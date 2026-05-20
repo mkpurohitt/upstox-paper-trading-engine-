@@ -25,8 +25,17 @@ class ServiceContainer:
         self.reconciliation = ReconciliationEngine(repo)
         self.execution_adapter = UpstoxSandboxExecutionAdapter(self.settings)
         self.oms = PaperOMS(repo, event_bus, self.rms, self.reconciliation, self.execution_adapter)
+        
+        # Establish operational pipelines across core boundaries
         self.strategy_engine.signal_handler = self.oms.route_signal
+        
+        # 1. Wire live ticks into the Strategy Engine queue
         self.market_data.tick_handlers.append(self.strategy_engine.on_tick)
+        # 2. Wire live ticks to run the asynchronous Order Matching Engine simulation logic
+        self.market_data.tick_handlers.append(self.oms.on_market_tick)
+        # 3. Wire time bars/candles into the Strategy Engine queue
+        self.market_data.candle_handlers.append(self.strategy_engine.on_candle)
+        
         self.upstox_client = UpstoxClient(self.settings)
         self.upstox_ws = UpstoxMarketWebSocket(self.upstox_client, self.market_data.ingest_tick)
         self.live_quote = LiveQuotePollingService(self.settings, self.upstox_client, self.market_data.ingest_tick)
