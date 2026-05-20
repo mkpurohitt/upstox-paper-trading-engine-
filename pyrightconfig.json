@@ -1,0 +1,14 @@
+{
+  "include": ["backend", "strategies"],
+  "executionEnvironments": [
+    {
+      "root": "backend",
+      "extraPaths": ["backend"]
+    },
+    {
+      "root": "strategies",
+      "extraPaths": ["backend"]
+    }
+  ]
+}
+
