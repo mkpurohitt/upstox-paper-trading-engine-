@@ -86,7 +86,7 @@ function MarketStatus() {
   const nse = data?.[0];
   if (!nse) return null;
   return (
-    <span className={cn("hidden rounded-full px-2 py-0.5 text-2xs font-medium sm:inline-flex", nse.is_open ? "bg-profit/15 text-profit" : "bg-muted text-muted-foreground")}>
+    <span className={cn("hidden whitespace-nowrap rounded-full px-2 py-0.5 text-2xs font-medium sm:inline-flex", nse.is_open ? "bg-profit/15 text-profit" : "bg-muted text-muted-foreground")}>
       {nse.is_open ? "Market open" : "Market closed"}
     </span>
   );

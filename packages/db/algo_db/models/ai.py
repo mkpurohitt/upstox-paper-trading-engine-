@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from algo_db.base import Base, BigIntId, Embedding, IdMixin, TimestampMixin, utcnow
@@ -34,7 +34,7 @@ class ChatMessage(IdMixin, Base):
     model: Mapped[str | None] = mapped_column(String(64))
     tokens_in: Mapped[int] = mapped_column(Integer, default=0)
     tokens_out: Mapped[int] = mapped_column(Integer, default=0)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
 
 
 class RagDocument(IdMixin, Base):
@@ -51,8 +51,8 @@ class RagDocument(IdMixin, Base):
     meta: Mapped[dict[str, Any]] = mapped_column(default=dict)
     uploaded_by: Mapped[int | None] = mapped_column(BigIntId, ForeignKey("users.id", ondelete="SET NULL"))
     error: Mapped[str | None] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
-    indexed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    indexed_at: Mapped[datetime | None] = mapped_column()
 
 
 class RagChunk(IdMixin, Base):
@@ -64,7 +64,7 @@ class RagChunk(IdMixin, Base):
     token_count: Mapped[int] = mapped_column(Integer, default=0)
     embedding: Mapped[list[float] | None] = mapped_column(Embedding(384))
     meta: Mapped[dict[str, Any]] = mapped_column(default=dict)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
 
 
 class LLMUsage(IdMixin, Base):
@@ -77,4 +77,4 @@ class LLMUsage(IdMixin, Base):
     tokens_in: Mapped[int] = mapped_column(Integer, default=0)
     tokens_out: Mapped[int] = mapped_column(Integer, default=0)
     cost_usd: Mapped[float] = mapped_column(Float, default=0.0)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow, index=True)

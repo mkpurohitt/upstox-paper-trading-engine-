@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import DateTime, String
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from algo_db.base import Base, BigIntId, IdMixin, utcnow
@@ -21,7 +21,7 @@ class AuditLog(IdMixin, Base):
 
     __tablename__ = "audit_log"
 
-    ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    ts: Mapped[datetime] = mapped_column(default=utcnow, index=True)
     user_id: Mapped[int | None] = mapped_column(BigIntId, index=True)
     actor: Mapped[str] = mapped_column(String(16), default="user")  # user | system | admin | agent | runner
     action: Mapped[str] = mapped_column(String(64), index=True)
@@ -39,4 +39,4 @@ class SystemFlag(Base):
     key: Mapped[str] = mapped_column(String(64), primary_key=True)
     value: Mapped[dict[str, Any]] = mapped_column(default=dict)
     updated_by: Mapped[int | None] = mapped_column(BigIntId)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(default=utcnow, onupdate=utcnow)

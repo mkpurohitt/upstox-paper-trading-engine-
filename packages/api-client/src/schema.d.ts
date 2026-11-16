@@ -280,6 +280,244 @@ export interface paths {
         patch: operations["update_me_api_me_patch"];
         trace?: never;
     };
+    "/api/market/provider": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Provider */
+        get: operations["provider_api_market_provider_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/market/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search */
+        get: operations["search_api_market_search_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/market/instruments/{symbol}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Instrument */
+        get: operations["instrument_api_market_instruments__symbol__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/market/universes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Universes */
+        get: operations["universes_api_market_universes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/market/quotes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Quotes */
+        get: operations["quotes_api_market_quotes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/market/quote/{symbol}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Quote */
+        get: operations["quote_api_market_quote__symbol__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/market/candles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Candles */
+        get: operations["candles_api_market_candles_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/market/expiries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Expiries */
+        get: operations["expiries_api_market_expiries_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/market/option-chain": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Option Chain */
+        get: operations["option_chain_api_market_option_chain_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/market/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Status */
+        get: operations["status_api_market_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/market/holidays": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Holidays */
+        get: operations["holidays_api_market_holidays_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/market/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Overview */
+        get: operations["overview_api_market_overview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/market/nse/tools": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Nse Tools */
+        get: operations["nse_tools_api_market_nse_tools_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/market/nse/tools/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Nse Tool Call */
+        post: operations["nse_tool_call_api_market_nse_tools__name__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -296,11 +534,162 @@ export interface components {
             /** Demo Login */
             demo_login: boolean;
         };
+        /** Breadth */
+        Breadth: {
+            /** Advances */
+            advances: number;
+            /** Declines */
+            declines: number;
+            /** Unchanged */
+            unchanged: number;
+            /** Universe */
+            universe: number;
+            /**
+             * Nse
+             * @default {}
+             */
+            nse: {
+                [key: string]: unknown;
+            };
+        };
+        /** Candle */
+        Candle: {
+            /**
+             * Ts
+             * Format: date-time
+             */
+            ts: string;
+            /** Open */
+            open: number;
+            /** High */
+            high: number;
+            /** Low */
+            low: number;
+            /** Close */
+            close: number;
+            /**
+             * Volume
+             * @default 0
+             */
+            volume: number;
+            /** Oi */
+            oi?: number | null;
+        };
+        /** DepthLevel */
+        DepthLevel: {
+            /** Price */
+            price: number;
+            /** Quantity */
+            quantity: number;
+            /**
+             * Orders
+             * @default 0
+             */
+            orders: number;
+        };
+        /**
+         * Exchange
+         * @enum {string}
+         */
+        Exchange: "NSE" | "BSE" | "NFO" | "BFO" | "MCX" | "CDS" | "NSE_INDEX" | "BSE_INDEX";
+        /** Greeks */
+        Greeks: {
+            /**
+             * Delta
+             * @default 0
+             */
+            delta: number;
+            /**
+             * Gamma
+             * @default 0
+             */
+            gamma: number;
+            /**
+             * Theta
+             * @default 0
+             */
+            theta: number;
+            /**
+             * Vega
+             * @default 0
+             */
+            vega: number;
+            /**
+             * Rho
+             * @default 0
+             */
+            rho: number;
+            /**
+             * Iv
+             * @description Implied volatility in % (e.g. 14.2)
+             */
+            iv?: number | null;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** Instrument */
+        Instrument: {
+            /**
+             * Symbol
+             * @description Canonical symbol, e.g. NSE:RELIANCE
+             */
+            symbol: string;
+            /**
+             * Instrument Key
+             * @description Provider native key, e.g. NSE_EQ|INE002A01018
+             */
+            instrument_key: string;
+            exchange: components["schemas"]["Exchange"];
+            /** Tradingsymbol */
+            tradingsymbol: string;
+            /** Name */
+            name: string;
+            instrument_type: components["schemas"]["InstrumentType"];
+            /**
+             * Segment
+             * @default
+             */
+            segment: string;
+            /** Underlying */
+            underlying?: string | null;
+            /** Expiry */
+            expiry?: string | null;
+            /** Strike */
+            strike?: number | null;
+            /**
+             * Lot Size
+             * @default 1
+             */
+            lot_size: number;
+            /**
+             * Tick Size
+             * @default 0.05
+             */
+            tick_size: number;
+            /** Freeze Qty */
+            freeze_qty?: number | null;
+            /** Isin */
+            isin?: string | null;
+            /** Sector */
+            sector?: string | null;
+            /** Industry */
+            industry?: string | null;
+            /** Market Cap Cr */
+            market_cap_cr?: number | null;
+        };
+        /**
+         * InstrumentType
+         * @enum {string}
+         */
+        InstrumentType: "EQ" | "INDEX" | "FUT" | "CE" | "PE";
+        /**
+         * Interval
+         * @enum {string}
+         */
+        Interval: "1m" | "3m" | "5m" | "15m" | "30m" | "1h" | "1d" | "1w";
         /** LoginIn */
         LoginIn: {
             /**
@@ -322,6 +711,33 @@ export interface components {
             challenge_token?: string | null;
             token?: components["schemas"]["TokenOut"] | null;
         };
+        /** MarketStatus */
+        MarketStatus: {
+            /** Exchange */
+            exchange: string;
+            /** Status */
+            status: string;
+            /** Is Open */
+            is_open: boolean;
+            /**
+             * Ts
+             * Format: date-time
+             */
+            ts: string;
+            /** Next Event */
+            next_event?: string | null;
+        };
+        /** McpToolOut */
+        McpToolOut: {
+            /** Name */
+            name: string;
+            /** Description */
+            description: string;
+            /** Input Schema */
+            input_schema: {
+                [key: string]: unknown;
+            };
+        };
         /** Message */
         Message: {
             /**
@@ -334,6 +750,207 @@ export interface components {
              * @default
              */
             message: string;
+        };
+        /** MoverRow */
+        MoverRow: {
+            /** Symbol */
+            symbol: string;
+            /** Name */
+            name?: string | null;
+            /** Ltp */
+            ltp: number;
+            /** Change */
+            change?: number | null;
+            /** Change Pct */
+            change_pct?: number | null;
+            /** Volume */
+            volume?: number | null;
+            /** Value Cr */
+            value_cr?: number | null;
+            /** Oi */
+            oi?: number | null;
+            /** Oi Change Pct */
+            oi_change_pct?: number | null;
+            /** Buildup */
+            buildup?: string | null;
+        };
+        /** OptionChain */
+        OptionChain: {
+            /** Underlying */
+            underlying: string;
+            /** Spot */
+            spot: number;
+            /**
+             * Expiry
+             * Format: date
+             */
+            expiry: string;
+            /** Expiries */
+            expiries?: string[];
+            /**
+             * Lot Size
+             * @default 1
+             */
+            lot_size: number;
+            /** Atm Strike */
+            atm_strike: number;
+            /** Rows */
+            rows: components["schemas"]["OptionChainRow"][];
+            /** Pcr */
+            pcr?: number | null;
+            /** Max Pain */
+            max_pain?: number | null;
+            /**
+             * Total Call Oi
+             * @default 0
+             */
+            total_call_oi: number;
+            /**
+             * Total Put Oi
+             * @default 0
+             */
+            total_put_oi: number;
+            /**
+             * Ts
+             * Format: date-time
+             */
+            ts: string;
+        };
+        /** OptionChainRow */
+        OptionChainRow: {
+            /** Strike */
+            strike: number;
+            /**
+             * Expiry
+             * Format: date
+             */
+            expiry: string;
+            call?: components["schemas"]["OptionLeg"] | null;
+            put?: components["schemas"]["OptionLeg"] | null;
+            /** Pcr */
+            pcr?: number | null;
+        };
+        /** OptionLeg */
+        OptionLeg: {
+            /** Symbol */
+            symbol: string;
+            /** Ltp */
+            ltp: number;
+            /** Bid */
+            bid?: number | null;
+            /** Ask */
+            ask?: number | null;
+            /**
+             * Volume
+             * @default 0
+             */
+            volume: number;
+            /**
+             * Oi
+             * @default 0
+             */
+            oi: number;
+            /**
+             * Oi Change
+             * @default 0
+             */
+            oi_change: number;
+            /** Iv */
+            iv?: number | null;
+            greeks?: components["schemas"]["Greeks"];
+        };
+        /** OverviewOut */
+        OverviewOut: {
+            /** Ts */
+            ts: string;
+            /** Indices */
+            indices: components["schemas"]["MoverRow"][];
+            /** Sector Indices */
+            sector_indices: components["schemas"]["MoverRow"][];
+            /** Sectors */
+            sectors: components["schemas"]["SectorTile"][];
+            breadth: components["schemas"]["Breadth"];
+            /** Top Gainers */
+            top_gainers: components["schemas"]["MoverRow"][];
+            /** Top Losers */
+            top_losers: components["schemas"]["MoverRow"][];
+            /** Most Active */
+            most_active: components["schemas"]["MoverRow"][];
+            /** Oi Gainers */
+            oi_gainers: components["schemas"]["MoverRow"][];
+            /** Oi Losers */
+            oi_losers: components["schemas"]["MoverRow"][];
+            /** Fii Dii */
+            fii_dii: {
+                [key: string]: unknown;
+            };
+        };
+        /** ProviderInfo */
+        ProviderInfo: {
+            /** Name */
+            name: string;
+            /** Live */
+            live: boolean;
+            /** Data Mode */
+            data_mode: string;
+        };
+        /** Quote */
+        Quote: {
+            /** Symbol */
+            symbol: string;
+            /**
+             * Ts
+             * Format: date-time
+             */
+            ts: string;
+            /** Ltp */
+            ltp: number;
+            /** Ltq */
+            ltq?: number | null;
+            /** Volume */
+            volume?: number | null;
+            /** Oi */
+            oi?: number | null;
+            /** Open */
+            open?: number | null;
+            /** High */
+            high?: number | null;
+            /** Low */
+            low?: number | null;
+            /**
+             * Close
+             * @description Previous close
+             */
+            close?: number | null;
+            /** Change */
+            change?: number | null;
+            /** Change Pct */
+            change_pct?: number | null;
+            /** Bid */
+            bid?: number | null;
+            /** Ask */
+            ask?: number | null;
+            greeks?: components["schemas"]["Greeks"] | null;
+            /** Name */
+            name?: string | null;
+            /** Avg Price */
+            avg_price?: number | null;
+            /** Upper Circuit */
+            upper_circuit?: number | null;
+            /** Lower Circuit */
+            lower_circuit?: number | null;
+            /** Week52 High */
+            week52_high?: number | null;
+            /** Week52 Low */
+            week52_low?: number | null;
+            /** Total Buy Qty */
+            total_buy_qty?: number | null;
+            /** Total Sell Qty */
+            total_sell_qty?: number | null;
+            /** Bids */
+            bids?: components["schemas"]["DepthLevel"][];
+            /** Asks */
+            asks?: components["schemas"]["DepthLevel"][];
         };
         /** RegisterIn */
         RegisterIn: {
@@ -364,6 +981,30 @@ export interface components {
              * @default false
              */
             marketing_opt_in: boolean;
+        };
+        /** SectorStock */
+        SectorStock: {
+            /** Symbol */
+            symbol: string;
+            /** Name */
+            name?: string | null;
+            /** Ltp */
+            ltp: number;
+            /** Change Pct */
+            change_pct?: number | null;
+            /** Mcap Cr */
+            mcap_cr: number;
+        };
+        /** SectorTile */
+        SectorTile: {
+            /** Sector */
+            sector: string;
+            /** Change Pct */
+            change_pct: number;
+            /** Mcap Cr */
+            mcap_cr: number;
+            /** Stocks */
+            stocks: components["schemas"]["SectorStock"][];
         };
         /** SessionOut */
         SessionOut: {
@@ -944,6 +1585,403 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    provider_api_market_provider_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProviderInfo"];
+                };
+            };
+        };
+    };
+    search_api_market_search_get: {
+        parameters: {
+            query: {
+                q: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Instrument"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    instrument_api_market_instruments__symbol__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                symbol: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Instrument"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    universes_api_market_universes_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string[];
+                    };
+                };
+            };
+        };
+    };
+    quotes_api_market_quotes_get: {
+        parameters: {
+            query: {
+                /** @description Comma separated canonical symbols */
+                symbols: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Quote"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    quote_api_market_quote__symbol__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                symbol: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Quote"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    candles_api_market_candles_get: {
+        parameters: {
+            query: {
+                symbol: string;
+                interval?: components["schemas"]["Interval"];
+                days?: number;
+                start?: string | null;
+                end?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Candle"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    expiries_api_market_expiries_get: {
+        parameters: {
+            query: {
+                underlying: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    option_chain_api_market_option_chain_get: {
+        parameters: {
+            query: {
+                underlying: string;
+                expiry?: string | null;
+                strikes?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OptionChain"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    status_api_market_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketStatus"][];
+                };
+            };
+        };
+    };
+    holidays_api_market_holidays_get: {
+        parameters: {
+            query?: {
+                year?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    }[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    overview_api_market_overview_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OverviewOut"];
+                };
+            };
+        };
+    };
+    nse_tools_api_market_nse_tools_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["McpToolOut"][];
+                };
+            };
+        };
+    };
+    nse_tool_call_api_market_nse_tools__name__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                } | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */

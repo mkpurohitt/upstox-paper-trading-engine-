@@ -575,6 +575,722 @@
           }
         ]
       }
+    },
+    "/api/market/provider": {
+      "get": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Provider",
+        "operationId": "provider_api_market_provider_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderInfo"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/market/search": {
+      "get": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Search",
+        "operationId": "search_api_market_search_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "title": "Q"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Instrument"
+                  },
+                  "title": "Response Search Api Market Search Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/market/instruments/{symbol}": {
+      "get": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Instrument",
+        "operationId": "instrument_api_market_instruments__symbol__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Symbol"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instrument"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/market/universes": {
+      "get": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Universes",
+        "operationId": "universes_api_market_universes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "type": "object",
+                  "title": "Response Universes Api Market Universes Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/market/quotes": {
+      "get": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Quotes",
+        "operationId": "quotes_api_market_quotes_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "symbols",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Comma separated canonical symbols",
+              "title": "Symbols"
+            },
+            "description": "Comma separated canonical symbols"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Quote"
+                  },
+                  "title": "Response Quotes Api Market Quotes Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/market/quote/{symbol}": {
+      "get": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Quote",
+        "operationId": "quote_api_market_quote__symbol__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Symbol"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Quote"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/market/candles": {
+      "get": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Candles",
+        "operationId": "candles_api_market_candles_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Symbol"
+            }
+          },
+          {
+            "name": "interval",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Interval",
+              "default": "1d"
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 3650,
+              "minimum": 1,
+              "default": 365,
+              "title": "Days"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Candle"
+                  },
+                  "title": "Response Candles Api Market Candles Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/market/expiries": {
+      "get": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Expiries",
+        "operationId": "expiries_api_market_expiries_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "underlying",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Underlying"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "title": "Response Expiries Api Market Expiries Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/market/option-chain": {
+      "get": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Option Chain",
+        "operationId": "option_chain_api_market_option_chain_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "underlying",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Underlying"
+            }
+          },
+          {
+            "name": "expiry",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Expiry"
+            }
+          },
+          {
+            "name": "strikes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 60,
+              "minimum": 3,
+              "default": 20,
+              "title": "Strikes"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptionChain"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/market/status": {
+      "get": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Status",
+        "operationId": "status_api_market_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MarketStatus"
+                  },
+                  "type": "array",
+                  "title": "Response Status Api Market Status Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/market/holidays": {
+      "get": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Holidays",
+        "operationId": "holidays_api_market_holidays_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Year"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  "title": "Response Holidays Api Market Holidays Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/market/overview": {
+      "get": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Overview",
+        "operationId": "overview_api_market_overview_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverviewOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/market/nse/tools": {
+      "get": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Nse Tools",
+        "operationId": "nse_tools_api_market_nse_tools_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/McpToolOut"
+                  },
+                  "type": "array",
+                  "title": "Response Nse Tools Api Market Nse Tools Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/market/nse/tools/{name}": {
+      "post": {
+        "tags": [
+          "market"
+        ],
+        "summary": "Nse Tool Call",
+        "operationId": "nse_tool_call_api_market_nse_tools__name__post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Arguments"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Nse Tool Call Api Market Nse Tools  Name  Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -602,6 +1318,170 @@
         ],
         "title": "AuthProvidersOut"
       },
+      "Breadth": {
+        "properties": {
+          "advances": {
+            "type": "integer",
+            "title": "Advances"
+          },
+          "declines": {
+            "type": "integer",
+            "title": "Declines"
+          },
+          "unchanged": {
+            "type": "integer",
+            "title": "Unchanged"
+          },
+          "universe": {
+            "type": "integer",
+            "title": "Universe"
+          },
+          "nse": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Nse",
+            "default": {}
+          }
+        },
+        "type": "object",
+        "required": [
+          "advances",
+          "declines",
+          "unchanged",
+          "universe"
+        ],
+        "title": "Breadth"
+      },
+      "Candle": {
+        "properties": {
+          "ts": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Ts"
+          },
+          "open": {
+            "type": "number",
+            "title": "Open"
+          },
+          "high": {
+            "type": "number",
+            "title": "High"
+          },
+          "low": {
+            "type": "number",
+            "title": "Low"
+          },
+          "close": {
+            "type": "number",
+            "title": "Close"
+          },
+          "volume": {
+            "type": "number",
+            "title": "Volume",
+            "default": 0
+          },
+          "oi": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ts",
+          "open",
+          "high",
+          "low",
+          "close"
+        ],
+        "title": "Candle"
+      },
+      "DepthLevel": {
+        "properties": {
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "orders": {
+            "type": "integer",
+            "title": "Orders",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "price",
+          "quantity"
+        ],
+        "title": "DepthLevel"
+      },
+      "Exchange": {
+        "type": "string",
+        "enum": [
+          "NSE",
+          "BSE",
+          "NFO",
+          "BFO",
+          "MCX",
+          "CDS",
+          "NSE_INDEX",
+          "BSE_INDEX"
+        ],
+        "title": "Exchange"
+      },
+      "Greeks": {
+        "properties": {
+          "delta": {
+            "type": "number",
+            "title": "Delta",
+            "default": 0.0
+          },
+          "gamma": {
+            "type": "number",
+            "title": "Gamma",
+            "default": 0.0
+          },
+          "theta": {
+            "type": "number",
+            "title": "Theta",
+            "default": 0.0
+          },
+          "vega": {
+            "type": "number",
+            "title": "Vega",
+            "default": 0.0
+          },
+          "rho": {
+            "type": "number",
+            "title": "Rho",
+            "default": 0.0
+          },
+          "iv": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iv",
+            "description": "Implied volatility in % (e.g. 14.2)"
+          }
+        },
+        "type": "object",
+        "title": "Greeks"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -614,6 +1494,173 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "Instrument": {
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol",
+            "description": "Canonical symbol, e.g. NSE:RELIANCE"
+          },
+          "instrument_key": {
+            "type": "string",
+            "title": "Instrument Key",
+            "description": "Provider native key, e.g. NSE_EQ|INE002A01018"
+          },
+          "exchange": {
+            "$ref": "#/components/schemas/Exchange"
+          },
+          "tradingsymbol": {
+            "type": "string",
+            "title": "Tradingsymbol"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "instrument_type": {
+            "$ref": "#/components/schemas/InstrumentType"
+          },
+          "segment": {
+            "type": "string",
+            "title": "Segment",
+            "default": ""
+          },
+          "underlying": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Underlying"
+          },
+          "expiry": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiry"
+          },
+          "strike": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Strike"
+          },
+          "lot_size": {
+            "type": "integer",
+            "title": "Lot Size",
+            "default": 1
+          },
+          "tick_size": {
+            "type": "number",
+            "title": "Tick Size",
+            "default": 0.05
+          },
+          "freeze_qty": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Freeze Qty"
+          },
+          "isin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Isin"
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector"
+          },
+          "industry": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry"
+          },
+          "market_cap_cr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Market Cap Cr"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symbol",
+          "instrument_key",
+          "exchange",
+          "tradingsymbol",
+          "name",
+          "instrument_type"
+        ],
+        "title": "Instrument"
+      },
+      "InstrumentType": {
+        "type": "string",
+        "enum": [
+          "EQ",
+          "INDEX",
+          "FUT",
+          "CE",
+          "PE"
+        ],
+        "title": "InstrumentType"
+      },
+      "Interval": {
+        "type": "string",
+        "enum": [
+          "1m",
+          "3m",
+          "5m",
+          "15m",
+          "30m",
+          "1h",
+          "1d",
+          "1w"
+        ],
+        "title": "Interval"
       },
       "LoginIn": {
         "properties": {
@@ -668,6 +1715,70 @@
         "type": "object",
         "title": "LoginOut"
       },
+      "MarketStatus": {
+        "properties": {
+          "exchange": {
+            "type": "string",
+            "title": "Exchange"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "is_open": {
+            "type": "boolean",
+            "title": "Is Open"
+          },
+          "ts": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Ts"
+          },
+          "next_event": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Event"
+          }
+        },
+        "type": "object",
+        "required": [
+          "exchange",
+          "status",
+          "is_open",
+          "ts"
+        ],
+        "title": "MarketStatus"
+      },
+      "McpToolOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "input_schema": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Input Schema"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "description",
+          "input_schema"
+        ],
+        "title": "McpToolOut"
+      },
       "Message": {
         "properties": {
           "ok": {
@@ -683,6 +1794,687 @@
         },
         "type": "object",
         "title": "Message"
+      },
+      "MoverRow": {
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "ltp": {
+            "type": "number",
+            "title": "Ltp"
+          },
+          "change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change"
+          },
+          "change_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Pct"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume"
+          },
+          "value_cr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value Cr"
+          },
+          "oi": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi"
+          },
+          "oi_change_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi Change Pct"
+          },
+          "buildup": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buildup"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symbol",
+          "ltp"
+        ],
+        "title": "MoverRow"
+      },
+      "OptionChain": {
+        "properties": {
+          "underlying": {
+            "type": "string",
+            "title": "Underlying"
+          },
+          "spot": {
+            "type": "number",
+            "title": "Spot"
+          },
+          "expiry": {
+            "type": "string",
+            "format": "date",
+            "title": "Expiry"
+          },
+          "expiries": {
+            "items": {
+              "type": "string",
+              "format": "date"
+            },
+            "type": "array",
+            "title": "Expiries"
+          },
+          "lot_size": {
+            "type": "integer",
+            "title": "Lot Size",
+            "default": 1
+          },
+          "atm_strike": {
+            "type": "number",
+            "title": "Atm Strike"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/OptionChainRow"
+            },
+            "type": "array",
+            "title": "Rows"
+          },
+          "pcr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pcr"
+          },
+          "max_pain": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Pain"
+          },
+          "total_call_oi": {
+            "type": "number",
+            "title": "Total Call Oi",
+            "default": 0
+          },
+          "total_put_oi": {
+            "type": "number",
+            "title": "Total Put Oi",
+            "default": 0
+          },
+          "ts": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Ts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "underlying",
+          "spot",
+          "expiry",
+          "atm_strike",
+          "rows",
+          "ts"
+        ],
+        "title": "OptionChain"
+      },
+      "OptionChainRow": {
+        "properties": {
+          "strike": {
+            "type": "number",
+            "title": "Strike"
+          },
+          "expiry": {
+            "type": "string",
+            "format": "date",
+            "title": "Expiry"
+          },
+          "call": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OptionLeg"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "put": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OptionLeg"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pcr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pcr"
+          }
+        },
+        "type": "object",
+        "required": [
+          "strike",
+          "expiry"
+        ],
+        "title": "OptionChainRow"
+      },
+      "OptionLeg": {
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol"
+          },
+          "ltp": {
+            "type": "number",
+            "title": "Ltp"
+          },
+          "bid": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid"
+          },
+          "ask": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ask"
+          },
+          "volume": {
+            "type": "number",
+            "title": "Volume",
+            "default": 0
+          },
+          "oi": {
+            "type": "number",
+            "title": "Oi",
+            "default": 0
+          },
+          "oi_change": {
+            "type": "number",
+            "title": "Oi Change",
+            "default": 0
+          },
+          "iv": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iv"
+          },
+          "greeks": {
+            "$ref": "#/components/schemas/Greeks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symbol",
+          "ltp"
+        ],
+        "title": "OptionLeg"
+      },
+      "OverviewOut": {
+        "properties": {
+          "ts": {
+            "type": "string",
+            "title": "Ts"
+          },
+          "indices": {
+            "items": {
+              "$ref": "#/components/schemas/MoverRow"
+            },
+            "type": "array",
+            "title": "Indices"
+          },
+          "sector_indices": {
+            "items": {
+              "$ref": "#/components/schemas/MoverRow"
+            },
+            "type": "array",
+            "title": "Sector Indices"
+          },
+          "sectors": {
+            "items": {
+              "$ref": "#/components/schemas/SectorTile"
+            },
+            "type": "array",
+            "title": "Sectors"
+          },
+          "breadth": {
+            "$ref": "#/components/schemas/Breadth"
+          },
+          "top_gainers": {
+            "items": {
+              "$ref": "#/components/schemas/MoverRow"
+            },
+            "type": "array",
+            "title": "Top Gainers"
+          },
+          "top_losers": {
+            "items": {
+              "$ref": "#/components/schemas/MoverRow"
+            },
+            "type": "array",
+            "title": "Top Losers"
+          },
+          "most_active": {
+            "items": {
+              "$ref": "#/components/schemas/MoverRow"
+            },
+            "type": "array",
+            "title": "Most Active"
+          },
+          "oi_gainers": {
+            "items": {
+              "$ref": "#/components/schemas/MoverRow"
+            },
+            "type": "array",
+            "title": "Oi Gainers"
+          },
+          "oi_losers": {
+            "items": {
+              "$ref": "#/components/schemas/MoverRow"
+            },
+            "type": "array",
+            "title": "Oi Losers"
+          },
+          "fii_dii": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Fii Dii"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ts",
+          "indices",
+          "sector_indices",
+          "sectors",
+          "breadth",
+          "top_gainers",
+          "top_losers",
+          "most_active",
+          "oi_gainers",
+          "oi_losers",
+          "fii_dii"
+        ],
+        "title": "OverviewOut"
+      },
+      "ProviderInfo": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "live": {
+            "type": "boolean",
+            "title": "Live"
+          },
+          "data_mode": {
+            "type": "string",
+            "title": "Data Mode"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "live",
+          "data_mode"
+        ],
+        "title": "ProviderInfo"
+      },
+      "Quote": {
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol"
+          },
+          "ts": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Ts"
+          },
+          "ltp": {
+            "type": "number",
+            "title": "Ltp"
+          },
+          "ltq": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ltq"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume"
+          },
+          "oi": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi"
+          },
+          "open": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open"
+          },
+          "high": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "High"
+          },
+          "low": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Low"
+          },
+          "close": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Close",
+            "description": "Previous close"
+          },
+          "change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change"
+          },
+          "change_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Pct"
+          },
+          "bid": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid"
+          },
+          "ask": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ask"
+          },
+          "greeks": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Greeks"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "avg_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Price"
+          },
+          "upper_circuit": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Upper Circuit"
+          },
+          "lower_circuit": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lower Circuit"
+          },
+          "week52_high": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Week52 High"
+          },
+          "week52_low": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Week52 Low"
+          },
+          "total_buy_qty": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Buy Qty"
+          },
+          "total_sell_qty": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Sell Qty"
+          },
+          "bids": {
+            "items": {
+              "$ref": "#/components/schemas/DepthLevel"
+            },
+            "type": "array",
+            "title": "Bids"
+          },
+          "asks": {
+            "items": {
+              "$ref": "#/components/schemas/DepthLevel"
+            },
+            "type": "array",
+            "title": "Asks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symbol",
+          "ts",
+          "ltp"
+        ],
+        "title": "Quote"
       },
       "RegisterIn": {
         "properties": {
@@ -727,6 +2519,82 @@
           "accept_privacy"
         ],
         "title": "RegisterIn"
+      },
+      "SectorStock": {
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "ltp": {
+            "type": "number",
+            "title": "Ltp"
+          },
+          "change_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Pct"
+          },
+          "mcap_cr": {
+            "type": "number",
+            "title": "Mcap Cr"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symbol",
+          "ltp",
+          "mcap_cr"
+        ],
+        "title": "SectorStock"
+      },
+      "SectorTile": {
+        "properties": {
+          "sector": {
+            "type": "string",
+            "title": "Sector"
+          },
+          "change_pct": {
+            "type": "number",
+            "title": "Change Pct"
+          },
+          "mcap_cr": {
+            "type": "number",
+            "title": "Mcap Cr"
+          },
+          "stocks": {
+            "items": {
+              "$ref": "#/components/schemas/SectorStock"
+            },
+            "type": "array",
+            "title": "Stocks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sector",
+          "change_pct",
+          "mcap_cr",
+          "stocks"
+        ],
+        "title": "SectorTile"
       },
       "SessionOut": {
         "properties": {

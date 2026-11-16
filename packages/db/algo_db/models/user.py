@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from algo_db.base import Base, BigIntId, IdMixin, TimestampMixin, utcnow
@@ -26,8 +26,8 @@ class User(IdMixin, TimestampMixin, Base):
     theme: Mapped[str] = mapped_column(String(8), default="dark")
     notification_prefs: Mapped[dict[str, Any]] = mapped_column(default=dict)
     kill_switch: Mapped[bool] = mapped_column(Boolean, default=False)
-    last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    deletion_requested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_login_at: Mapped[datetime | None] = mapped_column()
+    deletion_requested_at: Mapped[datetime | None] = mapped_column()
 
     twofa: Mapped[UserTwoFA | None] = relationship(back_populates="user", uselist=False, lazy="selectin")
 
@@ -51,10 +51,10 @@ class Session(IdMixin, Base):
     family_id: Mapped[str] = mapped_column(String(32), index=True)
     user_agent: Mapped[str | None] = mapped_column(String(400))
     ip: Mapped[str | None] = mapped_column(String(64))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
-    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    last_used_at: Mapped[datetime | None] = mapped_column()
+    expires_at: Mapped[datetime] = mapped_column()
+    revoked_at: Mapped[datetime | None] = mapped_column()
     replaced_by_id: Mapped[int | None] = mapped_column(BigIntId)
 
 
@@ -64,10 +64,10 @@ class UserTwoFA(Base):
     user_id: Mapped[int] = mapped_column(BigIntId, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
     secret_enc: Mapped[str] = mapped_column(Text)
     enabled: Mapped[bool] = mapped_column(Boolean, default=False)
-    confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    confirmed_at: Mapped[datetime | None] = mapped_column()
     recovery_codes_hash: Mapped[list[Any]] = mapped_column(default=list)
     last_used_step: Mapped[int] = mapped_column(Integer, default=0)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
 
     user: Mapped[User] = relationship(back_populates="twofa")
 
@@ -82,4 +82,4 @@ class Consent(IdMixin, Base):
     version: Mapped[str] = mapped_column(String(16), default="1.0")
     granted: Mapped[bool] = mapped_column(Boolean, default=True)
     ip: Mapped[str | None] = mapped_column(String(64))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)

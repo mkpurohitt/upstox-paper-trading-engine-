@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, Float, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from algo_db.base import Base, BigIntId, IdMixin, TimestampMixin, utcnow
@@ -40,7 +40,7 @@ class StrategyVersion(IdMixin, Base):
     version: Mapped[int] = mapped_column(Integer)
     dsl: Mapped[dict[str, Any]] = mapped_column()
     note: Mapped[str] = mapped_column(String(200), default="")
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
 
 
 class Backtest(IdMixin, Base):
@@ -60,9 +60,9 @@ class Backtest(IdMixin, Base):
     monthly_returns: Mapped[list[Any]] = mapped_column(default=list)
     extra: Mapped[dict[str, Any]] = mapped_column(default=dict)
     error: Mapped[str | None] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
-    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    started_at: Mapped[datetime | None] = mapped_column()
+    finished_at: Mapped[datetime | None] = mapped_column()
 
 
 class BacktestTrade(IdMixin, Base):
@@ -73,9 +73,9 @@ class BacktestTrade(IdMixin, Base):
     leg: Mapped[str | None] = mapped_column(String(32))
     side: Mapped[str] = mapped_column(String(5))
     quantity: Mapped[int] = mapped_column(Integer)
-    entry_ts: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    entry_ts: Mapped[datetime] = mapped_column()
     entry_price: Mapped[float] = mapped_column(Float)
-    exit_ts: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    exit_ts: Mapped[datetime | None] = mapped_column()
     exit_price: Mapped[float | None] = mapped_column(Float)
     gross_pnl: Mapped[float] = mapped_column(Float, default=0.0)
     charges: Mapped[float] = mapped_column(Float, default=0.0)
@@ -103,17 +103,17 @@ class Deployment(IdMixin, TimestampMixin, Base):
     pnl_unrealised: Mapped[float] = mapped_column(Float, default=0.0)
     state: Mapped[dict[str, Any]] = mapped_column(default=dict)
     error: Mapped[str | None] = mapped_column(Text)
-    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    stopped_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    last_heartbeat: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    confirmed_2fa_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    started_at: Mapped[datetime | None] = mapped_column()
+    stopped_at: Mapped[datetime | None] = mapped_column()
+    last_heartbeat: Mapped[datetime | None] = mapped_column()
+    confirmed_2fa_at: Mapped[datetime | None] = mapped_column()
 
 
 class DeploymentLog(IdMixin, Base):
     __tablename__ = "deployment_logs"
 
     deployment_id: Mapped[int] = mapped_column(BigIntId, ForeignKey("deployments.id", ondelete="CASCADE"), index=True)
-    ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    ts: Mapped[datetime] = mapped_column(default=utcnow)
     level: Mapped[str] = mapped_column(String(8), default="info")
     message: Mapped[str] = mapped_column(Text)
     data: Mapped[dict[str, Any]] = mapped_column(default=dict)

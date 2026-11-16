@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Index, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, Float, ForeignKey, Index, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from algo_db.base import Base, BigIntId, IdMixin, TimestampMixin, utcnow
@@ -24,8 +24,8 @@ class BrokerConnection(IdMixin, TimestampMixin, Base):
     session_enc: Mapped[str | None] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(16), default="disconnected")
     status_message: Mapped[str | None] = mapped_column(String(500))
-    token_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    last_synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    token_expires_at: Mapped[datetime | None] = mapped_column()
+    last_synced_at: Mapped[datetime | None] = mapped_column()
     is_default: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
@@ -77,7 +77,7 @@ class Trade(IdMixin, Base):
     price: Mapped[float] = mapped_column(Float)
     charges: Mapped[float] = mapped_column(Float, default=0.0)
     product: Mapped[str] = mapped_column(String(8), default="MIS")
-    ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    ts: Mapped[datetime] = mapped_column(default=utcnow)
 
 
 class PositionSnapshot(IdMixin, Base):
@@ -91,7 +91,7 @@ class PositionSnapshot(IdMixin, Base):
     holdings: Mapped[list[Any]] = mapped_column(default=list)
     pnl_realised: Mapped[float] = mapped_column(Float, default=0.0)
     pnl_unrealised: Mapped[float] = mapped_column(Float, default=0.0)
-    taken_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    taken_at: Mapped[datetime] = mapped_column(default=utcnow, index=True)
 
 
 class RiskLimit(IdMixin, TimestampMixin, Base):

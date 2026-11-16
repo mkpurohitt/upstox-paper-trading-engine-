@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Any
 
-from sqlalchemy import Boolean, Date, DateTime, Float, ForeignKey, Index, Integer, String, Text
+from sqlalchemy import Boolean, Date, Float, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from algo_db.base import Base, BigIntId, IdMixin, TimestampMixin, utcnow
@@ -33,7 +33,7 @@ class InstrumentRow(IdMixin, Base):
     industry: Mapped[str | None] = mapped_column(String(64))
     market_cap_cr: Mapped[float | None] = mapped_column(Float)
     broker_tokens: Mapped[dict[str, Any]] = mapped_column(default=dict)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(default=utcnow)
 
 
 class CandleRow(Base):
@@ -44,7 +44,7 @@ class CandleRow(Base):
 
     symbol: Mapped[str] = mapped_column(String(64), primary_key=True)
     interval: Mapped[str] = mapped_column(String(4), primary_key=True)
-    ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), primary_key=True)
+    ts: Mapped[datetime] = mapped_column(primary_key=True)
     open: Mapped[float] = mapped_column(Float)
     high: Mapped[float] = mapped_column(Float)
     low: Mapped[float] = mapped_column(Float)
@@ -60,7 +60,7 @@ class OptionChainSnapshot(Base):
     expiry: Mapped[date] = mapped_column(Date, primary_key=True)
     strike: Mapped[float] = mapped_column(Float, primary_key=True)
     option_type: Mapped[str] = mapped_column(String(2), primary_key=True)
-    ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), primary_key=True)
+    ts: Mapped[datetime] = mapped_column(primary_key=True)
     spot: Mapped[float] = mapped_column(Float)
     ltp: Mapped[float] = mapped_column(Float)
     bid: Mapped[float | None] = mapped_column(Float)
@@ -84,11 +84,11 @@ class NewsItem(IdMixin, Base):
     ai_summary: Mapped[str | None] = mapped_column(Text)
     content: Mapped[str | None] = mapped_column(Text)
     category: Mapped[str] = mapped_column(String(24), default="news")  # news | announcement | results | economy
-    published_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    published_at: Mapped[datetime] = mapped_column(default=utcnow, index=True)
     sentiment: Mapped[str] = mapped_column(String(10), default="neutral")
     sentiment_score: Mapped[float] = mapped_column(Float, default=0.0)
     tickers: Mapped[list[Any]] = mapped_column(default=list)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
 
 
 class Watchlist(IdMixin, TimestampMixin, Base):
@@ -109,7 +109,7 @@ class Screen(IdMixin, TimestampMixin, Base):
     criteria: Mapped[dict[str, Any]] = mapped_column(default=dict)
     alert_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
     schedule_minutes: Mapped[int] = mapped_column(Integer, default=60)
-    last_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_run_at: Mapped[datetime | None] = mapped_column()
     last_results: Mapped[list[Any]] = mapped_column(default=list)
 
 
@@ -123,7 +123,7 @@ class Alert(IdMixin, TimestampMixin, Base):
     channels: Mapped[list[Any]] = mapped_column(default=lambda: ["in_app"])
     status: Mapped[str] = mapped_column(String(16), default="active")
     message: Mapped[str] = mapped_column(String(500), default="")
-    triggered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    triggered_at: Mapped[datetime | None] = mapped_column()
 
 
 class Notification(IdMixin, Base):
@@ -135,5 +135,5 @@ class Notification(IdMixin, Base):
     body: Mapped[str] = mapped_column(Text, default="")
     data: Mapped[dict[str, Any]] = mapped_column(default=dict)
     channels_sent: Mapped[list[Any]] = mapped_column(default=list)
-    read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    read_at: Mapped[datetime | None] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(default=utcnow, index=True)

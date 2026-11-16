@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, Integer, String
+from sqlalchemy import BigInteger, Boolean, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from algo_db.base import Base, BigIntId, IdMixin, TimestampMixin, utcnow
@@ -28,8 +28,8 @@ class Subscription(IdMixin, TimestampMixin, Base):
     user_id: Mapped[int] = mapped_column(BigIntId, ForeignKey("users.id", ondelete="CASCADE"), index=True)
     plan_id: Mapped[int] = mapped_column(BigIntId, ForeignKey("plans.id"))
     status: Mapped[str] = mapped_column(String(16), default="active")
-    current_period_start: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
-    current_period_end: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    current_period_start: Mapped[datetime] = mapped_column(default=utcnow)
+    current_period_end: Mapped[datetime | None] = mapped_column()
     cancel_at_period_end: Mapped[bool] = mapped_column(Boolean, default=False)
     razorpay_subscription_id: Mapped[str | None] = mapped_column(String(64))
 
@@ -51,5 +51,5 @@ class Payment(IdMixin, Base):
     razorpay_signature: Mapped[str | None] = mapped_column(String(128))
     method: Mapped[str | None] = mapped_column(String(32))
     raw: Mapped[dict[str, Any]] = mapped_column(default=dict)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
-    paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    paid_at: Mapped[datetime | None] = mapped_column()

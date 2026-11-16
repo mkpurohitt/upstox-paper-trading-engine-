@@ -71,9 +71,29 @@ class Embedding(TypeDecorator[list[float]]):
         return [float(x) for x in value]
 
 
+class TZDateTime(TypeDecorator[datetime]):
+    """Timezone-aware UTC datetimes on every backend (SQLite drops tzinfo)."""
+
+    impl = DateTime(timezone=True)
+    cache_ok = True
+
+    def process_bind_param(self, value: datetime | None, dialect: Any) -> datetime | None:
+        if value is None:
+            return None
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=UTC)
+        value = value.astimezone(UTC)
+        return value.replace(tzinfo=None) if dialect.name == "sqlite" else value
+
+    def process_result_value(self, value: datetime | None, dialect: Any) -> datetime | None:
+        if value is None:
+            return None
+        return value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC)
+
+
 class Base(DeclarativeBase):
     metadata = MetaData(naming_convention=NAMING)
-    type_annotation_map = {dict[str, Any]: JSONType, list[Any]: JSONType}
+    type_annotation_map = {dict[str, Any]: JSONType, list[Any]: JSONType, datetime: TZDateTime()}
 
 
 class IdMixin:
@@ -81,7 +101,5 @@ class IdMixin:
 
 
 class TimestampMixin:
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=utcnow, onupdate=utcnow, server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(TZDateTime(), default=utcnow, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(TZDateTime(), default=utcnow, onupdate=utcnow, server_default=func.now())
