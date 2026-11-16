@@ -1,0 +1,57 @@
+# Workers egress through a NAT gateway with a static Elastic IP that is
+# whitelisted with brokers (SEBI static-IP requirement for API order flow).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: worker } }
+  template:
+    metadata: { labels: { app: worker } }
+    spec:
+      securityContext: { runAsNonRoot: true, runAsUser: 10001 }
+      containers:
+        - name: worker
+          image: algodesk/api
+          command: ["arq", "algo_jobs.worker.WorkerSettings"]
+          envFrom: [{ configMapRef: { name: algodesk-config } }, { secretRef: { name: algodesk-secrets } }]
+          resources: { requests: { cpu: 500m, memory: 1Gi }, limits: { cpu: "2", memory: 3Gi } }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: market-data
+spec:
+  replicas: 1   # single upstream feed connection per token
+  strategy: { type: Recreate }
+  selector: { matchLabels: { app: market-data } }
+  template:
+    metadata: { labels: { app: market-data } }
+    spec:
+      securityContext: { runAsNonRoot: true, runAsUser: 10001 }
+      containers:
+        - name: market-data
+          image: algodesk/api
+          command: ["python", "-m", "market_data.worker"]
+          envFrom: [{ configMapRef: { name: algodesk-config } }, { secretRef: { name: algodesk-secrets } }]
+          resources: { requests: { cpu: 250m, memory: 512Mi }, limits: { cpu: "1", memory: 1Gi } }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: strategy-runner
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector: { matchLabels: { app: strategy-runner } }
+  template:
+    metadata: { labels: { app: strategy-runner } }
+    spec:
+      securityContext: { runAsNonRoot: true, runAsUser: 10001 }
+      containers:
+        - name: strategy-runner
+          image: algodesk/api
+          command: ["python", "-m", "strategy_engine.live.service"]
+          envFrom: [{ configMapRef: { name: algodesk-config } }, { secretRef: { name: algodesk-secrets } }]
+          resources: { requests: { cpu: 500m, memory: 512Mi }, limits: { cpu: "2", memory: 2Gi } }

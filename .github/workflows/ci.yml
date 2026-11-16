@@ -1,0 +1,120 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "ccr-*"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: timescale/timescaledb-ha:pg16
+        env:
+          POSTGRES_USER: algo
+          POSTGRES_PASSWORD: algo
+          POSTGRES_DB: algo
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U algo" --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - run: uv sync --frozen
+      - name: Lint
+        run: uv run ruff check .
+      - name: Type-check (core packages)
+        run: uv run mypy packages/py-common/algo_common services/strategy-engine/strategy_engine --ignore-missing-imports
+      - name: Migrations (up / down / up) against TimescaleDB + pgvector
+        working-directory: apps/api
+        env:
+          DATABASE_URL: postgresql+asyncpg://algo:algo@localhost:5432/algo
+        run: |
+          uv run alembic upgrade head
+          uv run alembic downgrade base
+          uv run alembic upgrade head
+          uv run alembic check
+      - name: Tests (SQLite)
+        run: uv run pytest -q --cov=services --cov=apps/api/app --cov-report=term-missing:skip-covered
+      - name: Tests (Postgres)
+        env:
+          TEST_DATABASE_URL: postgresql+asyncpg://algo:algo@localhost:5432/algo
+          PGVECTOR_ENABLED: "true"
+        run: uv run pytest -q apps/api/tests
+      - name: AI evals (mock provider)
+        run: uv run python evals/run_evals.py --min-score 0.85
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @algo/web lint
+      - run: pnpm -r typecheck
+      - run: pnpm --filter @algo/web test
+      - run: pnpm --filter @algo/web build
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: uv sync --frozen && pnpm install --frozen-lockfile
+      - run: pnpm --filter @algo/web exec playwright install --with-deps chromium
+      - run: pnpm --filter @algo/web build
+      - name: Start API (SQLite, embedded workers) and web
+        run: |
+          mkdir -p var
+          (cd apps/api && DATABASE_URL=sqlite+aiosqlite:///$PWD/../../var/e2e.db uv run python -m app.seed && \
+           DATABASE_URL=sqlite+aiosqlite:///$PWD/../../var/e2e.db uv run uvicorn app.main:app --port 8000 &) 
+          (cd apps/web && pnpm start &)
+          npx --yes wait-on http://localhost:8000/api/health http://localhost:3000/login
+      - run: pnpm --filter @algo/web e2e --project=desktop
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scanning (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: astral-sh/setup-uv@v5
+      - name: Python dependency audit
+        run: uvx pip-audit --strict --progress-spinner off -r <(uv export --frozen --no-dev --no-hashes --no-emit-workspace) || true
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: pnpm install --frozen-lockfile && pnpm audit --prod --audit-level high || true
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - run: docker build -f apps/api/Dockerfile -t algodesk/api:ci .
+      - run: docker build -f apps/web/Dockerfile -t algodesk/web:ci .

@@ -1,0 +1,37 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+htmlcov/
+
+# node
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+playwright-report/
+test-results/
+
+# data / local
+*.sqlite3
+*.db
+*.log
+.local/
+var/
+algo-platform.zip
+.DS_Store

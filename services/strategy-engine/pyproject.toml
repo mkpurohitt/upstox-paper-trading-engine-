@@ -1,0 +1,22 @@
+[project]
+name = "algo-strategy-engine"
+version = "0.1.0"
+description = "Strategy DSL, indicators, backtester (event-driven + vectorised), optimisation and live runner"
+requires-python = ">=3.12"
+dependencies = [
+  "algo-common",
+  "algo-db",
+  "algo-market-data",
+  "algo-broker-gateway",
+  "numpy>=2.0",
+  "pandas>=2.2",
+  "scipy>=1.14",
+  "statsmodels>=0.14.4",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["strategy_engine"]

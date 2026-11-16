@@ -1,0 +1,140 @@
+# AlgoDesk local stack.  `docker compose up --build`  (or `make dev`)
+#
+# Profiles:
+#   (default)       postgres+timescale+pgvector, redis, migrate, api, worker, market-data, strategy-runner, web
+#   ollama          local LLM fallback   -> docker compose --profile ollama up
+#   observability   prometheus + jaeger  -> docker compose --profile observability up
+
+x-python: &python
+  build:
+    context: .
+    dockerfile: apps/api/Dockerfile
+  image: algodesk/api:local
+  env_file:
+    - path: .env
+      required: false
+  environment: &pyenv
+    DATABASE_URL: postgresql+asyncpg://algo:algo@postgres:5432/algo
+    REDIS_URL: redis://redis:6379/0
+    PGVECTOR_ENABLED: "true"
+    EMBEDDED_WORKERS: "false"
+    API_BASE_URL: http://localhost:8000
+    WEB_BASE_URL: http://localhost:3000
+    OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+  restart: unless-stopped
+
+services:
+  postgres:
+    image: timescale/timescaledb-ha:pg16
+    environment:
+      POSTGRES_USER: algo
+      POSTGRES_PASSWORD: algo
+      POSTGRES_DB: algo
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/home/postgres/pgdata/data
+      - ./infra/docker/postgres-init.sql:/docker-entrypoint-initdb.d/00-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U algo -d algo"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "allkeys-lru"]
+    ports: ["6379:6379"]
+    volumes: [redisdata:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  migrate:
+    <<: *python
+    command: ["sh", "-c", "alembic upgrade head && python -m app.seed"]
+    restart: "no"
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  api:
+    <<: *python
+    environment:
+      <<: *pyenv
+      OTEL_SERVICE_NAME: algo-api
+    ports: ["8000:8000"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+
+  worker:
+    <<: *python
+    command: ["arq", "algo_jobs.worker.WorkerSettings"]
+    environment:
+      <<: *pyenv
+      OTEL_SERVICE_NAME: algo-worker
+    healthcheck: { disable: true }
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+
+  market-data:
+    <<: *python
+    command: ["python", "-m", "market_data.worker"]
+    environment:
+      <<: *pyenv
+      OTEL_SERVICE_NAME: algo-market-data
+    healthcheck: { disable: true }
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+
+  strategy-runner:
+    <<: *python
+    command: ["python", "-m", "strategy_engine.live.service"]
+    environment:
+      <<: *pyenv
+      OTEL_SERVICE_NAME: algo-strategy-runner
+    healthcheck: { disable: true }
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        API_INTERNAL_URL: http://api:8000
+        NEXT_PUBLIC_WS_URL: ws://localhost:8000/ws
+    image: algodesk/web:local
+    ports: ["3000:3000"]
+    depends_on:
+      api: { condition: service_healthy }
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["ollama"]
+    ports: ["11434:11434"]
+    volumes: [ollama:/root/.ollama]
+
+  prometheus:
+    image: prom/prometheus:latest
+    profiles: ["observability"]
+    volumes: [./infra/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro]
+    ports: ["9090:9090"]
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    profiles: ["observability"]
+    environment: { COLLECTOR_OTLP_ENABLED: "true" }
+    ports: ["16686:16686", "4318:4318"]
+
+volumes:
+  pgdata:
+  redisdata:
+  ollama:

@@ -1,0 +1,18 @@
+{
+  "name": "algo-platform",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AI-first algorithmic trading platform for Indian markets (NSE, BSE, MCX)",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @algo/web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "gen:api": "pnpm --filter @algo/api-client generate"
+  }
+}

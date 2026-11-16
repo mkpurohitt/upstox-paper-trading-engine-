@@ -1,0 +1,7 @@
+title = "algodesk gitleaks config"
+[extend]
+useDefault = true
+[allowlist]
+description = "dev-only defaults and test fixtures"
+paths = ['''\.env\.example''', '''apps/api/tests/''', '''packages/py-common/tests/''']
+regexes = ['''dev-only-[a-z0-9-]+''']

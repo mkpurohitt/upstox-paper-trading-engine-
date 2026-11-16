@@ -1,0 +1,21 @@
+{
+  "name": "@algo/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Typed client generated from the FastAPI OpenAPI schema",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "generate": "cd ../.. && uv run python apps/api/scripts/export_openapi.py packages/api-client/openapi.json && cd packages/api-client && openapi-typescript openapi.json -o src/schema.d.ts",
+    "lint": "echo 'no lint'",
+    "typecheck": "tsc --noEmit -p .",
+    "test": "echo 'no tests'"
+  },
+  "dependencies": {
+    "openapi-fetch": "0.14.1"
+  },
+  "devDependencies": {
+    "openapi-typescript": "7.13.0",
+    "typescript": "5.9.3"
+  }
+}

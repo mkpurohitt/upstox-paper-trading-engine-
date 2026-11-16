@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: algodesk-config
+data:
+  ENVIRONMENT: production
+  DATA_MODE: live
+  EMBEDDED_WORKERS: "false"
+  PGVECTOR_ENABLED: "true"
+  COOKIE_SECURE: "true"
+  DATA_REGION: ap-south-1
+  LOG_JSON: "true"
+  ORDER_RATE_LIMIT_PER_SEC: "8"
+  WEB_BASE_URL: https://app.algodesk.in
+  API_BASE_URL: https://app.algodesk.in
+  CORS_ORIGINS: https://app.algodesk.in
+---
+# Create from your secrets manager (never commit real values):
+# kubectl -n algodesk create secret generic algodesk-secrets \
+#   --from-literal=DATABASE_URL=... --from-literal=REDIS_URL=... --from-literal=JWT_SECRET=... \
+#   --from-literal=VAULT_MASTER_KEY=... --from-literal=UPSTOX_ANALYTICS_TOKEN=... --from-literal=LLM_PRIMARY_API_KEY=...

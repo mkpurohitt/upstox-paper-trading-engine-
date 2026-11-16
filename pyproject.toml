@@ -1,0 +1,99 @@
+# Root uv workspace. `uv sync` installs every Python package in editable mode
+# into a single .venv for local development.
+[project]
+name = "algo-platform"
+version = "0.1.0"
+description = "AI-first algorithmic trading platform for Indian markets"
+requires-python = ">=3.12"
+dependencies = [
+  "algo-common",
+  "algo-db",
+  "algo-market-data",
+  "algo-broker-gateway",
+  "algo-strategy-engine",
+  "algo-ai-agent",
+  "algo-jobs",
+  "algo-api",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3",
+  "pytest-asyncio>=0.24",
+  "pytest-cov>=5.0",
+  "ruff>=0.8",
+  "mypy>=1.13",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = [
+  "packages/py-common",
+  "packages/db",
+  "services/market-data",
+  "services/broker-gateway",
+  "services/strategy-engine",
+  "services/ai-agent",
+  "services/jobs",
+  "apps/api",
+]
+
+[tool.uv.sources]
+algo-common = { workspace = true }
+algo-db = { workspace = true }
+algo-market-data = { workspace = true }
+algo-broker-gateway = { workspace = true }
+algo-strategy-engine = { workspace = true }
+algo-ai-agent = { workspace = true }
+algo-jobs = { workspace = true }
+algo-api = { workspace = true }
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = [
+  "packages/py-common/tests",
+  "services/market-data/tests",
+  "services/broker-gateway/tests",
+  "services/strategy-engine/tests",
+  "services/ai-agent/tests",
+  "services/jobs/tests",
+  "apps/api/tests",
+]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = ["**/proto/*_pb2.py", "**/alembic/versions/*.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "ASYNC", "RUF"]
+ignore = [
+  "E501",   # line length handled by formatter
+  "S101",   # assert in tests
+  "B008",   # FastAPI Depends in defaults
+  "S311",   # random for simulations is fine
+  "RUF001", "RUF002", "RUF003",  # unicode (₹) in strings/comments
+  "RUF012",
+  "S105", "S106",  # false positives on 'token' names
+  "B904",
+  "ASYNC109",
+  "S608",
+  "UP046", "UP047",  # PEP 695 generics: keep TypeVar style for readability
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+warn_unused_ignores = false
+check_untyped_defs = true
+plugins = ["pydantic.mypy"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["algo_common", "algo_db", "market_data", "broker_gateway", "strategy_engine", "ai_agent", "algo_jobs", "app"]
