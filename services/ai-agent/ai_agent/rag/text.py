@@ -144,8 +144,9 @@ def _mk(units: list[str], heading: str, path: list[str]) -> Chunk:
 
 
 def best_snippet(content: str, query: str, max_chars: int = 260) -> str:
-    """The sentence (window) of `content` that best matches the query terms."""
+    """The sentence (window) of `content` that best matches the query terms (markdown emphasis stripped)."""
     body = content.split("\n", 1)[-1] if "\n" in content else content
+    body = re.sub(r"\*\*|__|`", "", body)
     sents = [s.strip() for s in _SENT.split(" ".join(body.split())) if s.strip()]
     if not sents:
         return body[:max_chars]

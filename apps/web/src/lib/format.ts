@@ -91,3 +91,10 @@ export function exch(symbol: string): string {
   const i = symbol.indexOf(":");
   return i >= 0 ? symbol.slice(0, i).replace("_INDEX", "") : "";
 }
+
+/** ₹ crore amounts: ₹6.48 L Cr (lakh crore) / ₹12,345 Cr. */
+export function croreInr(cr: number | null | undefined): string {
+  if (cr === null || cr === undefined || Number.isNaN(cr)) return "—";
+  if (Math.abs(cr) >= 1e5) return `₹${(cr / 1e5).toFixed(2)} L Cr`;
+  return `₹${Math.round(cr).toLocaleString("en-IN")} Cr`;
+}

@@ -184,6 +184,8 @@ def test_status_and_rag_admin(client, auth_headers):
     assert all(h["title"] != "Desk Rules" for h in hits)
     bad = client.post("/api/rag/documents/upload", files={"file": ("x.exe", b"MZ\x00\x00binary")}, headers=admin)
     assert bad.status_code == 422
+    assert client.post("/api/rag/reindex-all", headers=admin).status_code == 202
+    assert client.post("/api/rag/reindex-all", headers=auth_headers).status_code == 403
 
 
 def test_websocket_chat_handler(client, auth_headers):

@@ -107,6 +107,15 @@ async def remove(doc_id: int, user: AdminUser, db: DB) -> Message:
     return Message(message="Deleted")
 
 
+@router.post("/reindex-all", response_model=Message, status_code=202)
+async def reindex_all(user: AdminUser, db: DB) -> Message:
+    from algo_jobs.queue import enqueue
+
+    await audit(db, "rag.reindex_all", user_id=user.id, actor="admin")
+    await enqueue("rag_reindex_all")
+    return Message(message="Re-indexing queued")
+
+
 class ChunkOut(BaseModel):
     id: int
     ordinal: int

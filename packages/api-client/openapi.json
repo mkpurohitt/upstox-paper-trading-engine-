@@ -443,7 +443,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/SessionOut"
+                    "$ref": "#/components/schemas/app__schemas__auth__SessionOut"
                   },
                   "type": "array",
                   "title": "Response List Sessions Api Auth Sessions Get"
@@ -4693,6 +4693,922 @@
         }
       }
     },
+    "/api/ai/chat": {
+      "post": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Stream a copilot turn as Server-Sent Events",
+        "operationId": "chat_api_ai_chat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/ai/sessions": {
+      "get": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "List Sessions",
+        "operationId": "list_sessions_api_ai_sessions_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/app__routes__ai__SessionOut"
+                  },
+                  "title": "Response List Sessions Api Ai Sessions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Create Session",
+        "operationId": "create_session_api_ai_sessions_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__routes__ai__SessionOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/sessions/{session_id}": {
+      "get": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Get Session",
+        "operationId": "get_session_api_ai_sessions__session_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Patch Session",
+        "operationId": "patch_session_api_ai_sessions__session_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__routes__ai__SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Delete Session",
+        "operationId": "delete_session_api_ai_sessions__session_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/sessions/{session_id}/share": {
+      "post": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Share Session",
+        "operationId": "share_session_api_ai_sessions__session_id__share_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShareOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Unshare Session",
+        "operationId": "unshare_session_api_ai_sessions__session_id__share_delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/shared/{token}": {
+      "get": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Public read-only view of a shared chat",
+        "operationId": "shared_api_ai_shared__token__get",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SharedOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/messages/{message_id}/feedback": {
+      "post": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Feedback",
+        "operationId": "feedback_api_ai_messages__message_id__feedback_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "message_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Message Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/usage": {
+      "get": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Ai Usage",
+        "operationId": "ai_usage_api_ai_usage_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/ai/status": {
+      "get": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Ai Status",
+        "operationId": "ai_status_api_ai_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/rag/documents": {
+      "get": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "List Documents",
+        "operationId": "list_documents_api_rag_documents_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Documents Api Rag Documents Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/rag/documents/upload": {
+      "post": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Upload",
+        "operationId": "upload_api_rag_documents_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_api_rag_documents_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/rag/documents/url": {
+      "post": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Add Url",
+        "operationId": "add_url_api_rag_documents_url_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UrlIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/rag/documents/text": {
+      "post": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Add Text",
+        "operationId": "add_text_api_rag_documents_text_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TextIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/rag/documents/{doc_id}/reindex": {
+      "post": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Reindex Doc",
+        "operationId": "reindex_doc_api_rag_documents__doc_id__reindex_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "doc_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Doc Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rag/documents/{doc_id}": {
+      "delete": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Remove",
+        "operationId": "remove_api_rag_documents__doc_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "doc_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Doc Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rag/reindex-all": {
+      "post": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Reindex All",
+        "operationId": "reindex_all_api_rag_reindex_all_post",
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/rag/documents/{doc_id}/chunks": {
+      "get": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Chunks",
+        "operationId": "chunks_api_rag_documents__doc_id__chunks_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "doc_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Doc Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChunkOut"
+                  },
+                  "title": "Response Chunks Api Rag Documents  Doc Id  Chunks Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rag/search": {
+      "post": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Search Kb",
+        "operationId": "search_kb_api_rag_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HitOut"
+                  },
+                  "type": "array",
+                  "title": "Response Search Kb Api Rag Search Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/watchlists": {
       "get": {
         "tags": [
@@ -5422,6 +6338,31 @@
         ],
         "title": "BacktestTradeOut"
       },
+      "Body_upload_api_rag_documents_upload_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_api_rag_documents_upload_post"
+      },
       "Breadth": {
         "properties": {
           "advances": {
@@ -5546,6 +6487,79 @@
           "close"
         ],
         "title": "Candle"
+      },
+      "ChatIn": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Message"
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Id"
+          },
+          "context": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 8000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Context",
+            "description": "dashboard context from 'Ask AI'"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "ChatIn"
+      },
+      "ChunkOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "ordinal": {
+            "type": "integer",
+            "title": "Ordinal"
+          },
+          "token_count": {
+            "type": "integer",
+            "title": "Token Count"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          },
+          "meta": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "ordinal",
+          "token_count",
+          "content",
+          "meta"
+        ],
+        "title": "ChunkOut"
       },
       "CompareCondition": {
         "properties": {
@@ -6178,6 +7192,87 @@
         ],
         "title": "DepthLevel"
       },
+      "DocumentOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "source_type": {
+            "type": "string",
+            "title": "Source Type"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "mime": {
+            "type": "string",
+            "title": "Mime"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "chunk_count": {
+            "type": "integer",
+            "title": "Chunk Count"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "indexed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indexed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "source_type",
+          "source_url",
+          "mime",
+          "status",
+          "chunk_count",
+          "error",
+          "created_at",
+          "indexed_at"
+        ],
+        "title": "DocumentOut"
+      },
       "Exchange": {
         "type": "string",
         "enum": [
@@ -6261,6 +7356,35 @@
         "additionalProperties": false,
         "type": "object",
         "title": "ExitRules"
+      },
+      "FeedbackIn": {
+        "properties": {
+          "rating": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Rating"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rating"
+        ],
+        "title": "FeedbackIn"
       },
       "FundsOut": {
         "properties": {
@@ -6400,6 +7524,73 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "HitOut": {
+        "properties": {
+          "n": {
+            "type": "integer",
+            "title": "N"
+          },
+          "chunk_id": {
+            "type": "integer",
+            "title": "Chunk Id"
+          },
+          "document_id": {
+            "type": "integer",
+            "title": "Document Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "heading": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heading"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "source_type": {
+            "type": "string",
+            "title": "Source Type"
+          },
+          "snippet": {
+            "type": "string",
+            "title": "Snippet"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "n",
+          "chunk_id",
+          "document_id",
+          "title",
+          "heading",
+          "source_url",
+          "source_type",
+          "snippet",
+          "score"
+        ],
+        "title": "HitOut"
       },
       "IndicatorCatalogItem": {
         "properties": {
@@ -7003,6 +8194,70 @@
         },
         "type": "object",
         "title": "Message"
+      },
+      "MessageOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          },
+          "cards": {
+            "items": {},
+            "type": "array",
+            "title": "Cards",
+            "default": []
+          },
+          "citations": {
+            "items": {},
+            "type": "array",
+            "title": "Citations",
+            "default": []
+          },
+          "suggestions": {
+            "items": {},
+            "type": "array",
+            "title": "Suggestions",
+            "default": []
+          },
+          "tool_calls": {
+            "items": {},
+            "type": "array",
+            "title": "Tool Calls",
+            "default": []
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "role",
+          "content",
+          "created_at"
+        ],
+        "title": "MessageOut"
       },
       "ModifyIn": {
         "properties": {
@@ -9142,6 +10397,28 @@
         "type": "object",
         "title": "ScreenQuery"
       },
+      "SearchIn": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 2,
+            "title": "Query"
+          },
+          "k": {
+            "type": "integer",
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "K",
+            "default": 5
+          }
+        },
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "title": "SearchIn"
+      },
       "SectorStock": {
         "properties": {
           "symbol": {
@@ -9218,72 +10495,150 @@
         ],
         "title": "SectorTile"
       },
-      "SessionOut": {
+      "SessionDetail": {
         "properties": {
           "id": {
             "type": "integer",
             "title": "Id"
           },
-          "user_agent": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "User Agent"
+          "title": {
+            "type": "string",
+            "title": "Title"
           },
-          "ip": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Ip"
+          "pinned": {
+            "type": "boolean",
+            "title": "Pinned"
+          },
+          "shared": {
+            "type": "boolean",
+            "title": "Shared"
           },
           "created_at": {
             "type": "string",
             "format": "date-time",
             "title": "Created At"
           },
-          "last_used_at": {
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "preview": {
             "anyOf": [
               {
-                "type": "string",
-                "format": "date-time"
+                "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Last Used At"
+            "title": "Preview"
           },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time",
-            "title": "Expires At"
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/MessageOut"
+            },
+            "type": "array",
+            "title": "Messages"
           },
-          "current": {
-            "type": "boolean",
-            "title": "Current",
-            "default": false
+          "share_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Share Token"
           }
         },
         "type": "object",
         "required": [
           "id",
-          "user_agent",
-          "ip",
+          "title",
+          "pinned",
+          "shared",
           "created_at",
-          "last_used_at",
-          "expires_at"
+          "updated_at",
+          "messages"
         ],
-        "title": "SessionOut"
+        "title": "SessionDetail"
+      },
+      "SessionPatch": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "pinned": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pinned"
+          }
+        },
+        "type": "object",
+        "title": "SessionPatch"
+      },
+      "ShareOut": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          },
+          "path": {
+            "type": "string",
+            "title": "Path"
+          }
+        },
+        "type": "object",
+        "required": [
+          "token",
+          "path"
+        ],
+        "title": "ShareOut"
+      },
+      "SharedOut": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/MessageOut"
+            },
+            "type": "array",
+            "title": "Messages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "created_at",
+          "messages"
+        ],
+        "title": "SharedOut"
       },
       "Side": {
         "type": "string",
@@ -9343,6 +10698,58 @@
         "additionalProperties": false,
         "type": "object",
         "title": "Sizing"
+      },
+      "StatusOut": {
+        "properties": {
+          "llm_configured": {
+            "type": "boolean",
+            "title": "Llm Configured"
+          },
+          "providers": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Providers"
+          },
+          "embedding_provider": {
+            "type": "string",
+            "title": "Embedding Provider"
+          },
+          "advice_enabled": {
+            "type": "boolean",
+            "title": "Advice Enabled"
+          },
+          "rag_documents": {
+            "type": "integer",
+            "title": "Rag Documents"
+          },
+          "rag_chunks": {
+            "type": "integer",
+            "title": "Rag Chunks"
+          },
+          "queries_today": {
+            "type": "integer",
+            "title": "Queries Today"
+          },
+          "limit_per_day": {
+            "type": "integer",
+            "title": "Limit Per Day"
+          }
+        },
+        "type": "object",
+        "required": [
+          "llm_configured",
+          "providers",
+          "embedding_provider",
+          "advice_enabled",
+          "rag_documents",
+          "rag_chunks",
+          "queries_today",
+          "limit_per_day"
+        ],
+        "title": "StatusOut"
       },
       "StopSpec": {
         "properties": {
@@ -9776,6 +11183,28 @@
         "type": "object",
         "title": "StrikeSelector"
       },
+      "TextIn": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 2000000,
+            "minLength": 20,
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "text"
+        ],
+        "title": "TextIn"
+      },
       "TimeCondition": {
         "properties": {
           "kind": {
@@ -10059,6 +11488,101 @@
         "type": "object",
         "title": "Universe"
       },
+      "UrlIn": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 8,
+            "title": "Url"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "UrlIn"
+      },
+      "UsageDay": {
+        "properties": {
+          "day": {
+            "type": "string",
+            "title": "Day"
+          },
+          "queries": {
+            "type": "integer",
+            "title": "Queries"
+          },
+          "tokens_in": {
+            "type": "integer",
+            "title": "Tokens In"
+          },
+          "tokens_out": {
+            "type": "integer",
+            "title": "Tokens Out"
+          },
+          "cost_usd": {
+            "type": "number",
+            "title": "Cost Usd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "day",
+          "queries",
+          "tokens_in",
+          "tokens_out",
+          "cost_usd"
+        ],
+        "title": "UsageDay"
+      },
+      "UsageOut": {
+        "properties": {
+          "queries_today": {
+            "type": "integer",
+            "title": "Queries Today"
+          },
+          "limit_per_day": {
+            "type": "integer",
+            "title": "Limit Per Day"
+          },
+          "tokens_today": {
+            "type": "integer",
+            "title": "Tokens Today"
+          },
+          "cost_today_usd": {
+            "type": "number",
+            "title": "Cost Today Usd"
+          },
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/UsageDay"
+            },
+            "type": "array",
+            "title": "Days"
+          }
+        },
+        "type": "object",
+        "required": [
+          "queries_today",
+          "limit_per_day",
+          "tokens_today",
+          "cost_today_usd",
+          "days"
+        ],
+        "title": "UsageOut"
+      },
       "UserOut": {
         "properties": {
           "id": {
@@ -10327,6 +11851,57 @@
         ],
         "title": "WatchlistOut"
       },
+      "app__routes__ai__SessionOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "pinned": {
+            "type": "boolean",
+            "title": "Pinned"
+          },
+          "shared": {
+            "type": "boolean",
+            "title": "Shared"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "preview": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preview"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "pinned",
+          "shared",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "SessionOut"
+      },
       "app__schemas__auth__LoginIn": {
         "properties": {
           "email": {
@@ -10347,6 +11922,73 @@
           "password"
         ],
         "title": "LoginIn"
+      },
+      "app__schemas__auth__SessionOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "user_agent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Agent"
+          },
+          "ip": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ip"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "last_used_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Used At"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At"
+          },
+          "current": {
+            "type": "boolean",
+            "title": "Current",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_agent",
+          "ip",
+          "created_at",
+          "last_used_at",
+          "expires_at"
+        ],
+        "title": "SessionOut"
       },
       "app__schemas__trading__LoginIn": {
         "properties": {

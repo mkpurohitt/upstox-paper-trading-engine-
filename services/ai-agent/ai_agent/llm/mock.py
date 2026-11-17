@@ -369,8 +369,9 @@ def _knowledge_answer(question: str, system: str) -> str | None:
         if i == 0 and terms <= (htoks | toks):  # opening sentence of the section about this very term
             definitional += 0.35
         m = re.match(r"\*\*([^*]{2,60})\.\*\*", sent)  # glossary entry: "**Term.** definition"
-        if m and terms & set(tokenize(m.group(1))):
-            definitional += 0.4
+        if m:
+            bold = set(tokenize(m.group(1))) | htoks
+            definitional += 0.4 * sum(idf[t] for t in terms if t in bold) / q_mass
         if sent.startswith("- "):
             definitional -= 0.1
         return (own + ctx) / q_mass + definitional + (0.15 if i < 2 else 0) - (n - 1) * 0.12
@@ -380,7 +381,11 @@ def _knowledge_answer(question: str, system: str) -> str | None:
     if ranked and score(ranked[0]) >= 0.55:
         top = ranked[0]
         # lead paragraph: the best sentence and the two that follow it in the same excerpt
-        chosen = [x for x in sorted((x for x in sents if x[0] == top[0]), key=lambda x: x[1]) if top[1] <= x[1] < top[1] + 3]
+        chosen = [top]
+        for x in sorted((x for x in sents if x[0] == top[0] and top[1] < x[1] < top[1] + 3), key=lambda x: x[1]):
+            if re.match(r"\*\*[^*]{2,60}\.\*\*", x[2]) or x[2].startswith("- "):
+                break  # next glossary entry / list item: a different topic
+            chosen.append(x)
         other = next((x for x in ranked if x[0] != top[0] and score(x) >= 0.8), None)
         if other is not None:
             chosen.append(other)

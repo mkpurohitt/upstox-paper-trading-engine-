@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/misc";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ApiError, apiJson } from "@/lib/api";
-import { compactNum, inr, num, shortDate } from "@/lib/format";
+import { compactNum, croreInr, inr, num, shortDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 interface Ratios { pe: number; pb: number; roe_pct: number; roce_pct: number; debt_to_equity: number; dividend_yield_pct: number; net_margin_pct: number; revenue_growth_3y_pct: number; eps_ttm: number; book_value: number; market_cap_cr: number; face_value: number }
@@ -94,7 +94,7 @@ function Inner() {
             {d.source === "mock" && <Badge variant="warning">sample data — connect a fundamentals provider for live figures</Badge>}
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-8">
-            <Stat label="Market cap" value={inr(d.ratios.market_cap_cr * 1e7, { compact: true })} />
+            <Stat label="Market cap" value={croreInr(d.ratios.market_cap_cr)} />
             <Stat label="P/E" value={num(d.ratios.pe, 1)} hint={`EPS ${num(d.ratios.eps_ttm)}`} />
             <Stat label="P/B" value={num(d.ratios.pb, 2)} hint={`BV ${num(d.ratios.book_value)}`} />
             <Stat label="ROE" value={`${num(d.ratios.roe_pct, 1)}%`} tone={d.ratios.roe_pct >= 15 ? "profit" : "default"} />
