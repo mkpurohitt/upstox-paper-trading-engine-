@@ -40,6 +40,7 @@ from ai_agent.prompts import system_prompt
 from ai_agent.rag import knowledge_block, search
 from ai_agent.tools.registry import QuotaCheck, ToolContext, all_tools, execute
 from algo_common.logging import get_logger
+from algo_common.metrics import LLM_TOKENS, TOOL_CALLS
 from algo_common.settings import get_settings
 from algo_common.timeutils import is_market_open, utcnow
 from algo_db.audit import audit
@@ -235,6 +236,7 @@ async def run_turn(inp: TurnInput) -> AsyncIterator[dict[str, Any]]:
                 if card:
                     cards.append(card)
                 tool_log.append({"id": c.id, "name": c.name, "args": c.arguments, "ok": res.ok, "error": res.data.get("error")})
+                TOOL_CALLS.labels(c.name, "ok" if res.ok else "error").inc()
                 yield {"type": "tool_end", "id": c.id, "name": c.name, "ok": res.ok, "card": card, "error": res.data.get("error")}
                 msgs.append(ChatMsg("tool", guardrails.neutralise(res.llm_payload()), tool_call_id=c.id, name=c.name))
 
@@ -251,6 +253,9 @@ async def run_turn(inp: TurnInput) -> AsyncIterator[dict[str, Any]]:
     sugg = [] if verdict.blocked else suggestions_for(verdict.text, tools_used, cards)
     sv = served[-1] if served else Served("none", "none", [])
     cost = cost_usd(sv.model, usage.tokens_in, usage.tokens_out)
+    if sv.provider != "none":
+        LLM_TOKENS.labels(sv.provider, sv.model, "in").inc(usage.tokens_in)
+        LLM_TOKENS.labels(sv.provider, sv.model, "out").inc(usage.tokens_out)
     message_id = None
     if inp.persist:
         async with session_scope() as db:

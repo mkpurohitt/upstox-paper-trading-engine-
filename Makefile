@@ -65,6 +65,9 @@ fmt: ## Format code
 gen-api: ## Regenerate the typed TS client from the OpenAPI schema
 	pnpm gen:api
 
+docs-api: ## Regenerate docs/API.md from the OpenAPI schema
+	cd apps/api && uv run python scripts/export_api_md.py ../../docs/API.md
+
 zip: ## Package the repo as algo-platform.zip (no node_modules/.venv/build/.env)
 	@rm -f algo-platform.zip
 	git archive --format=zip --prefix=algo-platform/ -o algo-platform.zip HEAD

@@ -106,3 +106,13 @@ Ambiguities in the brief, the option chosen, and why. Newest decisions are appen
 | 68 | **KYC is a placeholder that stores only the PAN's last four characters.** | Brokers perform KYC for live trading; holding full PANs would add risk without a use. |
 | 69 | **Muted notification events still create in-app records** but skip email/Telegram/WhatsApp. | Users can always audit what happened; muting only controls interruptions. |
 | 70 | **The admin global kill switch requires a reason** (stored in the flag and the audit log); admins cannot demote or deactivate themselves; black-box approvals notify the owner. | Accountability for platform-wide actions; avoids locking the last admin out. |
+
+## Phase 8 — tests, docs, packaging
+
+| # | Decision | Rationale |
+|---|----------|-----------|
+| 71 | **Playwright smoke tests run against the self-contained stack** (SQLite, embedded workers, offline AI) on desktop and mobile (Pixel 7) projects; CI starts the API with the same settings. Copilot helpers wait for a *finished* answer (its Copy button) rather than the Stop button. | Deterministic, key-free e2e. Waiting on the Stop button raced with streaming start. |
+| 72 | **The e2e suite caught a real bug**: under React StrictMode the session-loading effect cleared the conversation after an "Ask AI" hand-off. "New chat" now clears messages explicitly instead. | Kept as a regression test (`dashboard Ask AI hands context to the copilot`). |
+| 73 | **`docs/API.md` is generated from the live OpenAPI schema** (`make docs-api`), with a hand-written guide for auth, errors, SSE and WebSocket protocols. | The endpoint reference cannot drift from the code. |
+| 74 | **Docker images were not built in the development sandbox** (no Docker daemon available). `docker compose config` validates both compose files, the Kubernetes manifests parse, and every Dockerfile `COPY` source exists. The CI `docker` job builds the images. | Stated plainly so nobody assumes the images were smoke-tested locally. |
+| 75 | **`algo-platform.zip` is produced with `git archive HEAD`**, so it contains exactly the committed tree: no `node_modules`, `.venv`, build output, `var/`, `.env` or test artefacts. | Reproducible and free of secrets by construction. |

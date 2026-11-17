@@ -82,14 +82,20 @@ jobs:
       - run: uv sync --frozen && pnpm install --frozen-lockfile
       - run: pnpm --filter @algo/web exec playwright install --with-deps chromium
       - run: pnpm --filter @algo/web build
-      - name: Start API (SQLite, embedded workers) and web
+      - name: Start API (SQLite, embedded workers, offline AI) and web
+        env:
+          EMBEDDED_WORKERS: "true"
+          REDIS_URL: ""
+          DATA_MODE: mock
+          LLM_PRIMARY_PROVIDER: mock
+          LOG_JSON: "false"
         run: |
           mkdir -p var
           (cd apps/api && DATABASE_URL=sqlite+aiosqlite:///$PWD/../../var/e2e.db uv run python -m app.seed && \
-           DATABASE_URL=sqlite+aiosqlite:///$PWD/../../var/e2e.db uv run uvicorn app.main:app --port 8000 &) 
+           DATABASE_URL=sqlite+aiosqlite:///$PWD/../../var/e2e.db uv run uvicorn app.main:app --port 8000 &)
           (cd apps/web && pnpm start &)
           npx --yes wait-on http://localhost:8000/api/health http://localhost:3000/login
-      - run: pnpm --filter @algo/web e2e --project=desktop
+      - run: pnpm --filter @algo/web e2e --workers=2
 
   security:
     runs-on: ubuntu-latest

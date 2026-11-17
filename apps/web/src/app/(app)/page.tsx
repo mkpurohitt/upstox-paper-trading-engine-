@@ -156,10 +156,7 @@ function Copilot() {
 
   // load a conversation from history (skip when we created it by streaming)
   React.useEffect(() => {
-    if (sessionId === null) {
-      setMessages([]);
-      return;
-    }
+    if (sessionId === null) return; // "New chat" clears messages explicitly; clearing here would wipe an in-flight first turn
     if (streamedSession.current === sessionId) return;
     let cancel = false;
     setLoading(true);

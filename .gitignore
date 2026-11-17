@@ -37,3 +37,5 @@ algo-platform.zip
 .DS_Store
 .next-build/
 evals/report.json
+apps/web/test-results/
+apps/web/playwright-report/
