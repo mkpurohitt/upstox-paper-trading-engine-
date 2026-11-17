@@ -6,7 +6,7 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "generate": "cd ../.. && uv run python apps/api/scripts/export_openapi.py packages/api-client/openapi.json && cd packages/api-client && openapi-typescript openapi.json -o src/schema.d.ts",
+    "generate": "cd ../.. && uv run python apps/api/scripts/export_openapi.py packages/api-client/openapi.json && cd packages/api-client && openapi-typescript openapi.json -o src/schema.d.ts --default-non-nullable false",
     "lint": "echo 'no lint'",
     "typecheck": "tsc --noEmit -p .",
     "test": "echo 'no tests'"

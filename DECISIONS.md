@@ -32,3 +32,19 @@ Ambiguities in the brief, the option chosen, and why. Newest decisions are appen
 | 19 | **MCP SDK 2.x** (`streamable_http_client`), with a 1.x fallback path. | The installed SDK is 2.x; older environments are still supported. |
 | 20 | **Tick demand model**: the WS gateway writes the symbol set plus heartbeats to KV and pings `md:control`; the streamer unions that with pinned symbols (strategy runners) and the always-on index strip. | Upstream subscriptions stay bounded by what clients actually watch, and it works across many API replicas. |
 | 21 | **Market data timestamps are stored in UTC** (`TZDateTime` type). Intraday bars are displayed in IST on charts. | One source of truth; SQLite and Postgres behave identically. |
+
+## Phase 3 — strategy engine
+
+| # | Decision | Rationale |
+|---|----------|-----------|
+| 22 | **One declarative DSL (v1.0, Pydantic) drives every builder, the backtester and the live runner.** Code mode does not run user strategies: it runs a sandboxed *builder script* that emits DSL. | Prevents arbitrary code execution in the order path; a strategy behaves identically in research and live. |
+| 23 | **Custom Python only inside `CUSTOM` indicators**, executed in a subprocess sandbox: AST allow-list, no imports/dunders/I-O attributes, `python -I -B`, empty env, `setrlimit` (CPU, memory, zero file writes) and a wall-clock timeout. | Covers the "advanced mode, sandboxed" requirement with defence in depth. Production should add seccomp / no-network (documented). |
+| 24 | **Statutory charges are effective-dated regimes** (pre-Oct-2024, Oct-2024, Apr-2026). The Apr-2026 F&O STT rates follow the Union Budget 2026 proposal and are flagged *verify*. Brokerage tariffs are approximate per broker. | Backtests spanning regime changes are charged correctly; rates can be overridden with `set_rate_override()`. |
+| 25 | **Intrabar execution is conservative**: if the stop and target are both touched in one bar, the stop fills first; gaps fill at the open; options SL is checked at the underlying's high/low extremes. | Avoids optimistic bias. |
+| 26 | **Freeze-quantity order slicing** is modelled, and each slice is charged as a separate order. | Flat-fee brokerage on large F&O orders is otherwise understated. |
+| 27 | **Options backtests price legs with Black-Scholes** (the mock IV surface in mock mode; realised vol + skew with live underlying data) unless chain snapshots exist. This is surfaced as a warning on every options result. | Tick-level historical option data is not freely available; being transparent about the modelling assumption matters more. |
+| 28 | **Optimisation and walk-forward use the vectorised engine.** Overfitting checks: too few trades, IS-vs-OOS decay, neighbourhood fragility, and the deflated Sharpe ratio (Bailey & López de Prado). | Speed for parameter sweeps, plus actionable warnings rather than a single "best" number. |
+| 29 | **Intraday backtest ranges are clipped** (e.g. 1m ≤ 60 days, 15m ≤ 400 days) with a warning. | Bounded memory and runtime, in line with broker history limits. |
+| 30 | **Seeded demo strategies are not tuned to look profitable.** On random-walk mock data, naive strategies lose after costs. | Honest and educational; synthetic edges would be misleading. |
+| 31 | **OpenAPI uses single (input-mode) schemas** and `openapi-typescript --default-non-nullable false`. | Fields with defaults stay optional in the generated TS types, so the DSL builder can send partial documents. |
+| 32 | **Heavy builder panels (React Flow, Monaco, Recharts) are lazy-loaded** with `next/dynamic`. | Builder route first-load JS drops from 413 kB to 211 kB. |

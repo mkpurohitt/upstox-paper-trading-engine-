@@ -128,7 +128,7 @@ class MockProvider(MarketDataProvider):
     # ------------------------------------------------------------------ calendar
     def _days(self) -> list[date]:
         today = now_ist().date()
-        if self._calendar is None or self._calendar[-1] < today - timedelta(days=0) and is_trading_day(today):
+        if self._calendar is None or (self._calendar[-1] < today - timedelta(days=0) and is_trading_day(today)):
             start = date.fromisoformat(HISTORY_START)
             self._calendar = trading_days(start, today)
         return self._calendar

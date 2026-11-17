@@ -45,6 +45,7 @@ class Runtime:
         from app.ws.gateway import manager
 
         manager.start()
+        manager.backtest_owner = _backtest_owner
         self.on_stop(manager.stop)
         if not s.embedded_workers:
             log.info("runtime.embedded_workers_disabled")
@@ -64,6 +65,15 @@ class Runtime:
             with contextlib.suppress(Exception):
                 await hook()
         self._tasks.clear()
+
+
+async def _backtest_owner(backtest_id: int) -> int | None:
+    from algo_db.models import Backtest
+    from algo_db.session import session_scope
+
+    async with session_scope() as db:
+        bt = await db.get(Backtest, backtest_id)
+        return bt.user_id if bt else None
 
 
 runtime = Runtime()

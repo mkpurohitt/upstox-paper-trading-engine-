@@ -71,7 +71,7 @@ class BacktestTrade(IdMixin, Base):
     backtest_id: Mapped[int] = mapped_column(BigIntId, ForeignKey("backtests.id", ondelete="CASCADE"), index=True)
     symbol: Mapped[str] = mapped_column(String(64))
     leg: Mapped[str | None] = mapped_column(String(32))
-    side: Mapped[str] = mapped_column(String(5))
+    side: Mapped[str] = mapped_column(String(16))
     quantity: Mapped[int] = mapped_column(Integer)
     entry_ts: Mapped[datetime] = mapped_column()
     entry_price: Mapped[float] = mapped_column(Float)

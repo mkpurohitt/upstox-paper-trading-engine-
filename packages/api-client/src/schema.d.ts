@@ -518,6 +518,253 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/strategies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Strategies */
+        get: operations["list_strategies_api_strategies_get"];
+        put?: never;
+        /** Create */
+        post: operations["create_api_strategies_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/strategies/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Templates */
+        get: operations["templates_api_strategies_templates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/strategies/indicators": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Indicators */
+        get: operations["indicators_api_strategies_indicators_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/strategies/dsl/schema": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Schema */
+        get: operations["schema_api_strategies_dsl_schema_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/strategies/code-template": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Code Template */
+        get: operations["code_template_api_strategies_code_template_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/strategies/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Validate */
+        post: operations["validate_api_strategies_validate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/strategies/compile-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Compile Code */
+        post: operations["compile_code_api_strategies_compile_code_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/strategies/{strategy_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get */
+        get: operations["get_api_strategies__strategy_id__get"];
+        /** Update */
+        put: operations["update_api_strategies__strategy_id__put"];
+        post?: never;
+        /** Delete */
+        delete: operations["delete_api_strategies__strategy_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/strategies/{strategy_id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Versions */
+        get: operations["versions_api_strategies__strategy_id__versions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/strategies/{strategy_id}/clone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Clone */
+        post: operations["clone_api_strategies__strategy_id__clone_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/strategies/{strategy_id}/listing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Listing
+         * @description Marketplace listing. Black-box listings require a SEBI RA registration
+         *     number and stay hidden until an admin approves them.
+         */
+        patch: operations["listing_api_strategies__strategy_id__listing_patch"];
+        trace?: never;
+    };
+    "/api/backtests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Backtests */
+        get: operations["list_backtests_api_backtests_get"];
+        put?: never;
+        /** Create */
+        post: operations["create_api_backtests_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/backtests/{backtest_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get */
+        get: operations["get_api_backtests__backtest_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete */
+        delete: operations["delete_api_backtests__backtest_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/backtests/{backtest_id}/trades": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Trades */
+        get: operations["trades_api_backtests__backtest_id__trades_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -528,11 +775,195 @@ export interface components {
              * Password
              * @default true
              */
-            password: boolean;
+            password?: boolean;
             /** Google */
             google: boolean;
             /** Demo Login */
             demo_login: boolean;
+        };
+        /** BacktestIn */
+        BacktestIn: {
+            /** Strategy Id */
+            strategy_id?: number | null;
+            dsl?: components["schemas"]["StrategyDSL"] | null;
+            /**
+             * Kind
+             * @default backtest
+             * @enum {string}
+             */
+            kind?: "backtest" | "optimise" | "walk_forward" | "monte_carlo";
+            params: components["schemas"]["BacktestParamsIn"];
+        };
+        /** BacktestOut */
+        BacktestOut: {
+            /** Id */
+            id: number;
+            /** Strategy Id */
+            strategy_id: number | null;
+            /** Strategy Version */
+            strategy_version: number | null;
+            /** Kind */
+            kind: string;
+            /** Status */
+            status: string;
+            /** Progress */
+            progress: number;
+            /** Metrics */
+            metrics: {
+                [key: string]: unknown;
+            };
+            /** Params */
+            params: {
+                [key: string]: unknown;
+            };
+            /** Error */
+            error?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Finished At */
+            finished_at?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Dsl */
+            dsl: {
+                [key: string]: unknown;
+            };
+            /** Equity Curve */
+            equity_curve: {
+                [key: string]: unknown;
+            }[];
+            /** Drawdown Curve */
+            drawdown_curve: {
+                [key: string]: unknown;
+            }[];
+            /** Monthly Returns */
+            monthly_returns: {
+                [key: string]: unknown;
+            }[];
+            /** Extra */
+            extra: {
+                [key: string]: unknown;
+            };
+        };
+        /** BacktestParamsIn */
+        BacktestParamsIn: {
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
+            /**
+             * Initial Capital
+             * @default 1000000
+             */
+            initial_capital?: number;
+            /**
+             * Broker
+             * @default zerodha
+             */
+            broker?: string;
+            /**
+             * Slippage Bps
+             * @default 5
+             */
+            slippage_bps?: number;
+            /**
+             * Fill
+             * @default next_open
+             * @enum {string}
+             */
+            fill?: "next_open" | "close";
+            /**
+             * Mode
+             * @default event
+             * @enum {string}
+             */
+            mode?: "event" | "vectorised";
+            /**
+             * Options
+             * @description optimise/walk-forward/monte-carlo options
+             */
+            options?: {
+                [key: string]: unknown;
+            };
+        };
+        /** BacktestSummary */
+        BacktestSummary: {
+            /** Id */
+            id: number;
+            /** Strategy Id */
+            strategy_id: number | null;
+            /** Strategy Version */
+            strategy_version: number | null;
+            /** Kind */
+            kind: string;
+            /** Status */
+            status: string;
+            /** Progress */
+            progress: number;
+            /** Metrics */
+            metrics: {
+                [key: string]: unknown;
+            };
+            /** Params */
+            params: {
+                [key: string]: unknown;
+            };
+            /** Error */
+            error?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Finished At */
+            finished_at?: string | null;
+            /** Name */
+            name?: string | null;
+        };
+        /** BacktestTradeOut */
+        BacktestTradeOut: {
+            /** Id */
+            id: number;
+            /** Symbol */
+            symbol: string;
+            /** Leg */
+            leg: string | null;
+            /** Side */
+            side: string;
+            /** Quantity */
+            quantity: number;
+            /**
+             * Entry Ts
+             * Format: date-time
+             */
+            entry_ts: string;
+            /** Entry Price */
+            entry_price: number;
+            /** Exit Ts */
+            exit_ts: string | null;
+            /** Exit Price */
+            exit_price: number | null;
+            /** Gross Pnl */
+            gross_pnl: number;
+            /** Charges */
+            charges: number;
+            /** Net Pnl */
+            net_pnl: number;
+            /** Exit Reason */
+            exit_reason: string | null;
+            /** Meta */
+            meta: {
+                [key: string]: unknown;
+            };
         };
         /** Breadth */
         Breadth: {
@@ -548,7 +979,7 @@ export interface components {
              * Nse
              * @default {}
              */
-            nse: {
+            nse?: {
                 [key: string]: unknown;
             };
         };
@@ -571,9 +1002,72 @@ export interface components {
              * Volume
              * @default 0
              */
-            volume: number;
+            volume?: number;
             /** Oi */
             oi?: number | null;
+        };
+        /** CompareCondition */
+        CompareCondition: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "compare";
+            /** Left */
+            left: components["schemas"]["IndicatorOperand"] | components["schemas"]["PriceOperand"] | components["schemas"]["ConstOperand"];
+            /**
+             * Op
+             * @enum {string}
+             */
+            op: ">" | "<" | ">=" | "<=" | "==" | "crosses_above" | "crosses_below";
+            /** Right */
+            right: components["schemas"]["IndicatorOperand"] | components["schemas"]["PriceOperand"] | components["schemas"]["ConstOperand"];
+        };
+        /** CompileCodeIn */
+        CompileCodeIn: {
+            /** Code */
+            code: string;
+        };
+        /** CompileCodeOut */
+        CompileCodeOut: {
+            /** Ok */
+            ok: boolean;
+            /** Dsl */
+            dsl?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Errors
+             * @default []
+             */
+            errors?: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Stdout
+             * @default
+             */
+            stdout?: string;
+        };
+        /** ConstOperand */
+        ConstOperand: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "const";
+            /** Value */
+            value: number;
+        };
+        /** DayCondition */
+        DayCondition: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "day_of_week";
+            /** Days */
+            days: ("MON" | "TUE" | "WED" | "THU" | "FRI")[];
         };
         /** DepthLevel */
         DepthLevel: {
@@ -585,50 +1079,140 @@ export interface components {
              * Orders
              * @default 0
              */
-            orders: number;
+            orders?: number;
         };
         /**
          * Exchange
          * @enum {string}
          */
         Exchange: "NSE" | "BSE" | "NFO" | "BFO" | "MCX" | "CDS" | "NSE_INDEX" | "BSE_INDEX";
+        /** ExitRules */
+        ExitRules: {
+            long?: components["schemas"]["GroupCondition"] | null;
+            short?: components["schemas"]["GroupCondition"] | null;
+            stop_loss?: components["schemas"]["StopSpec"] | null;
+            target?: components["schemas"]["StopSpec"] | null;
+            trailing_sl?: components["schemas"]["TrailingSpec"] | null;
+            /** Max Holding Bars */
+            max_holding_bars?: number | null;
+        };
         /** Greeks */
         Greeks: {
             /**
              * Delta
              * @default 0
              */
-            delta: number;
+            delta?: number;
             /**
              * Gamma
              * @default 0
              */
-            gamma: number;
+            gamma?: number;
             /**
              * Theta
              * @default 0
              */
-            theta: number;
+            theta?: number;
             /**
              * Vega
              * @default 0
              */
-            vega: number;
+            vega?: number;
             /**
              * Rho
              * @default 0
              */
-            rho: number;
+            rho?: number;
             /**
              * Iv
              * @description Implied volatility in % (e.g. 14.2)
              */
             iv?: number | null;
         };
+        /** GroupCondition */
+        GroupCondition: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "all" | "any";
+            /** Conditions */
+            conditions?: (components["schemas"]["CompareCondition"] | components["schemas"]["TimeCondition"] | components["schemas"]["DayCondition"] | components["schemas"]["PatternCondition"] | components["schemas"]["GroupCondition"])[];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** IndicatorCatalogItem */
+        IndicatorCatalogItem: {
+            /** Kind */
+            kind: string;
+            /** Description */
+            description: string;
+            /** Outputs */
+            outputs: string[];
+            /** Overlay */
+            overlay: boolean;
+            /** Default Source */
+            default_source: string;
+            /** Params */
+            params: components["schemas"]["IndicatorParam"][];
+        };
+        /** IndicatorOperand */
+        IndicatorOperand: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "indicator";
+            /**
+             * Ref
+             * @description indicator id, optionally `.output` e.g. `macd.signal`
+             */
+            ref: string;
+            /**
+             * Offset
+             * @description bars ago
+             * @default 0
+             */
+            offset?: number;
+        };
+        /** IndicatorParam */
+        IndicatorParam: {
+            /** Name */
+            name: string;
+            /** Default */
+            default: number;
+            /** Min */
+            min: number;
+            /** Max */
+            max: number;
+        };
+        /** IndicatorSpec */
+        IndicatorSpec: {
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @description e.g. EMA, RSI, MACD, SUPERTREND, CUSTOM
+             */
+            kind: string;
+            /** Params */
+            params?: {
+                [key: string]: number | string;
+            };
+            /**
+             * Source
+             * @default close
+             * @enum {string}
+             */
+            source?: "open" | "high" | "low" | "close" | "volume" | "hl2" | "hlc3" | "ohlc4";
+            /**
+             * Code
+             * @description CUSTOM only: `def compute(df, params): ...` (sandboxed)
+             */
+            code?: string | null;
         };
         /** Instrument */
         Instrument: {
@@ -652,7 +1236,7 @@ export interface components {
              * Segment
              * @default
              */
-            segment: string;
+            segment?: string;
             /** Underlying */
             underlying?: string | null;
             /** Expiry */
@@ -663,12 +1247,12 @@ export interface components {
              * Lot Size
              * @default 1
              */
-            lot_size: number;
+            lot_size?: number;
             /**
              * Tick Size
              * @default 0.05
              */
-            tick_size: number;
+            tick_size?: number;
             /** Freeze Qty */
             freeze_qty?: number | null;
             /** Isin */
@@ -690,6 +1274,25 @@ export interface components {
          * @enum {string}
          */
         Interval: "1m" | "3m" | "5m" | "15m" | "30m" | "1h" | "1d" | "1w";
+        /** ListingIn */
+        ListingIn: {
+            /**
+             * Visibility
+             * @enum {string}
+             */
+            visibility: "private" | "marketplace";
+            /**
+             * Box Type
+             * @default white_box
+             * @enum {string}
+             */
+            box_type?: "white_box" | "black_box";
+            /**
+             * Provider Ra Number
+             * @description SEBI Research Analyst reg. no.
+             */
+            provider_ra_number?: string | null;
+        };
         /** LoginIn */
         LoginIn: {
             /**
@@ -706,7 +1309,7 @@ export interface components {
              * Requires 2Fa
              * @default false
              */
-            requires_2fa: boolean;
+            requires_2fa?: boolean;
             /** Challenge Token */
             challenge_token?: string | null;
             token?: components["schemas"]["TokenOut"] | null;
@@ -744,12 +1347,12 @@ export interface components {
              * Ok
              * @default true
              */
-            ok: boolean;
+            ok?: boolean;
             /**
              * Message
              * @default
              */
-            message: string;
+            message?: string;
         };
         /** MoverRow */
         MoverRow: {
@@ -791,7 +1394,7 @@ export interface components {
              * Lot Size
              * @default 1
              */
-            lot_size: number;
+            lot_size?: number;
             /** Atm Strike */
             atm_strike: number;
             /** Rows */
@@ -804,12 +1407,12 @@ export interface components {
              * Total Call Oi
              * @default 0
              */
-            total_call_oi: number;
+            total_call_oi?: number;
             /**
              * Total Put Oi
              * @default 0
              */
-            total_put_oi: number;
+            total_put_oi?: number;
             /**
              * Ts
              * Format: date-time
@@ -844,20 +1447,82 @@ export interface components {
              * Volume
              * @default 0
              */
-            volume: number;
+            volume?: number;
             /**
              * Oi
              * @default 0
              */
-            oi: number;
+            oi?: number;
             /**
              * Oi Change
              * @default 0
              */
-            oi_change: number;
+            oi_change?: number;
             /** Iv */
             iv?: number | null;
             greeks?: components["schemas"]["Greeks"];
+        };
+        /** OptionLegSpec */
+        OptionLegSpec: {
+            /**
+             * Id
+             * @default leg
+             */
+            id?: string;
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "BUY" | "SELL";
+            /**
+             * Option Type
+             * @enum {string}
+             */
+            option_type: "CE" | "PE" | "FUT";
+            strike?: components["schemas"]["StrikeSelector"];
+            /**
+             * Expiry
+             * @default current
+             * @enum {string}
+             */
+            expiry?: "current" | "next" | "monthly";
+            /**
+             * Lots
+             * @default 1
+             */
+            lots?: number;
+            /**
+             * Stop Loss Pct
+             * @description leg SL as % of entry premium
+             */
+            stop_loss_pct?: number | null;
+            /** Target Pct */
+            target_pct?: number | null;
+        };
+        /** OptionsExit */
+        OptionsExit: {
+            /**
+             * Combined Stop Loss Pct
+             * @description % of net premium
+             */
+            combined_stop_loss_pct?: number | null;
+            /**
+             * Combined Target Pct
+             * @description % of net premium captured
+             */
+            combined_target_pct?: number | null;
+            /**
+             * Stop Loss Amount
+             * @description ₹ MTM loss per set
+             */
+            stop_loss_amount?: number | null;
+            /**
+             * Target Amount
+             * @description ₹ MTM profit per set
+             */
+            target_amount?: number | null;
+            /** Exit On Expiry Day At */
+            exit_on_expiry_day_at?: string | null;
         };
         /** OverviewOut */
         OverviewOut: {
@@ -884,6 +1549,78 @@ export interface components {
             fii_dii: {
                 [key: string]: unknown;
             };
+        };
+        /** PairSpec */
+        PairSpec: {
+            /** Leg A */
+            leg_a: string;
+            /** Leg B */
+            leg_b: string;
+            /**
+             * Lookback
+             * @default 60
+             */
+            lookback?: number;
+            /**
+             * Entry Z
+             * @default 2
+             */
+            entry_z?: number;
+            /**
+             * Exit Z
+             * @default 0.5
+             */
+            exit_z?: number;
+            /**
+             * Stop Z
+             * @default 4
+             */
+            stop_z?: number | null;
+            /**
+             * Hedge
+             * @default ols
+             * @enum {string}
+             */
+            hedge?: "ols" | "fixed";
+            /** Fixed Ratio */
+            fixed_ratio?: number | null;
+        };
+        /** PatternCondition */
+        PatternCondition: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "pattern";
+            /**
+             * Name
+             * @enum {string}
+             */
+            name: "doji" | "hammer" | "inverted_hammer" | "shooting_star" | "bullish_engulfing" | "bearish_engulfing" | "morning_star" | "evening_star" | "inside_bar" | "outside_bar" | "three_white_soldiers" | "three_black_crows" | "breakout_high" | "breakdown_low" | "gap_up" | "gap_down";
+            /**
+             * Lookback
+             * @default 20
+             */
+            lookback?: number;
+        };
+        /** PriceOperand */
+        PriceOperand: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "price";
+            /**
+             * Field
+             * @default close
+             * @enum {string}
+             */
+            field?: "open" | "high" | "low" | "close" | "volume" | "hl2" | "hlc3" | "ohlc4";
+            /**
+             * Offset
+             * @default 0
+             */
+            offset?: number;
         };
         /** ProviderInfo */
         ProviderInfo: {
@@ -952,6 +1689,24 @@ export interface components {
             /** Asks */
             asks?: components["schemas"]["DepthLevel"][];
         };
+        /** Reentry */
+        Reentry: {
+            /**
+             * Enabled
+             * @default false
+             */
+            enabled?: boolean;
+            /**
+             * Max Per Day
+             * @default 1
+             */
+            max_per_day?: number;
+            /**
+             * Cooldown Bars
+             * @default 0
+             */
+            cooldown_bars?: number;
+        };
         /** RegisterIn */
         RegisterIn: {
             /**
@@ -965,7 +1720,7 @@ export interface components {
              * Full Name
              * @default
              */
-            full_name: string;
+            full_name?: string;
             /**
              * Accept Terms
              * @description Terms of use + risk disclosure (required)
@@ -980,7 +1735,44 @@ export interface components {
              * Marketing Opt In
              * @default false
              */
-            marketing_opt_in: boolean;
+            marketing_opt_in?: boolean;
+        };
+        /** RiskSpec */
+        RiskSpec: {
+            /**
+             * Max Loss Per Day
+             * @description ₹; stop trading for the day
+             */
+            max_loss_per_day?: number | null;
+            /** Max Trades Per Day */
+            max_trades_per_day?: number | null;
+            /**
+             * Portfolio Max Loss
+             * @description ₹ from initial capital; halt strategy
+             */
+            portfolio_max_loss?: number | null;
+            /** Max Profit Per Day */
+            max_profit_per_day?: number | null;
+        };
+        /** Schedule */
+        Schedule: {
+            /**
+             * Entry After
+             * @default 09:20
+             */
+            entry_after?: string | null;
+            /**
+             * Entry Before
+             * @default 15:00
+             */
+            entry_before?: string | null;
+            /**
+             * Square Off
+             * @default 15:15
+             */
+            square_off?: string | null;
+            /** Days */
+            days?: ("MON" | "TUE" | "WED" | "THU" | "FRI")[];
         };
         /** SectorStock */
         SectorStock: {
@@ -1030,7 +1822,226 @@ export interface components {
              * Current
              * @default false
              */
-            current: boolean;
+            current?: boolean;
+        };
+        /** SideRules */
+        SideRules: {
+            long?: components["schemas"]["GroupCondition"] | null;
+            short?: components["schemas"]["GroupCondition"] | null;
+        };
+        /** Sizing */
+        Sizing: {
+            /**
+             * Mode
+             * @default capital_pct
+             * @enum {string}
+             */
+            mode?: "fixed_qty" | "fixed_lots" | "capital_pct" | "fixed_capital";
+            /**
+             * Value
+             * @default 10
+             */
+            value?: number;
+        };
+        /** StopSpec */
+        StopSpec: {
+            /**
+             * Type
+             * @default percent
+             * @enum {string}
+             */
+            type?: "percent" | "points" | "atr";
+            /** Value */
+            value: number;
+            /**
+             * Atr Period
+             * @default 14
+             */
+            atr_period?: number;
+        };
+        /** StrategyDSL */
+        StrategyDSL: {
+            /**
+             * Dsl Version
+             * @default 1.0
+             * @constant
+             */
+            dsl_version?: "1.0";
+            /** Name */
+            name: string;
+            /**
+             * Description
+             * @default
+             */
+            description?: string;
+            /**
+             * Kind
+             * @default equity
+             * @enum {string}
+             */
+            kind?: "equity" | "options" | "pair";
+            universe?: components["schemas"]["Universe"];
+            /**
+             * Timeframe
+             * @default 15m
+             * @enum {string}
+             */
+            timeframe?: "1m" | "3m" | "5m" | "15m" | "30m" | "1h" | "1d";
+            /**
+             * Product
+             * @default MIS
+             * @enum {string}
+             */
+            product?: "MIS" | "CNC" | "NRML";
+            /** Indicators */
+            indicators?: components["schemas"]["IndicatorSpec"][];
+            entry?: components["schemas"]["SideRules"];
+            exit?: components["schemas"]["ExitRules"];
+            /** Legs */
+            legs?: components["schemas"]["OptionLegSpec"][];
+            options_exit?: components["schemas"]["OptionsExit"];
+            pair?: components["schemas"]["PairSpec"] | null;
+            sizing?: components["schemas"]["Sizing"];
+            schedule?: components["schemas"]["Schedule"];
+            reentry?: components["schemas"]["Reentry"];
+            risk?: components["schemas"]["RiskSpec"];
+            /** Tags */
+            tags?: string[];
+        };
+        /** StrategyIn */
+        StrategyIn: {
+            dsl: components["schemas"]["StrategyDSL"];
+            /**
+             * Source
+             * @default form
+             * @enum {string}
+             */
+            source?: "form" | "visual" | "code" | "ai" | "template";
+            /** Code */
+            code?: string | null;
+            /** Graph */
+            graph?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Note
+             * @default
+             */
+            note?: string;
+        };
+        /** StrategyOut */
+        StrategyOut: {
+            /** Id */
+            id: number;
+            /** User Id */
+            user_id: number | null;
+            /** Name */
+            name: string;
+            /** Description */
+            description: string;
+            dsl: components["schemas"]["StrategyDSL"];
+            /** Version */
+            version: number;
+            /** Kind */
+            kind: string;
+            /** Source */
+            source: string;
+            /** Code */
+            code?: string | null;
+            /** Graph */
+            graph?: {
+                [key: string]: unknown;
+            } | null;
+            /** Visibility */
+            visibility: string;
+            /** Is Template */
+            is_template: boolean;
+            /** Box Type */
+            box_type: string;
+            /** Provider Ra Number */
+            provider_ra_number?: string | null;
+            /** Ra Status */
+            ra_status: string;
+            /**
+             * Tags
+             * @default []
+             */
+            tags?: string[];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Last Backtest */
+            last_backtest?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** StrategyVersionOut */
+        StrategyVersionOut: {
+            /** Id */
+            id: number;
+            /** Version */
+            version: number;
+            /** Note */
+            note: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Dsl */
+            dsl: {
+                [key: string]: unknown;
+            };
+        };
+        /** StrikeSelector */
+        StrikeSelector: {
+            /**
+             * Mode
+             * @default ATM_OFFSET
+             * @enum {string}
+             */
+            mode?: "ATM_OFFSET" | "DELTA" | "PREMIUM";
+            /**
+             * Offset
+             * @description ATM_OFFSET: strikes away from ATM (+ = higher strike)
+             * @default 0
+             */
+            offset?: number;
+            /**
+             * Delta
+             * @description DELTA: absolute delta target
+             */
+            delta?: number | null;
+            /**
+             * Premium
+             * @description PREMIUM: closest premium in ₹
+             */
+            premium?: number | null;
+        };
+        /** TimeCondition */
+        TimeCondition: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "time";
+            /**
+             * After
+             * @description HH:MM IST, inclusive
+             */
+            after?: string | null;
+            /**
+             * Before
+             * @description HH:MM IST, exclusive
+             */
+            before?: string | null;
         };
         /** TokenOut */
         TokenOut: {
@@ -1040,10 +2051,27 @@ export interface components {
              * Token Type
              * @default bearer
              */
-            token_type: string;
+            token_type?: string;
             /** Expires In */
             expires_in: number;
             user: components["schemas"]["UserOut"];
+        };
+        /** TrailingSpec */
+        TrailingSpec: {
+            /**
+             * Type
+             * @default percent
+             * @enum {string}
+             */
+            type?: "percent" | "points";
+            /** Value */
+            value: number;
+            /**
+             * Activate After
+             * @description profit (same unit) before trailing starts
+             * @default 0
+             */
+            activate_after?: number;
         };
         /** TwoFADisableIn */
         TwoFADisableIn: {
@@ -1076,6 +2104,16 @@ export interface components {
             /** Otpauth Uri */
             otpauth_uri: string;
         };
+        /** Universe */
+        Universe: {
+            /** Symbols */
+            symbols?: string[];
+            /**
+             * Underlying
+             * @description options: NIFTY, BANKNIFTY, ... or a stock
+             */
+            underlying?: string | null;
+        };
         /** UserOut */
         UserOut: {
             /** Id */
@@ -1104,7 +2142,7 @@ export interface components {
              * Notification Prefs
              * @default {}
              */
-            notification_prefs: {
+            notification_prefs?: {
                 [key: string]: unknown;
             };
             /**
@@ -1116,7 +2154,7 @@ export interface components {
              * Plan
              * @default free
              */
-            plan: string;
+            plan?: string;
         };
         /** UserPatch */
         UserPatch: {
@@ -1130,6 +2168,16 @@ export interface components {
             notification_prefs?: {
                 [key: string]: unknown;
             } | null;
+        };
+        /** ValidateOut */
+        ValidateOut: {
+            /** Valid */
+            valid: boolean;
+            /** Errors */
+            errors: {
+                [key: string]: unknown;
+            }[];
+            dsl?: components["schemas"]["StrategyDSL"] | null;
         };
         /** ValidationError */
         ValidationError: {
@@ -1982,6 +3030,579 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_strategies_api_strategies_get: {
+        parameters: {
+            query?: {
+                scope?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StrategyOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_api_strategies_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StrategyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StrategyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    templates_api_strategies_templates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
+                };
+            };
+        };
+    };
+    indicators_api_strategies_indicators_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IndicatorCatalogItem"][];
+                };
+            };
+        };
+    };
+    schema_api_strategies_dsl_schema_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+    };
+    code_template_api_strategies_code_template_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+        };
+    };
+    validate_api_strategies_validate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    compile_code_api_strategies_compile_code_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompileCodeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompileCodeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_api_strategies__strategy_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                strategy_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StrategyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_api_strategies__strategy_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                strategy_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StrategyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StrategyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_api_strategies__strategy_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                strategy_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Message"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    versions_api_strategies__strategy_id__versions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                strategy_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StrategyVersionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    clone_api_strategies__strategy_id__clone_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                strategy_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StrategyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listing_api_strategies__strategy_id__listing_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                strategy_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ListingIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StrategyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_backtests_api_backtests_get: {
+        parameters: {
+            query?: {
+                strategy_id?: number | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BacktestSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_api_backtests_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BacktestIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BacktestSummary"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_api_backtests__backtest_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                backtest_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BacktestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_api_backtests__backtest_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                backtest_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Message"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    trades_api_backtests__backtest_id__trades_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                backtest_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BacktestTradeOut"][];
                 };
             };
             /** @description Validation Error */

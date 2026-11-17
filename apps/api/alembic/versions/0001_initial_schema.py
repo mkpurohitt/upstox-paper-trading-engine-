@@ -528,7 +528,7 @@ def upgrade() -> None:
     sa.Column('backtest_id', sa.BigInteger().with_variant(sa.Integer(), 'sqlite'), nullable=False),
     sa.Column('symbol', sa.String(length=64), nullable=False),
     sa.Column('leg', sa.String(length=32), nullable=True),
-    sa.Column('side', sa.String(length=5), nullable=False),
+    sa.Column('side', sa.String(length=16), nullable=False),
     sa.Column('quantity', sa.Integer(), nullable=False),
     sa.Column('entry_ts', sa.DateTime(timezone=True), nullable=False),
     sa.Column('entry_price', sa.Float(), nullable=False),

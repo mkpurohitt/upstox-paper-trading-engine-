@@ -47,7 +47,7 @@ def split(symbol: str) -> tuple[str, str]:
     if ":" not in symbol:
         return "NSE", symbol.upper()
     ex, ts = symbol.split(":", 1)
-    return ex.upper(), ts.upper() if not ex.upper().endswith("INDEX") else ts.upper()
+    return ex.upper(), ts.upper()
 
 
 def fmt_expiry(d: date) -> str:

@@ -108,10 +108,10 @@ class UpstoxFeed:
                     log.info("upstox.feed_connected")
                     queue: asyncio.Queue[bytes] = asyncio.Queue(maxsize=5000)
 
-                    async def reader() -> None:
+                    async def reader(q: asyncio.Queue[bytes] = queue) -> None:
                         async for msg in ws:
                             if isinstance(msg, bytes):
-                                await queue.put(msg)
+                                await q.put(msg)
 
                     reader_task = asyncio.create_task(reader())
                     try:

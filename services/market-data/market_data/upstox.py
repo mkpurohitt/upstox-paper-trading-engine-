@@ -52,7 +52,7 @@ from algo_common.timeutils import IST, now_ist
 from market_data.base import DemandFn, MarketDataProvider
 from market_data.mock import max_pain
 from market_data.options import atm_strike, strike_step
-from market_data.symbols import future_symbol, option_symbol, parse, underlying_spot_symbol
+from market_data.symbols import future_symbol, option_symbol, underlying_spot_symbol
 
 log = get_logger("upstox")
 

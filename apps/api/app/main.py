@@ -76,6 +76,8 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
         docs_url="/docs",
         redoc_url="/redoc",
+        # one schema per model (input mode): fields with defaults stay optional in the TS client
+        separate_input_output_schemas=False,
     )
     app.add_middleware(GlobalRateLimitMiddleware, limit_per_min=s.api_rate_limit_per_min)
     app.add_middleware(SecurityHeadersMiddleware)
