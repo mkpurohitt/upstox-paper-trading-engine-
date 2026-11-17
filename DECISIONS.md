@@ -48,3 +48,19 @@ Ambiguities in the brief, the option chosen, and why. Newest decisions are appen
 | 30 | **Seeded demo strategies are not tuned to look profitable.** On random-walk mock data, naive strategies lose after costs. | Honest and educational; synthetic edges would be misleading. |
 | 31 | **OpenAPI uses single (input-mode) schemas** and `openapi-typescript --default-non-nullable false`. | Fields with defaults stay optional in the generated TS types, so the DSL builder can send partial documents. |
 | 32 | **Heavy builder panels (React Flow, Monaco, Recharts) are lazy-loaded** with `next/dynamic`. | Builder route first-load JS drops from 413 kB to 211 kB. |
+
+## Phase 4 — broker gateway and risk
+
+| # | Decision | Rationale |
+|---|----------|-----------|
+| 33 | **OpenAlgo (AGPL-3.0) was used only as a protocol reference.** No OpenAlgo code is copied, vendored or linked. All ten adapters are independent implementations of the brokers' publicly documented wire formats (endpoints, field names, checksum schemes), which are facts about third-party APIs. Details are in ARCHITECTURE.md → "Broker adapters & licensing". | Keeps the platform's own licence free of AGPL obligations while benefiting from OpenAlgo's catalogue of broker quirks (Kite weekly symbol codes, Dhan's `availabelBalance`, Noren `jData` bodies, Breeze checksum headers, ...). |
+| 34 | **ICICI Breeze has no OpenAlgo module**, so it is implemented from ICICI's public Breeze docs (session token + `X-Checksum = sha256(ts + body + secret)`). | Explicitly requested in the brief. |
+| 35 | **One `OrderRouter` for every order** (manual ticket, strategy runner, kill-switch square-off): Algo-ID tag → risk engine → freeze-qty slicing → persist → adapter → fills → audit → bus. | Pre-trade risk and the audit trail cannot be bypassed by any code path; system square-offs are tagged `bypass` and audited. |
+| 36 | **The Algo-ID is a placeholder** (`ALGO_ID_PREFIX-S{strategy}` / `-MANUAL`) stored on every order and deployment and sent in broker tag fields. | Exchange-assigned Algo-IDs only exist after empanelment through a broker; the field and plumbing are ready for them. |
+| 37 | **SEBI order-rate threshold**: a per-client, per-exchange 1-second sliding window (default 8/s, configurable, below the 10/s retail threshold), on top of per-user and per-strategy orders/minute limits. | SEBI retail algo framework. |
+| 38 | **Exits are never blocked by loss limits**; kill switches block everything except the system square-off orders they issue themselves. | Users must always be able to reduce risk. |
+| 39 | **Live mode requires TOTP 2FA**, checked before any broker is contacted, plus a fresh step-up code for each live deployment or manual live order. | Brief: "2FA required for live trading"; fail closed. |
+| 40 | **The paper broker is DB-backed** (orders/trades tables, `mode='paper'`) with a polling matcher for resting orders and automatic 15:20 IST MIS square-off. | The paper account survives restarts, appears in Portfolio, and shares 100% of the router/risk code path with live trading. |
+| 41 | **Broker credentials are AES-GCM encrypted with owner-bound AAD** (`user:{id}:broker:{name}`), never returned by the API, never audited; disconnecting erases them. | Brief §3 + OWASP A02. |
+| 42 | **Live order sync polls order books** (`sync_live`), while broker postbacks/websockets remain an adapter override point. | Polling works uniformly across all ten brokers; push feeds are broker-specific. |
+| 43 | **The live runner drains the bus in a separate pump task.** | Cancelling an async generator's `__anext__` (e.g. via `wait_for` timeouts) closes it. This was caught by the end-to-end deployment smoke test. |

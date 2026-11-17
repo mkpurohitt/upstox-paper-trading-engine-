@@ -23,4 +23,10 @@ async def start(rt: Runtime) -> None:
     streamer = TickStreamer(provider)
     set_streamer(streamer)
     rt.spawn("tick-streamer", streamer.run())
+
+    from broker_gateway.paper import PaperMatcher
+    from strategy_engine.live.manager import RunnerManager
+
+    rt.spawn("paper-matcher", PaperMatcher(provider).run())
+    rt.spawn("runner-manager", RunnerManager(provider).run())
     await asyncio.sleep(0)

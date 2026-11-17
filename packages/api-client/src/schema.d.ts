@@ -765,10 +765,464 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/brokers/catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Broker Catalog */
+        get: operations["broker_catalog_api_brokers_catalog_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/brokers/connections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Connections */
+        get: operations["connections_api_brokers_connections_get"];
+        put?: never;
+        /** Add Connection */
+        post: operations["add_connection_api_brokers_connections_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/brokers/connections/{conn_id}/oauth-url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Oauth Url */
+        get: operations["oauth_url_api_brokers_connections__conn_id__oauth_url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/brokers/connections/{conn_id}/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Login */
+        post: operations["login_api_brokers_connections__conn_id__login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/brokers/connections/{conn_id}/funds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Funds */
+        get: operations["funds_api_brokers_connections__conn_id__funds_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/brokers/connections/{conn_id}/default": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Make Default */
+        post: operations["make_default_api_brokers_connections__conn_id__default_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/brokers/connections/{conn_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Disconnect */
+        delete: operations["disconnect_api_brokers_connections__conn_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Orders */
+        get: operations["orders_api_orders_get"];
+        put?: never;
+        /** Place */
+        post: operations["place_api_orders_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orders/{order_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Modify */
+        patch: operations["modify_api_orders__order_id__patch"];
+        trace?: never;
+    };
+    "/api/orders/{order_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel */
+        post: operations["cancel_api_orders__order_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/trades": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Trades */
+        get: operations["trades_api_trades_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/positions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Positions */
+        get: operations["positions_api_positions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/positions/square-off": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Square Off */
+        post: operations["square_off_api_positions_square_off_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/funds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Funds */
+        get: operations["funds_api_funds_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/deployments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Deployments */
+        get: operations["list_deployments_api_deployments_get"];
+        put?: never;
+        /** Deploy */
+        post: operations["deploy_api_deployments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/deployments/{dep_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Deployment */
+        get: operations["get_deployment_api_deployments__dep_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/deployments/{dep_id}/logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Logs */
+        get: operations["logs_api_deployments__dep_id__logs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/deployments/{dep_id}/pause": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Pause */
+        post: operations["pause_api_deployments__dep_id__pause_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/deployments/{dep_id}/resume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resume */
+        post: operations["resume_api_deployments__dep_id__resume_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/deployments/{dep_id}/stop": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Stop */
+        post: operations["stop_api_deployments__dep_id__stop_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/deployments/{dep_id}/square-off": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Square Off */
+        post: operations["square_off_api_deployments__dep_id__square_off_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/risk/kill-switch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Kill State */
+        get: operations["kill_state_api_risk_kill_switch_get"];
+        put?: never;
+        /** Kill */
+        post: operations["kill_api_risk_kill_switch_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/risk/limits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Limits */
+        get: operations["get_limits_api_risk_limits_get"];
+        /** Set Limits */
+        put: operations["set_limits_api_risk_limits_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/risk/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Dry Run */
+        post: operations["dry_run_api_risk_check_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/risk/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Audit */
+        get: operations["my_audit_api_risk_audit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AuditOut */
+        AuditOut: {
+            /** Id */
+            id: number;
+            /**
+             * Ts
+             * Format: date-time
+             */
+            ts: string;
+            /** Actor */
+            actor: string;
+            /** Action */
+            action: string;
+            /** Entity Type */
+            entity_type: string | null;
+            /** Entity Id */
+            entity_id: string | null;
+            /** Payload */
+            payload: {
+                [key: string]: unknown;
+            };
+            /** Hash */
+            hash: string;
+        };
         /** AuthProvidersOut */
         AuthProvidersOut: {
             /**
@@ -983,6 +1437,21 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        /** BrokerCatalogItem */
+        BrokerCatalogItem: {
+            /** Name */
+            name: string;
+            /** Display Name */
+            display_name: string;
+            /** Auth Type */
+            auth_type: string;
+            /** Docs Url */
+            docs_url: string;
+            /** Rate Limit Per Sec */
+            rate_limit_per_sec: number;
+            /** Credential Fields */
+            credential_fields: components["schemas"]["CredentialFieldOut"][];
+        };
         /** Candle */
         Candle: {
             /**
@@ -1049,6 +1518,50 @@ export interface components {
              */
             stdout?: string;
         };
+        /** ConnectionIn */
+        ConnectionIn: {
+            /** Broker */
+            broker: string;
+            /**
+             * Label
+             * @default
+             */
+            label?: string;
+            /** Credentials */
+            credentials: {
+                [key: string]: string;
+            };
+        };
+        /** ConnectionOut */
+        ConnectionOut: {
+            /** Id */
+            id: number;
+            /** Broker */
+            broker: string;
+            /** Display Name */
+            display_name: string;
+            /** Auth Type */
+            auth_type: string;
+            /** Label */
+            label: string;
+            /** Client Id */
+            client_id: string;
+            /** Status */
+            status: string;
+            /** Status Message */
+            status_message?: string | null;
+            /** Token Expires At */
+            token_expires_at?: string | null;
+            /** Last Synced At */
+            last_synced_at?: string | null;
+            /** Is Default */
+            is_default: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** ConstOperand */
         ConstOperand: {
             /**
@@ -1059,6 +1572,22 @@ export interface components {
             /** Value */
             value: number;
         };
+        /** CredentialFieldOut */
+        CredentialFieldOut: {
+            /** Name */
+            name: string;
+            /** Label */
+            label: string;
+            /** Secret */
+            secret: boolean;
+            /** Required */
+            required: boolean;
+            /**
+             * Help
+             * @default
+             */
+            help?: string;
+        };
         /** DayCondition */
         DayCondition: {
             /**
@@ -1068,6 +1597,123 @@ export interface components {
             kind: "day_of_week";
             /** Days */
             days: ("MON" | "TUE" | "WED" | "THU" | "FRI")[];
+        };
+        /** DeploymentIn */
+        DeploymentIn: {
+            /** Strategy Id */
+            strategy_id: number;
+            /**
+             * Mode
+             * @default paper
+             * @enum {string}
+             */
+            mode?: "paper" | "live" | "notify";
+            /** Connection Id */
+            connection_id?: number | null;
+            /**
+             * Multiplier
+             * @default 1
+             */
+            multiplier?: number;
+            /**
+             * Capital
+             * @default 1000000
+             */
+            capital?: number;
+            risk_limits?: components["schemas"]["RiskLimitsIn"];
+            /** Notify Channels */
+            notify_channels?: ("in_app" | "email" | "telegram" | "whatsapp")[];
+            /** Totp Code */
+            totp_code?: string | null;
+            /**
+             * Acknowledge Risk
+             * @description user confirmed the risk disclosure in the confirmation modal
+             */
+            acknowledge_risk: boolean;
+        };
+        /** DeploymentLogOut */
+        DeploymentLogOut: {
+            /** Id */
+            id: number;
+            /**
+             * Ts
+             * Format: date-time
+             */
+            ts: string;
+            /** Level */
+            level: string;
+            /** Message */
+            message: string;
+            /** Data */
+            data: {
+                [key: string]: unknown;
+            };
+        };
+        /** DeploymentOut */
+        DeploymentOut: {
+            /** Id */
+            id: number;
+            /** Strategy Id */
+            strategy_id: number;
+            /** Strategy Version */
+            strategy_version: number;
+            /** Broker */
+            broker: string;
+            /** Broker Connection Id */
+            broker_connection_id: number | null;
+            /** Mode */
+            mode: string;
+            /** Status */
+            status: string;
+            /** Multiplier */
+            multiplier: number;
+            /** Risk Limits */
+            risk_limits: {
+                [key: string]: unknown;
+            };
+            /** Notify Channels */
+            notify_channels: string[];
+            /** Algo Id */
+            algo_id: string;
+            /** Pnl Realised */
+            pnl_realised: number;
+            /** Pnl Unrealised */
+            pnl_unrealised: number;
+            /** Error */
+            error: string | null;
+            /** Started At */
+            started_at: string | null;
+            /** Stopped At */
+            stopped_at: string | null;
+            /** Last Heartbeat */
+            last_heartbeat: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Name
+             * @default
+             */
+            name?: string;
+            /**
+             * Kind
+             * @default
+             */
+            kind?: string;
+            /**
+             * Symbols
+             * @default []
+             */
+            symbols?: string[];
+            /**
+             * State
+             * @default {}
+             */
+            state?: {
+                [key: string]: unknown;
+            };
         };
         /** DepthLevel */
         DepthLevel: {
@@ -1095,6 +1741,25 @@ export interface components {
             trailing_sl?: components["schemas"]["TrailingSpec"] | null;
             /** Max Holding Bars */
             max_holding_bars?: number | null;
+        };
+        /** FundsOut */
+        FundsOut: {
+            /** Available */
+            available: number;
+            /** Used */
+            used: number;
+            /** Total */
+            total: number;
+            /**
+             * Currency
+             * @default INR
+             */
+            currency?: string;
+            /**
+             * Mode
+             * @default paper
+             */
+            mode?: string;
         };
         /** Greeks */
         Greeks: {
@@ -1274,6 +1939,30 @@ export interface components {
          * @enum {string}
          */
         Interval: "1m" | "3m" | "5m" | "15m" | "30m" | "1h" | "1d" | "1w";
+        /** KillSwitchIn */
+        KillSwitchIn: {
+            /** Engaged */
+            engaged: boolean;
+            /**
+             * Square Off
+             * @default true
+             */
+            square_off?: boolean;
+        };
+        /** KillSwitchOut */
+        KillSwitchOut: {
+            /** User Engaged */
+            user_engaged: boolean;
+            /** Global Engaged */
+            global_engaged: boolean;
+            /**
+             * Summary
+             * @default {}
+             */
+            summary?: {
+                [key: string]: unknown;
+            };
+        };
         /** ListingIn */
         ListingIn: {
             /**
@@ -1292,16 +1981,6 @@ export interface components {
              * @description SEBI Research Analyst reg. no.
              */
             provider_ra_number?: string | null;
-        };
-        /** LoginIn */
-        LoginIn: {
-            /**
-             * Email
-             * Format: email
-             */
-            email: string;
-            /** Password */
-            password: string;
         };
         /** LoginOut */
         LoginOut: {
@@ -1353,6 +2032,16 @@ export interface components {
              * @default
              */
             message?: string;
+        };
+        /** ModifyIn */
+        ModifyIn: {
+            /** Quantity */
+            quantity?: number | null;
+            /** Price */
+            price?: number | null;
+            /** Trigger Price */
+            trigger_price?: number | null;
+            order_type?: components["schemas"]["OrderType"] | null;
         };
         /** MoverRow */
         MoverRow: {
@@ -1524,6 +2213,94 @@ export interface components {
             /** Exit On Expiry Day At */
             exit_on_expiry_day_at?: string | null;
         };
+        /** OrderIn */
+        OrderIn: {
+            /** Symbol */
+            symbol: string;
+            side: components["schemas"]["Side"];
+            /** Quantity */
+            quantity: number;
+            /** @default MARKET */
+            order_type?: components["schemas"]["OrderType"];
+            /** @default MIS */
+            product?: components["schemas"]["Product"];
+            /** Price */
+            price?: number | null;
+            /** Trigger Price */
+            trigger_price?: number | null;
+            /**
+             * Mode
+             * @default paper
+             * @enum {string}
+             */
+            mode?: "paper" | "live";
+            /** Connection Id */
+            connection_id?: number | null;
+            /**
+             * Totp Code
+             * @description required for live orders (2FA step-up)
+             */
+            totp_code?: string | null;
+        };
+        /** OrderOut */
+        OrderOut: {
+            /** Id */
+            id: number;
+            /** Client Order Id */
+            client_order_id: string;
+            /** Broker Order Id */
+            broker_order_id: string | null;
+            /** Symbol */
+            symbol: string;
+            /** Exchange */
+            exchange: string;
+            /** Side */
+            side: string;
+            /** Quantity */
+            quantity: number;
+            /** Filled Quantity */
+            filled_quantity: number;
+            /** Price */
+            price: number | null;
+            /** Trigger Price */
+            trigger_price: number | null;
+            /** Average Price */
+            average_price: number | null;
+            /** Order Type */
+            order_type: string;
+            /** Product */
+            product: string;
+            /** Status */
+            status: string;
+            /** Status Message */
+            status_message: string | null;
+            /** Mode */
+            mode: string;
+            /** Broker */
+            broker: string;
+            /** Algo Id */
+            algo_id: string;
+            /** Strategy Id */
+            strategy_id: number | null;
+            /** Deployment Id */
+            deployment_id: number | null;
+            /** Tag */
+            tag: string | null;
+            /** Risk Decision */
+            risk_decision: {
+                [key: string]: unknown;
+            };
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * OrderType
+         * @enum {string}
+         */
+        OrderType: "MARKET" | "LIMIT" | "SL" | "SL-M";
         /** OverviewOut */
         OverviewOut: {
             /** Ts */
@@ -1603,6 +2380,25 @@ export interface components {
              */
             lookback?: number;
         };
+        /** PositionOut */
+        PositionOut: {
+            /** Symbol */
+            symbol: string;
+            /** Product */
+            product: string;
+            /** Quantity */
+            quantity: number;
+            /** Average Price */
+            average_price: number;
+            /** Last Price */
+            last_price: number;
+            /** Realised Pnl */
+            realised_pnl: number;
+            /** Unrealised Pnl */
+            unrealised_pnl: number;
+            /** Broker */
+            broker: string;
+        };
         /** PriceOperand */
         PriceOperand: {
             /**
@@ -1622,6 +2418,11 @@ export interface components {
              */
             offset?: number;
         };
+        /**
+         * Product
+         * @enum {string}
+         */
+        Product: "MIS" | "CNC" | "NRML";
         /** ProviderInfo */
         ProviderInfo: {
             /** Name */
@@ -1737,6 +2538,68 @@ export interface components {
              */
             marketing_opt_in?: boolean;
         };
+        /** RiskCheckOut */
+        RiskCheckOut: {
+            /** Allowed */
+            allowed: boolean;
+            /** Rule */
+            rule: string | null;
+            /** Reason */
+            reason: string | null;
+            /** Reducing */
+            reducing: boolean;
+            /** Checks */
+            checks: {
+                [key: string]: unknown;
+            }[];
+        };
+        /** RiskLimitsIn */
+        RiskLimitsIn: {
+            /** Max Loss Per Day */
+            max_loss_per_day?: number | null;
+            /** Max Orders Per Min */
+            max_orders_per_min?: number | null;
+            /** Max Position Value */
+            max_position_value?: number | null;
+            /** Max Lots */
+            max_lots?: number | null;
+            /** Max Qty Per Order */
+            max_qty_per_order?: number | null;
+            /** Allowed Instruments */
+            allowed_instruments?: string[] | null;
+            /** Allowed Exchanges */
+            allowed_exchanges?: string[] | null;
+            /** Kill Switch */
+            kill_switch?: boolean | null;
+        };
+        /** RiskLimitsOut */
+        RiskLimitsOut: {
+            /** Strategy Id */
+            strategy_id: number | null;
+            /** Max Loss Per Day */
+            max_loss_per_day: number;
+            /** Max Orders Per Min */
+            max_orders_per_min: number;
+            /** Max Position Value */
+            max_position_value: number;
+            /** Max Lots */
+            max_lots: number;
+            /** Max Qty Per Order */
+            max_qty_per_order: number;
+            /** Allowed Instruments */
+            allowed_instruments: string[];
+            /** Allowed Exchanges */
+            allowed_exchanges: string[];
+            /** Kill Switch */
+            kill_switch: boolean;
+            /**
+             * Sebi Order Rate Limit Per Sec
+             * @default 0
+             */
+            sebi_order_rate_limit_per_sec?: number;
+            /** Static Egress Ip */
+            static_egress_ip?: string | null;
+        };
         /** RiskSpec */
         RiskSpec: {
             /**
@@ -1824,6 +2687,11 @@ export interface components {
              */
             current?: boolean;
         };
+        /**
+         * Side
+         * @enum {string}
+         */
+        Side: "BUY" | "SELL";
         /** SideRules */
         SideRules: {
             long?: components["schemas"]["GroupCondition"] | null;
@@ -2056,6 +2924,36 @@ export interface components {
             expires_in: number;
             user: components["schemas"]["UserOut"];
         };
+        /** TradeOut */
+        TradeOut: {
+            /** Id */
+            id: number;
+            /** Order Id */
+            order_id: number;
+            /** Symbol */
+            symbol: string;
+            /** Side */
+            side: string;
+            /** Quantity */
+            quantity: number;
+            /** Price */
+            price: number;
+            /** Charges */
+            charges: number;
+            /** Product */
+            product: string;
+            /** Mode */
+            mode: string;
+            /** Broker */
+            broker: string;
+            /** Deployment Id */
+            deployment_id: number | null;
+            /**
+             * Ts
+             * Format: date-time
+             */
+            ts: string;
+        };
         /** TrailingSpec */
         TrailingSpec: {
             /**
@@ -2192,6 +3090,21 @@ export interface components {
             /** Context */
             ctx?: Record<string, never>;
         };
+        /** LoginIn */
+        app__schemas__auth__LoginIn: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+            /** Password */
+            password: string;
+        };
+        /** LoginIn */
+        app__schemas__trading__LoginIn: {
+            /** Totp */
+            totp?: string | null;
+        };
     };
     responses: never;
     parameters: never;
@@ -2285,7 +3198,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LoginIn"];
+                "application/json": components["schemas"]["app__schemas__auth__LoginIn"];
             };
         };
         responses: {
@@ -3603,6 +4516,941 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BacktestTradeOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    broker_catalog_api_brokers_catalog_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrokerCatalogItem"][];
+                };
+            };
+        };
+    };
+    connections_api_brokers_connections_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionOut"][];
+                };
+            };
+        };
+    };
+    add_connection_api_brokers_connections_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConnectionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    oauth_url_api_brokers_connections__conn_id__oauth_url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conn_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    login_api_brokers_connections__conn_id__login_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conn_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["app__schemas__trading__LoginIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    funds_api_brokers_connections__conn_id__funds_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conn_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FundsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    make_default_api_brokers_connections__conn_id__default_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conn_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Message"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    disconnect_api_brokers_connections__conn_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conn_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Message"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    orders_api_orders_get: {
+        parameters: {
+            query?: {
+                mode?: string | null;
+                deployment_id?: number | null;
+                today?: boolean;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    place_api_orders_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrderIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    modify_api_orders__order_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModifyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_api_orders__order_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    trades_api_trades_get: {
+        parameters: {
+            query?: {
+                mode?: string | null;
+                deployment_id?: number | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TradeOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    positions_api_positions_get: {
+        parameters: {
+            query?: {
+                mode?: string;
+                connection_id?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PositionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    square_off_api_positions_square_off_post: {
+        parameters: {
+            query?: {
+                mode?: string;
+                connection_id?: number | null;
+                totp_code?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    funds_api_funds_get: {
+        parameters: {
+            query?: {
+                mode?: string;
+                connection_id?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FundsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_deployments_api_deployments_get: {
+        parameters: {
+            query?: {
+                active?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeploymentOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    deploy_api_deployments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeploymentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeploymentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_deployment_api_deployments__dep_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dep_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeploymentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    logs_api_deployments__dep_id__logs_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                dep_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeploymentLogOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    pause_api_deployments__dep_id__pause_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dep_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeploymentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resume_api_deployments__dep_id__resume_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dep_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeploymentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    stop_api_deployments__dep_id__stop_post: {
+        parameters: {
+            query?: {
+                square_off?: boolean;
+            };
+            header?: never;
+            path: {
+                dep_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeploymentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    square_off_api_deployments__dep_id__square_off_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dep_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Message"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    kill_state_api_risk_kill_switch_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KillSwitchOut"];
+                };
+            };
+        };
+    };
+    kill_api_risk_kill_switch_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KillSwitchIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KillSwitchOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_limits_api_risk_limits_get: {
+        parameters: {
+            query?: {
+                strategy_id?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskLimitsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_limits_api_risk_limits_put: {
+        parameters: {
+            query?: {
+                strategy_id?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskLimitsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskLimitsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    dry_run_api_risk_check_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrderIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskCheckOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_audit_api_risk_audit_get: {
+        parameters: {
+            query?: {
+                action?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditOut"][];
                 };
             };
             /** @description Validation Error */
