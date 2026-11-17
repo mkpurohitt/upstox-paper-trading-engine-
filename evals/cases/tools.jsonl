@@ -1,0 +1,49 @@
+{"id": "tool-001", "category": "tool_routing", "prompt": "What's the price of Reliance?", "expect": {"tools_any": ["get_quote"], "card_types": ["quotes"], "contains_any": ["RELIANCE"]}}
+{"id": "tool-002", "category": "tool_routing", "prompt": "Quote for TCS and Infosys", "expect": {"tools_any": ["get_quote"], "card_types": ["quotes"], "contains_any": ["TCS"]}}
+{"id": "tool-003", "category": "tool_routing", "prompt": "How is HDFC Bank trading today?", "expect": {"tools_any": ["get_quote"], "card_types": ["quotes"], "contains_any": ["HDFCBANK"]}}
+{"id": "tool-004", "category": "tool_routing", "prompt": "LTP of SBIN", "expect": {"tools_any": ["get_quote"], "card_types": ["quotes"], "contains_any": ["SBIN"]}}
+{"id": "tool-005", "category": "tool_routing", "prompt": "Where is NIFTY right now?", "expect": {"tools_any": ["get_quote"], "card_types": ["quotes"], "contains_any": ["NIFTY"]}}
+{"id": "tool-006", "category": "tool_routing", "prompt": "ITC price", "expect": {"tools_any": ["get_quote"], "card_types": ["quotes"], "contains_any": ["ITC"]}}
+{"id": "tool-007", "category": "tool_routing", "prompt": "Show me the daily chart and trend for Reliance", "expect": {"tools_any": ["get_candles"], "card_types": ["chart"]}}
+{"id": "tool-008", "category": "tool_routing", "prompt": "Technical view on ICICI Bank on the 1 hour chart", "expect": {"tools_any": ["get_candles"], "card_types": ["chart"]}}
+{"id": "tool-009", "category": "tool_routing", "prompt": "Is INFY in an uptrend? Check RSI and moving averages", "expect": {"tools_any": ["get_candles"], "card_types": ["chart"]}}
+{"id": "tool-010", "category": "tool_routing", "prompt": "Support and resistance levels for TCS", "expect": {"tools_any": ["get_candles"], "card_types": ["chart"]}}
+{"id": "tool-011", "category": "tool_routing", "prompt": "Give me the MACD and momentum picture for SBIN", "expect": {"tools_any": ["get_candles"], "card_types": ["chart"]}}
+{"id": "tool-012", "category": "tool_routing", "prompt": "NIFTY option chain summary", "expect": {"tools_any": ["get_option_chain"], "card_types": ["option_chain"], "contains_any": ["NIFTY"]}}
+{"id": "tool-013", "category": "tool_routing", "prompt": "What is the PCR and max pain for BANKNIFTY?", "expect": {"tools_any": ["get_option_chain"], "card_types": ["option_chain"], "contains_any": ["BANKNIFTY"]}}
+{"id": "tool-014", "category": "tool_routing", "prompt": "Open interest buildup in FINNIFTY options", "expect": {"tools_any": ["get_option_chain"], "card_types": ["option_chain"], "contains_any": ["FINNIFTY"]}}
+{"id": "tool-015", "category": "tool_routing", "prompt": "Show the option chain of Reliance", "expect": {"tools_any": ["get_option_chain"], "card_types": ["option_chain"], "contains_any": ["RELIANCE"]}}
+{"id": "tool-016", "category": "tool_routing", "prompt": "max pain for nifty this expiry", "expect": {"tools_any": ["get_option_chain"], "card_types": ["option_chain"], "contains_any": ["NIFTY"]}}
+{"id": "tool-017", "category": "tool_routing", "prompt": "Show me an iron condor on BANKNIFTY with greeks", "expect": {"tools_any": ["get_greeks"], "card_types": ["payoff"]}}
+{"id": "tool-018", "category": "tool_routing", "prompt": "Payoff of a short strangle on NIFTY", "expect": {"tools_any": ["get_greeks"], "card_types": ["payoff"]}}
+{"id": "tool-019", "category": "tool_routing", "prompt": "What are the greeks of a long straddle on NIFTY?", "expect": {"tools_any": ["get_greeks"], "card_types": ["payoff"]}}
+{"id": "tool-020", "category": "tool_routing", "prompt": "Price an iron fly on banknifty", "expect": {"tools_any": ["get_greeks"], "card_types": ["payoff"]}}
+{"id": "tool-021", "category": "tool_routing", "prompt": "Delta and theta of a bull call spread on NIFTY", "expect": {"tools_any": ["get_greeks"], "card_types": ["payoff"]}}
+{"id": "tool-022", "category": "tool_routing", "prompt": "Fundamentals of Infosys", "expect": {"tools_any": ["get_fundamentals"], "card_types": ["fundamentals"]}}
+{"id": "tool-023", "category": "tool_routing", "prompt": "What's the valuation of HDFC Bank - PE and ROE?", "expect": {"tools_any": ["get_fundamentals"], "card_types": ["fundamentals"]}}
+{"id": "tool-024", "category": "tool_routing", "prompt": "Is TCS overvalued compared to peers?", "expect": {"tools_any": ["get_fundamentals"], "card_types": ["fundamentals"]}}
+{"id": "tool-025", "category": "tool_routing", "prompt": "Show the financials and revenue of Reliance", "expect": {"tools_any": ["get_fundamentals"], "card_types": ["fundamentals"]}}
+{"id": "tool-026", "category": "tool_routing", "prompt": "Latest news on Infosys", "expect": {"tools_any": ["get_news"], "card_types": ["news"]}}
+{"id": "tool-027", "category": "tool_routing", "prompt": "What's in the market news today?", "expect": {"tools_any": ["get_news"], "card_types": ["news"]}}
+{"id": "tool-028", "category": "tool_routing", "prompt": "Any headlines about Reliance?", "expect": {"tools_any": ["get_news"], "card_types": ["news"]}}
+{"id": "tool-029", "category": "tool_routing", "prompt": "Why is HDFC Bank down today?", "expect": {"tools_any": ["get_news"], "card_types": ["news"]}}
+{"id": "tool-030", "category": "tool_routing", "prompt": "FII DII activity this week", "expect": {"tools_any": ["nse_get_fii_dii_activity"], "card_types": ["table", "kv"]}}
+{"id": "tool-031", "category": "tool_routing", "prompt": "What are institutional flows doing?", "expect": {"tools_any": ["nse_get_fii_dii_activity"], "card_types": ["table", "kv"]}}
+{"id": "tool-032", "category": "tool_routing", "prompt": "Upcoming corporate actions and dividends", "expect": {"tools_any": ["nse_get_corporate_actions"], "card_types": ["table", "kv"]}}
+{"id": "tool-033", "category": "tool_routing", "prompt": "Any bonus issue or stock split for Infosys?", "expect": {"tools_any": ["nse_get_corporate_actions"], "card_types": ["table", "kv"]}}
+{"id": "tool-034", "category": "tool_routing", "prompt": "Latest corporate announcements from Reliance", "expect": {"tools_any": ["nse_get_corporate_announcements"], "card_types": ["table", "kv"]}}
+{"id": "tool-035", "category": "tool_routing", "prompt": "Show today's bulk deals", "expect": {"tools_any": ["nse_get_bulk_block_deals"], "card_types": ["table", "kv"]}}
+{"id": "tool-036", "category": "tool_routing", "prompt": "Upcoming results calendar", "expect": {"tools_any": ["nse_get_results_calendar"], "card_types": ["table", "kv"]}}
+{"id": "tool-037", "category": "tool_routing", "prompt": "Market breadth - advances vs declines", "expect": {"tools_any": ["nse_get_market_breadth"]}}
+{"id": "tool-038", "category": "tool_routing", "prompt": "Shareholding pattern of ITC", "expect": {"tools_any": ["nse_get_shareholding_pattern"]}}
+{"id": "tool-039", "category": "tool_routing", "prompt": "What is the promoter holding in HDFC Bank?", "expect": {"tools_any": ["nse_get_shareholding_pattern"]}}
+{"id": "tool-040", "category": "tool_routing", "prompt": "Find oversold stocks with ROE above 15", "expect": {"tools_any": ["run_screener"], "card_types": ["screener"]}}
+{"id": "tool-041", "category": "tool_routing", "prompt": "Screen nifty 50 stocks with PE below 20 and dividend yield above 1.5", "expect": {"tools_any": ["run_screener"], "card_types": ["screener"]}}
+{"id": "tool-042", "category": "tool_routing", "prompt": "Which stocks are near their 52 week high with a volume surge?", "expect": {"tools_any": ["run_screener"], "card_types": ["screener"]}}
+{"id": "tool-043", "category": "tool_routing", "prompt": "Find low debt stocks with high ROE", "expect": {"tools_any": ["run_screener"], "card_types": ["screener"]}}
+{"id": "tool-044", "category": "tool_routing", "prompt": "Scan for cash and carry arbitrage", "expect": {"tools_any": ["run_scanner"], "card_types": ["table"], "args": {"run_scanner": {"kind": "arbitrage"}}}}
+{"id": "tool-045", "category": "tool_routing", "prompt": "Find ratio spread candidates on NIFTY", "expect": {"tools_any": ["run_scanner"], "card_types": ["table"], "args": {"run_scanner": {"kind": "ratio_spreads"}}}}
+{"id": "tool-046", "category": "tool_routing", "prompt": "Which bank stocks are cointegrated for pairs trading?", "expect": {"tools_any": ["run_scanner"], "card_types": ["table"], "args": {"run_scanner": {"kind": "pairs"}}}}
+{"id": "tool-047", "category": "tool_routing", "prompt": "Show my portfolio", "expect": {"tools_any": ["get_portfolio"]}}
+{"id": "tool-048", "category": "tool_routing", "prompt": "Analyze my portfolio risk and concentration", "expect": {"tools_any": ["analyze_portfolio"]}}
+{"id": "tool-049", "category": "tool_routing", "prompt": "What are my positions and P&L?", "expect": {"tools_any": ["get_portfolio"]}}

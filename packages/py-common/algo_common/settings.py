@@ -117,6 +117,11 @@ class Settings(BaseSettings):
     advice_enabled: bool = False
     llm_max_tool_steps: int = 6
     llm_request_timeout_s: float = 60.0
+    llm_fallbacks: str = "anthropic,ollama"  # tried in order after the primary; the rule-based mock is always last
+    ollama_enabled: bool = False
+    llm_mock_fallback: bool = True
+    llm_pricing_json: str = "{}"  # {"model": [usd_per_1m_in, usd_per_1m_out]} for cost tracking
+    rag_top_k: int = 4
 
     # ---- news -----------------------------------------------------------------
     news_rss_feeds: str = (

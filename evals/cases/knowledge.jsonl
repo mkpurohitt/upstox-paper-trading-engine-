@@ -1,0 +1,28 @@
+{"id": "rag-001", "category": "knowledge", "prompt": "What is max pain?", "expect": {"cites_title_any": ["Glossary"], "no_tools": ["*"], "contains_any": ["writers"]}}
+{"id": "rag-002", "category": "knowledge", "prompt": "What does PCR mean in options?", "expect": {"cites_title_any": ["Glossary"], "no_tools": ["*"], "contains_any": ["put"]}}
+{"id": "rag-003", "category": "knowledge", "prompt": "Explain open interest buildup", "expect": {"cites_title_any": ["Glossary"], "no_tools": ["*"], "contains_any": ["buildup"]}}
+{"id": "rag-004", "category": "knowledge", "prompt": "What is the freeze quantity?", "expect": {"cites_title_any": ["Glossary"], "no_tools": ["*"], "contains_any": ["single order"]}}
+{"id": "rag-005", "category": "knowledge", "prompt": "What is the F&O ban period?", "expect": {"cites_title_any": ["Glossary"], "no_tools": ["*"], "contains_any": ["95%"]}}
+{"id": "rag-006", "category": "knowledge", "prompt": "Explain theta decay", "expect": {"cites_title_any": ["Options Basics"], "no_tools": ["*"], "contains_any": ["decay"]}}
+{"id": "rag-007", "category": "knowledge", "prompt": "What is vega?", "expect": {"cites_title_any": ["Options Basics"], "no_tools": ["*"], "contains_any": ["volatility"]}}
+{"id": "rag-008", "category": "knowledge", "prompt": "Explain put-call parity", "expect": {"cites_title_any": ["Options Basics"], "no_tools": ["*"], "contains_any": ["parity"]}}
+{"id": "rag-009", "category": "knowledge", "prompt": "What is implied volatility?", "expect": {"cites_title_any": ["Options Basics"], "no_tools": ["*"], "contains_any": ["volatility"]}}
+{"id": "rag-010", "category": "knowledge", "prompt": "How is the expected move calculated from IV?", "expect": {"cites_title_any": ["Options Basics"], "no_tools": ["*"], "contains_any": ["expected move"]}}
+{"id": "rag-011", "category": "knowledge", "prompt": "What is an iron condor?", "expect": {"cites_title_any": ["Options Strategies"], "no_tools": ["*"], "contains_any": ["credit"]}}
+{"id": "rag-012", "category": "knowledge", "prompt": "Explain a ratio spread and its risks", "expect": {"cites_title_any": ["Options Strategies"], "no_tools": ["*"], "contains_any": ["unlimited"]}}
+{"id": "rag-013", "category": "knowledge", "prompt": "How does a calendar spread work?", "expect": {"cites_title_any": ["Options Strategies"], "no_tools": ["*"], "contains_any": ["near"]}}
+{"id": "rag-014", "category": "knowledge", "prompt": "What is pair trading?", "expect": {"cites_title_any": ["Options Strategies"], "no_tools": ["*"], "contains_any": ["cointegration"]}}
+{"id": "rag-015", "category": "knowledge", "prompt": "What is the SEBI order per second threshold for algos?", "expect": {"cites_title_any": ["SEBI"], "no_tools": ["*"], "contains_any": ["10 orders per second"]}}
+{"id": "rag-016", "category": "knowledge", "prompt": "Why is a static IP required for API trading?", "expect": {"cites_title_any": ["SEBI", "Broker"], "no_tools": ["*"], "contains_any": ["static IP"]}}
+{"id": "rag-017", "category": "knowledge", "prompt": "What is a black box algo?", "expect": {"cites_title_any": ["SEBI"], "no_tools": ["*"], "contains_any": ["Research Analyst"]}}
+{"id": "rag-018", "category": "knowledge", "prompt": "What is STT on options?", "expect": {"cites_title_any": ["Costs"], "no_tools": ["*"], "contains_any": ["0.1%"]}}
+{"id": "rag-019", "category": "knowledge", "prompt": "What are exchange transaction charges for options?", "expect": {"cites_title_any": ["Costs"], "no_tools": ["*"], "contains_any": ["0.03503%"]}}
+{"id": "rag-020", "category": "knowledge", "prompt": "How does walk-forward analysis help?", "expect": {"cites_title_any": ["Risk Management"], "no_tools": ["*"], "contains_any": ["out-of-sample"]}}
+{"id": "rag-021", "category": "knowledge", "prompt": "How should I size positions?", "expect": {"cites_title_any": ["Risk Management"], "no_tools": ["*"], "contains_any": ["risk"]}}
+{"id": "rag-022", "category": "knowledge", "prompt": "What is Monte Carlo simulation used for in backtesting?", "expect": {"cites_title_any": ["Risk Management"], "no_tools": ["*"], "contains_any": ["drawdown"]}}
+{"id": "rag-023", "category": "knowledge", "prompt": "What is Supertrend?", "expect": {"cites_title_any": ["Technical Indicators"], "no_tools": ["*"], "contains_any": ["ATR"]}}
+{"id": "rag-024", "category": "knowledge", "prompt": "What does ADX measure?", "expect": {"cites_title_any": ["Technical Indicators"], "no_tools": ["*"], "contains_any": ["trend strength"]}}
+{"id": "rag-025", "category": "knowledge", "prompt": "Why does my Zerodha token expire every day?", "expect": {"cites_title_any": ["Broker"], "no_tools": ["*"], "contains_any": ["expire"]}}
+{"id": "rag-026", "category": "knowledge", "prompt": "What does the kill switch do?", "expect": {"cites_title_any": [""], "no_tools": ["*"], "contains_any": ["kill switch"]}}
+{"id": "rag-027", "category": "knowledge", "prompt": "How do I deploy a strategy in paper mode?", "expect": {"cites_title_any": ["Platform Guide"], "no_tools": ["*"], "contains_any": ["Paper"]}}
+{"id": "rag-028", "category": "knowledge", "prompt": "What is the best biryani in Delhi?", "expect": {"no_citations": true, "no_tools": ["*"]}}

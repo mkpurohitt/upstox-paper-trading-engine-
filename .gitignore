@@ -36,3 +36,4 @@ var/
 algo-platform.zip
 .DS_Store
 .next-build/
+evals/report.json

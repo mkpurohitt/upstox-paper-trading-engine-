@@ -9,6 +9,7 @@ dependencies = [
   "algo-market-data",
   "algo-broker-gateway",
   "algo-strategy-engine",
+  "algo-jobs",
   "openai>=1.57",
   "anthropic>=0.40",
   "mcp>=1.6",

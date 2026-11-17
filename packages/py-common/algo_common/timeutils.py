@@ -97,6 +97,14 @@ def monthly_expiry(year: int, month: int, exchange: str = "NSE") -> date:
     return _adjust_back_for_holiday(last_weekday_of_month(year, month, wd))
 
 
+def expiry_from_date(at: datetime, exchange: str = "NSE") -> date:
+    """First date whose contracts are still alive at `at`: expiring contracts stop trading at the close
+    (15:30 IST for NSE/BSE, 23:30 for MCX), so after that the nearest expiry rolls forward."""
+    t = to_ist(at)
+    cutoff = time(23, 30) if exchange.upper() == "MCX" else time(15, 30)
+    return t.date() + timedelta(days=1) if t.time() >= cutoff else t.date()
+
+
 def upcoming_expiries(underlying: str, from_date: date, count: int = 6, exchange: str = "NSE") -> list[date]:
     """Return the next `count` expiry dates for an underlying (weekly where applicable)."""
     wd = EXPIRY_WEEKDAY.get(exchange.upper(), 1)

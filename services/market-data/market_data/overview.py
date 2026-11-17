@@ -8,7 +8,7 @@ from collections import defaultdict
 from typing import Any
 
 from algo_common.schemas.market import Quote
-from algo_common.timeutils import now_ist, upcoming_expiries
+from algo_common.timeutils import expiry_from_date, now_ist, upcoming_expiries
 from market_data.base import MarketDataProvider
 from market_data.nse_mcp import call_nse_tool
 from market_data.symbols import future_symbol
@@ -27,7 +27,7 @@ async def market_overview(provider: MarketDataProvider) -> dict[str, Any]:
     eq_syms = [a.symbol for a in EQUITIES]
     sector_syms = list(SECTOR_INDEX.values())
     fut_syms = []
-    exp = upcoming_expiries("_MONTHLY_", now_ist().date(), 1)[0]
+    exp = upcoming_expiries("_MONTHLY_", expiry_from_date(now_ist()), 1)[0]
     for a in EQUITIES:
         if a.lot_size:
             fut_syms.append(future_symbol(a.tradingsymbol, exp))

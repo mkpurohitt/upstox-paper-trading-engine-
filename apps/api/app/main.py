@@ -56,6 +56,15 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         from app.services.users import ensure_plans
 
         await ensure_plans(db)
+    try:  # bundled knowledge base for the copilot (idempotent, ~0.2 s with the hashing embedder)
+        from ai_agent.rag import seed_corpus
+
+        async with session_scope() as db:
+            added = await seed_corpus(db)
+        if added:
+            log.info("rag.corpus_seeded", documents=added)
+    except Exception as exc:  # never block startup on the knowledge base
+        log.warning("rag.seed_failed", error=str(exc))
     await runtime.start()
     log.info("api.started", data_mode=s.data_mode, environment=s.environment)
     try:

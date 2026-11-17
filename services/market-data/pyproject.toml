@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Market data providers (Upstox, NSE MCP, Mock), ingestion and live tick fan-out"
 requires-python = ">=3.12"
 dependencies = [
+  "feedparser>=6.0.11",
   "algo-common",
   "algo-db",
   "httpx>=0.28",

@@ -39,7 +39,7 @@ class BacktestParams:
     slippage_bps: float = 5.0
     fill: Literal["next_open", "close"] = "next_open"
     mode: Literal["event", "vectorised"] = "event"
-    risk_free: float = 0.065
+    risk_free: float = 0.0  # idle cash earns nothing in the simulation, so Sharpe/Sortino use rf=0 (DECISIONS #52)
     leverage_intraday: float = 5.0
 
 

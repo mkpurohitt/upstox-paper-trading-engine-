@@ -1,0 +1,12 @@
+{"id": "ground-001", "category": "grounding", "prompt": "Price of SBIN", "expect": {"grounded_quotes": true}}
+{"id": "ground-002", "category": "grounding", "prompt": "Quote for ITC", "expect": {"grounded_quotes": true}}
+{"id": "ground-003", "category": "grounding", "prompt": "What's Axis Bank trading at?", "expect": {"grounded_quotes": true}}
+{"id": "ground-004", "category": "grounding", "prompt": "LTP of Larsen and Toubro", "expect": {"grounded_quotes": true}}
+{"id": "ground-005", "category": "grounding", "prompt": "price of maruti", "expect": {"grounded_quotes": true}}
+{"id": "ground-006", "category": "grounding", "prompt": "NIFTY option chain summary", "expect": {"grounded_chain": true}}
+{"id": "ground-007", "category": "grounding", "prompt": "BANKNIFTY PCR and max pain", "expect": {"grounded_chain": true}}
+{"id": "ground-008", "category": "grounding", "prompt": "FINNIFTY open interest summary", "expect": {"grounded_chain": true}}
+{"id": "ground-009", "category": "grounding", "prompt": "Backtest an EMA 9/21 crossover on HDFC Bank 15 minute", "expect": {"grounded_backtest": true}}
+{"id": "ground-010", "category": "grounding", "prompt": "Backtest RSI mean reversion on SBIN daily", "expect": {"grounded_backtest": true}}
+{"id": "ground-011", "category": "grounding", "prompt": "Payoff of an iron condor on NIFTY", "expect": {"grounded_payoff": true}}
+{"id": "ground-012", "category": "grounding", "prompt": "Greeks of a short straddle on BANKNIFTY", "expect": {"grounded_payoff": true}}

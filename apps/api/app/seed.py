@@ -50,6 +50,11 @@ async def main() -> None:
     from app import seed_extra
 
     await seed_extra.run(demo.id, admin.id if admin else None)
+    from ai_agent.rag import seed_corpus
+
+    async with session_scope() as db:
+        docs = await seed_corpus(db)
+    log.info("seed.rag_corpus", documents=docs)
     log.info("seed.done", demo=s.demo_user_email, admin=ADMIN_EMAIL)
     await dispose_engine()
 

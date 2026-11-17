@@ -9,7 +9,7 @@ from typing import Any
 import numpy as np
 
 from algo_common.schemas.market import Interval, OptionChain
-from algo_common.timeutils import IST, now_ist, upcoming_expiries
+from algo_common.timeutils import IST, expiry_from_date, now_ist, upcoming_expiries
 from market_data.base import MarketDataProvider
 from market_data.options import RISK_FREE, bs_greeks, bs_price_vec, implied_vol, prob_between, strike_step
 from market_data.symbols import future_symbol, option_symbol, underlying_spot_symbol
@@ -303,7 +303,7 @@ async def ratio_spreads(
 
 async def arbitrage_scan(provider: MarketDataProvider, cost_bps: float = 6.0) -> dict[str, Any]:
     """Cash-futures basis, calendar spreads, NSE-BSE gaps, put-call parity breaks."""
-    today = now_ist().date()
+    today = expiry_from_date(now_ist())
     monthly = upcoming_expiries("_MONTHLY_", today, 2)
     stocks = [a for a in EQUITIES if a.lot_size][:40]
     syms: list[str] = []

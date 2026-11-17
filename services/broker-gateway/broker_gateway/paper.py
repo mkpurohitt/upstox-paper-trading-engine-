@@ -14,6 +14,7 @@ from __future__ import annotations
 import asyncio
 import uuid
 from collections import defaultdict
+from collections.abc import Callable
 from datetime import datetime, time
 from typing import Any
 
@@ -252,11 +253,13 @@ class PaperBroker(BrokerAdapter):
 class PaperMatcher:
     """Fills resting paper orders when prices cross, and squares off MIS at 15:20 IST."""
 
-    def __init__(self, provider: MarketDataProvider | None = None, interval_s: float = 1.0) -> None:
+    def __init__(self, provider: MarketDataProvider | None = None, interval_s: float = 1.0,
+                 clock: Callable[[], datetime] | None = None) -> None:
         from market_data.registry import get_provider
 
         self.provider = provider or get_provider()
         self.interval = interval_s
+        self.clock = clock or now_ist  # injectable for tests (MIS auto square-off is time-of-day dependent)
         self._squared_off_on: set[Any] = set()
 
     async def step(self) -> int:
@@ -284,7 +287,7 @@ class PaperMatcher:
                             px = min(px, r.price) if r.side == "BUY" else max(px, r.price)
                         await router.record_fill(db, r, r.quantity - r.filled_quantity, px)
                         filled += 1
-        now = now_ist()
+        now = self.clock()
         if now.time() >= MIS_SQUARE_OFF and now.date() not in self._squared_off_on and now.weekday() < 5:
             await self.square_off_mis()
             self._squared_off_on.add(now.date())

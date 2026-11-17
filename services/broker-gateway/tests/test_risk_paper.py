@@ -70,7 +70,9 @@ async def test_resting_limit_and_stop_orders_fill_via_matcher(db, user):
     await db.commit()
     assert lim.status == "open" and sl.status == "trigger_pending"
     prov.prices["NSE:SBIN"] = 789.0
-    matcher = PaperMatcher(prov)
+    from algo_common.timeutils import IST
+
+    matcher = PaperMatcher(prov, clock=lambda: datetime(2026, 11, 16, 11, 0, tzinfo=IST))  # mid-session
     assert await matcher.step() == 1  # limit fills, stop not yet triggered
     prov.prices["NSE:SBIN"] = 779.0
     assert await matcher.step() == 1

@@ -23,7 +23,7 @@ from algo_common.bus import get_bus
 from algo_common.errors import RiskRejectedError
 from algo_common.logging import get_logger
 from algo_common.schemas.market import Interval
-from algo_common.timeutils import IST, now_ist, upcoming_expiries, utcnow
+from algo_common.timeutils import IST, expiry_from_date, now_ist, upcoming_expiries, utcnow
 from algo_db.models import Deployment, DeploymentLog
 from algo_db.session import session_scope
 from broker_gateway.base import BrokerError
@@ -291,7 +291,7 @@ class StrategyRunner:
             if spec.option_type == "FUT":
                 continue
             exch = "BSE" if und in ("SENSEX", "BANKEX") else "NSE"
-            exps = upcoming_expiries(und if spec.expiry != "monthly" else "_MONTHLY_", now_ist().date(), 2, exch)
+            exps = upcoming_expiries(und if spec.expiry != "monthly" else "_MONTHLY_", expiry_from_date(now_ist(), exch), 2, exch)
             expiry = exps[1] if spec.expiry == "next" else exps[0]
             chain = await self.provider.option_chain(und, expiry, 25)
             step = strike_step(und, chain.spot)

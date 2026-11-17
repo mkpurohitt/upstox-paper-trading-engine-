@@ -47,6 +47,7 @@ from algo_common.timeutils import (
     IST,
     MOCK_HOLIDAYS,
     NSE_OPEN,
+    expiry_from_date,
     is_market_open,
     is_trading_day,
     now_ist,
@@ -404,14 +405,14 @@ class MockProvider(MarketDataProvider):
                 "symbol": f"BSE:{a.tradingsymbol}", "exchange": Exchange.BSE, "segment": "BSE_EQ",
                 "instrument_key": f"BSE_EQ|{a.tradingsymbol}",
             }))
-        today = now_ist().date()
         daily_cache: dict[str, float] = {}
         for und in DERIVATIVE_UNDERLYINGS:
             a = BY_SYMBOL.get(underlying_spot_symbol(und))
             if a is None or not a.lot_size:
                 continue
             exch = "BSE" if und in ("SENSEX", "BANKEX") else ("MCX" if und in COMMODITIES else "NSE")
-            monthly = upcoming_expiries("_MONTHLY_", today, 3, exch)
+            ref = expiry_from_date(now_ist(), exch)
+            monthly = upcoming_expiries("_MONTHLY_", ref, 3, exch)
             for e in monthly:
                 ins = self._derivative_instrument(parse(future_symbol(und, e)))
                 if ins:
@@ -422,7 +423,7 @@ class MockProvider(MarketDataProvider):
             step = strike_step(und, spot)
             atm = atm_strike(spot, step)
             n = 15 if und in BASE_IV else 8
-            for e in upcoming_expiries(und, today, 2, exch):
+            for e in upcoming_expiries(und, ref, 2, exch):
                 for k in range(-n, n + 1):
                     for opt in ("CE", "PE"):
                         ins = self._derivative_instrument(parse(option_symbol(und, e, atm + k * step, opt)))
@@ -628,7 +629,7 @@ class MockProvider(MarketDataProvider):
     async def expiries(self, underlying: str) -> list[date]:
         und = underlying.upper()
         exch = "BSE" if und in ("SENSEX", "BANKEX") else ("MCX" if und in COMMODITIES else "NSE")
-        return upcoming_expiries(und, now_ist().date(), 6, exch)
+        return upcoming_expiries(und, expiry_from_date(now_ist(), exch), 6, exch)
 
     async def option_chain(self, underlying: str, expiry: date | None = None, strikes: int = 20) -> OptionChain:
         return await asyncio.to_thread(self._chain_sync, underlying, expiry, strikes, None)
@@ -644,7 +645,7 @@ class MockProvider(MarketDataProvider):
             raise KeyError(f"no derivatives for {underlying}")
         now = at or now_ist()
         exch = "BSE" if und in ("SENSEX", "BANKEX") else ("MCX" if und in COMMODITIES else "NSE")
-        expiries = upcoming_expiries(und, now.date(), 6, exch)
+        expiries = upcoming_expiries(und, expiry_from_date(now, exch), 6, exch)
         exp = expiry if expiry is not None else expiries[0]
         spot = self.spot_at(asset, now) if at is not None else self._live_spot(asset)[0]
         step = strike_step(und, spot)

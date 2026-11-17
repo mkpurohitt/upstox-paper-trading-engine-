@@ -60,6 +60,7 @@ dependencies = [
     { name = "algo-broker-gateway" },
     { name = "algo-common" },
     { name = "algo-db" },
+    { name = "algo-jobs" },
     { name = "algo-market-data" },
     { name = "algo-strategy-engine" },
     { name = "anthropic" },
@@ -75,6 +76,7 @@ requires-dist = [
     { name = "algo-broker-gateway", editable = "services/broker-gateway" },
     { name = "algo-common", editable = "packages/py-common" },
     { name = "algo-db", editable = "packages/db" },
+    { name = "algo-jobs", editable = "services/jobs" },
     { name = "algo-market-data", editable = "services/market-data" },
     { name = "algo-strategy-engine", editable = "services/strategy-engine" },
     { name = "anthropic", specifier = ">=0.40" },
@@ -237,6 +239,7 @@ source = { editable = "services/market-data" }
 dependencies = [
     { name = "algo-common" },
     { name = "algo-db" },
+    { name = "feedparser" },
     { name = "httpx" },
     { name = "mcp" },
     { name = "numpy" },
@@ -250,6 +253,7 @@ dependencies = [
 requires-dist = [
     { name = "algo-common", editable = "packages/py-common" },
     { name = "algo-db", editable = "packages/db" },
+    { name = "feedparser", specifier = ">=6.0.11" },
     { name = "httpx", specifier = ">=0.28" },
     { name = "mcp", specifier = ">=1.6" },
     { name = "numpy", specifier = ">=2.0" },
