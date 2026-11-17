@@ -49,11 +49,18 @@ async def _whatsapp(phone: str | None, text: str) -> None:
         await c.post(s.whatsapp_webhook_url, json={"to": phone, "text": text[:4000]})
 
 
+EVENT_FOR_KIND = {"order": "order_fills", "deployment": "deployment_status", "risk": "risk", "alert": "screen_alerts",
+                  "summary": "daily_summary"}
+
+
 async def notify(db: AsyncSession, user_id: int, title: str, body: str = "", *, kind: str = "system",
                  data: dict[str, Any] | None = None, channels: list[str] | None = None) -> Notification:
     user = await db.get(User, user_id)
     prefs = (user.notification_prefs if user else {}) or {}
     wanted = channels if channels is not None else [c for c in ("email", "telegram", "whatsapp") if prefs.get(c)]
+    event = EVENT_FOR_KIND.get(kind)
+    if event and (prefs.get("events") or {}).get(event) is False:
+        wanted = []  # user muted this event type: keep the in-app record only
     sent = ["in_app"]
     n = Notification(user_id=user_id, kind=kind, title=title[:200], body=body, data=data or {}, channels_sent=sent)
     db.add(n)

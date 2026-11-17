@@ -1,7 +1,7 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Bell, ChevronsLeft, ChevronsRight, LogOut, Moon, Search, Sun, UserRound } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, LogOut, Moon, Search, Sun, UserRound } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -28,6 +28,7 @@ import { realtime, useWsStatus } from "@/lib/ws";
 import { CommandPalette } from "./command-palette";
 import { KillSwitchButton, KillSwitchDialog } from "./kill-switch";
 import { NAV } from "./nav";
+import { DeletionBanner, NotificationsBell } from "./notifications";
 
 const INDEX_STRIP = ["NSE_INDEX:NIFTY", "NSE_INDEX:BANKNIFTY", "BSE_INDEX:SENSEX", "NSE_INDEX:INDIAVIX"];
 const LABEL: Record<string, string> = {
@@ -298,13 +299,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </span>
             </Tooltip>
             <KillSwitchButton onClick={() => setKill(true)} />
-            <Tooltip content="Notifications">
-              <Button variant="ghost" size="icon-sm" asChild>
-                <Link href="/profile?tab=notifications" aria-label="Notifications">
-                  <Bell />
-                </Link>
-              </Button>
-            </Tooltip>
+            <NotificationsBell />
             <Tooltip content="Toggle theme">
               <Button
                 variant="ghost"
@@ -318,6 +313,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <UserMenu />
           </div>
         </header>
+        <DeletionBanner />
         <main id="main" className="flex-1 px-3 pb-20 pt-4 sm:px-6 md:pb-8">
           {children}
         </main>
