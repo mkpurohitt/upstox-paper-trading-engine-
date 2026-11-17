@@ -26,7 +26,7 @@ def load_all() -> dict[str, JobFn]:
     """Import every job module so decorators register."""
     import importlib
 
-    for mod in ("backtests", "market", "rag", "news", "alerts"):
+    for mod in ("backtests", "market", "rag", "news", "alerts", "privacy"):
         try:
             importlib.import_module(f"algo_jobs.{mod}")
         except ModuleNotFoundError as exc:

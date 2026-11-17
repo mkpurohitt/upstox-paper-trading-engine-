@@ -136,7 +136,7 @@ def test_ai_quota_enforced(client):
 
     async def tiny(db):
         u = (await db.execute(select(User).where(User.email == email))).scalar_one()
-        p = Plan(code=f"tiny-{u.id}", name="Tiny", price_paise=0, limits={"ai_queries_per_day": 1, "backtests_per_day": 0})
+        p = Plan(code=f"tiny-{u.id}", name="Tiny", price_paise=0, is_active=False, limits={"ai_queries_per_day": 1, "backtests_per_day": 0})
         db.add(p)
         await db.flush()
         db.add(Subscription(user_id=u.id, plan_id=p.id, status="active"))

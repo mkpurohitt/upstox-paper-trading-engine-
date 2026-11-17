@@ -119,3 +119,28 @@ def xirr(cashflows: list[tuple[date, float]], guess: float = 0.1) -> float | Non
         else:
             lo = mid
     return round((lo + hi) / 2 * 100, 2)
+
+
+def realised_by_day(fills: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Average-cost replay of fills {ts, symbol, product, side, quantity, price, charges} -> daily realised P&L
+    (net of charges) with a running total. Mirrors the paper broker's ledger."""
+    book: dict[tuple[str, str], list[float]] = defaultdict(lambda: [0.0, 0.0])  # qty, avg
+    days: dict[date, float] = defaultdict(float)
+    for f in sorted(fills, key=lambda x: x["ts"]):
+        key = (f["symbol"], f.get("product", "MIS"))
+        q, avg = book[key]
+        signed = f["quantity"] if f["side"] == "BUY" else -f["quantity"]
+        d = f["ts"].date()
+        days[d] -= float(f.get("charges") or 0)
+        if q == 0 or (q > 0) == (signed > 0):
+            book[key] = [q + signed, (avg * abs(q) + f["price"] * abs(signed)) / (abs(q) + abs(signed))]
+        else:
+            closing = min(abs(q), abs(signed))
+            days[d] += (f["price"] - avg) * closing * (1 if q > 0 else -1)
+            nq = q + signed
+            book[key] = [nq, f["price"] if abs(signed) > abs(q) else (0.0 if nq == 0 else avg)]
+    out, cum = [], 0.0
+    for d in sorted(days):
+        cum += days[d]
+        out.append({"date": d.isoformat(), "realised": round(days[d], 2), "cumulative": round(cum, 2)})
+    return out

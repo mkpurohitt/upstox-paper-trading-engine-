@@ -42,6 +42,8 @@ class UserOut(ORM):
     notification_prefs: dict[str, Any] = {}
     created_at: datetime
     plan: str = "free"
+    pan_last4: str | None = None
+    deletion_requested_at: datetime | None = None
 
 
 class TokenOut(BaseModel):

@@ -37,7 +37,7 @@ async def _scheduler() -> None:
     from algo_jobs.registry import JOBS, load_all
 
     load_all()
-    every = {"run_screen_alerts": 300, "refresh_news": 900}
+    every = {"run_screen_alerts": 300, "refresh_news": 900, "purge_deleted_accounts": 6 * 3600}
     last: dict[str, float] = {}
     loop = asyncio.get_running_loop()
     while True:

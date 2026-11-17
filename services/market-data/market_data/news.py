@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import re
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from typing import Any
 
 from algo_common.timeutils import now_ist
@@ -157,3 +157,56 @@ def mock_articles(symbol: str | None = None, count: int = 12, day: datetime | No
 
 
 INDEX_NAMES = [a.tradingsymbol for a in INDICES]
+
+
+# ---------------------------------------------------------------- economic calendar (indicative)
+
+_RBI_MPC_MONTHS = (2, 4, 6, 8, 10, 12)  # bi-monthly policy meetings; decision on the final day
+_FOMC_MONTHS = (1, 3, 5, 6, 7, 9, 10, 12)
+
+
+def _nth_weekday(year: int, month: int, weekday: int, n: int) -> date:
+    d = date(year, month, 1)
+    while d.weekday() != weekday:
+        d += timedelta(days=1)
+    return d + timedelta(days=7 * (n - 1))
+
+
+def _weekday_on_or_before(d: date) -> date:
+    while d.weekday() >= 5:
+        d -= timedelta(days=1)
+    return d
+
+
+def economic_calendar(start: date, days: int = 45) -> list[dict[str, Any]]:
+    """Indicative schedule of recurring macro events that move Indian markets.
+
+    Dates follow the usual release pattern (e.g. CPI on the 12th, RBI MPC decisions in the first week of
+    even months, GDP at the end of the quarter's second month); always verify against official calendars."""
+    end = start + timedelta(days=days)
+    out: list[dict[str, Any]] = []
+    y, m = start.year, start.month
+    while date(y, m, 1) <= end:
+        evs: list[tuple[date, str, str, str]] = [
+            (_weekday_on_or_before(date(y, m, 12)), "India CPI inflation (YoY)", "IN", "high"),
+            (_weekday_on_or_before(date(y, m, 14)), "India WPI inflation", "IN", "medium"),
+            (_weekday_on_or_before(date(y, m, 28)), "India IIP / core sector output", "IN", "medium"),
+            (_nth_weekday(y, m, 4, 1) if m != 1 else _nth_weekday(y, m, 4, 2), "US non-farm payrolls", "US", "high"),
+            (_weekday_on_or_before(date(y, m, 13)), "US CPI", "US", "high"),
+            (date(y, m, 1) if date(y, m, 1).weekday() < 5 else _nth_weekday(y, m, 0, 1), "GST collections & auto sales", "IN", "medium"),
+        ]
+        if m in _RBI_MPC_MONTHS:
+            evs.append((_nth_weekday(y, m, 2, 1) + timedelta(days=2), "RBI monetary policy decision", "IN", "high"))
+        if m in _FOMC_MONTHS:
+            evs.append((_nth_weekday(y, m, 2, 3), "US FOMC rate decision", "US", "high"))
+        if m in (2, 5, 8, 11):
+            evs.append((_weekday_on_or_before(date(y, m, 28)), "India GDP (quarterly)", "IN", "high"))
+        if m == 2:
+            evs.append((date(y, 2, 1), "Union Budget", "IN", "high"))
+        for d, title, country, impact in evs:
+            if start <= d <= end:
+                out.append({"date": d.isoformat(), "title": title, "country": country, "impact": impact, "indicative": True})
+        m += 1
+        if m > 12:
+            m, y = 1, y + 1
+    return sorted(out, key=lambda e: (e["date"], e["country"] != "IN"))
