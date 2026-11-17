@@ -29,4 +29,25 @@ async def start(rt: Runtime) -> None:
 
     rt.spawn("paper-matcher", PaperMatcher(provider).run())
     rt.spawn("runner-manager", RunnerManager(provider).run())
+    rt.spawn("scheduler", _scheduler())
+
+
+async def _scheduler() -> None:
+    """In-process stand-in for arq cron jobs (screen alerts, news refresh...)."""
+    from algo_jobs.registry import JOBS, load_all
+
+    load_all()
+    every = {"run_screen_alerts": 300, "refresh_news": 900}
+    last: dict[str, float] = {}
+    loop = asyncio.get_running_loop()
+    while True:
+        for name, period in every.items():
+            fn = JOBS.get(name)
+            if fn and loop.time() - last.get(name, -1e9) >= period:
+                last[name] = loop.time()
+                try:
+                    await fn({"embedded": True})
+                except Exception:
+                    log.exception("scheduler.job_failed", job=name)
+        await asyncio.sleep(30)
     await asyncio.sleep(0)

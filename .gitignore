@@ -35,3 +35,4 @@ test-results/
 var/
 algo-platform.zip
 .DS_Store
+.next-build/

@@ -34,6 +34,7 @@ const csp = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  distDir: process.env.NEXT_DIST_DIR ?? ".next",
   poweredByHeader: false,
   transpilePackages: ["@algo/ui", "@algo/api-client"],
   experimental: { optimizePackageImports: ["lucide-react", "recharts", "framer-motion"] },

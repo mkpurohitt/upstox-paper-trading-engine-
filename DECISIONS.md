@@ -64,3 +64,15 @@ Ambiguities in the brief, the option chosen, and why. Newest decisions are appen
 | 41 | **Broker credentials are AES-GCM encrypted with owner-bound AAD** (`user:{id}:broker:{name}`), never returned by the API, never audited; disconnecting erases them. | Brief §3 + OWASP A02. |
 | 42 | **Live order sync polls order books** (`sync_live`), while broker postbacks/websockets remain an adapter override point. | Polling works uniformly across all ten brokers; push feeds are broker-specific. |
 | 43 | **The live runner drains the bus in a separate pump task.** | Cancelling an async generator's `__anext__` (e.g. via `wait_for` timeouts) closes it. This was caught by the end-to-end deployment smoke test. |
+
+## Phase 5 — analysis dashboards
+
+| # | Decision | Rationale |
+|---|----------|-----------|
+| 44 | **Analytics live in `strategy_engine.analytics`** (options, technical, fundamentals, quant, pairs, screener) as pure async functions over a `MarketDataProvider`; the API layer only validates and caches. | The same functions back the dashboards, the AI agent tools (Phase 6) and the screen-alert job, so numbers agree everywhere. |
+| 45 | **Payoff maths exists twice**: server-side (`analytics.options.payoff`, with POP and Greeks) and client-side (`lib/options.ts`, Black-Scholes, unit-tested against the same invariants). | Sliders (days forward, IV shift, price range) must respond instantly without a round trip; the server stays the source of truth for POP and Greeks. |
+| 46 | **Chain IVs are computed against the forward**, and arbitrage scans report gross and net-of-cost figures with an explicit `cost_bps` input. | Avoids phantom put-call-parity "violations" caused by carry; makes cost assumptions visible. |
+| 47 | **Fundamentals are clearly labelled `source: "mock"`** until a fundamentals vendor is configured (Upstox/NSE do not provide audited financials). The UI shows a "sample data" badge. | Never present synthetic numbers as real. |
+| 48 | **Saved screens store the full query**; alerting screens are re-run every 5 minutes by `run_screen_alerts` (embedded scheduler or arq cron), which notifies only on *new* matches. | Avoids repeat notifications; the per-plan `screens` quota is enforced on save. |
+| 49 | **Options structures can be sent to the Builder** as an options-DSL draft with ATM-relative strikes, and paper-traded as a basket (hedges first). | Closes the loop analysis → backtest → deploy; ATM-relative strikes make the backtest meaningful across dates. |
+| 50 | **The straddle decay curve switches to hourly steps under 3 days to expiry**; the payoff chart's default price range scales with the expected move (≈4σ). | On weekly-expiry days a daily grid gives a two-point line and a fixed ±8% range hides the payoff shape. |

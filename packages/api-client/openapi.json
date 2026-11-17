@@ -3785,6 +3785,1089 @@
           }
         }
       }
+    },
+    "/api/analysis/option-chain": {
+      "get": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Option Chain",
+        "operationId": "option_chain_api_analysis_option_chain_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "underlying",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "NIFTY",
+              "title": "Underlying"
+            }
+          },
+          {
+            "name": "expiry",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Expiry"
+            }
+          },
+          {
+            "name": "strikes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 40,
+              "default": 20,
+              "title": "Strikes"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Option Chain Api Analysis Option Chain Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/analysis/arbitrage": {
+      "get": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Arbitrage",
+        "operationId": "arbitrage_api_analysis_arbitrage_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cost_bps",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 100,
+              "minimum": 0,
+              "default": 6.0,
+              "title": "Cost Bps"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Arbitrage Api Analysis Arbitrage Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/analysis/ratio-spreads": {
+      "post": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Ratio Spreads",
+        "operationId": "ratio_spreads_api_analysis_ratio_spreads_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RatioIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Ratio Spreads Api Analysis Ratio Spreads Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/analysis/straddle": {
+      "get": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Straddle",
+        "operationId": "straddle_api_analysis_straddle_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "underlying",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "NIFTY",
+              "title": "Underlying"
+            }
+          },
+          {
+            "name": "expiry",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Expiry"
+            }
+          },
+          {
+            "name": "otm_steps",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 0,
+              "default": 0,
+              "title": "Otm Steps"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Straddle Api Analysis Straddle Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/analysis/payoff": {
+      "post": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Payoff",
+        "operationId": "payoff_api_analysis_payoff_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayoffIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Payoff Api Analysis Payoff Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/analysis/technical": {
+      "get": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Technical Dash",
+        "operationId": "technical_dash_api_analysis_technical_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "NSE:RELIANCE",
+              "title": "Symbol"
+            }
+          },
+          {
+            "name": "interval",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "1d",
+              "title": "Interval"
+            }
+          },
+          {
+            "name": "indicators",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "EMA:20,EMA:50,BBANDS,RSI,MACD",
+              "title": "Indicators"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Technical Dash Api Analysis Technical Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/analysis/fundamentals": {
+      "get": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Fundamentals Dash",
+        "operationId": "fundamentals_dash_api_analysis_fundamentals_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "NSE:RELIANCE",
+              "title": "Symbol"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Fundamentals Dash Api Analysis Fundamentals Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/analysis/quant": {
+      "get": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Quant Dash",
+        "operationId": "quant_dash_api_analysis_quant_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "NSE:HDFCBANK",
+              "title": "Symbol"
+            }
+          },
+          {
+            "name": "basket",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "NSE:ICICIBANK,NSE:SBIN,NSE:KOTAKBANK,NSE:AXISBANK",
+              "title": "Basket"
+            }
+          },
+          {
+            "name": "benchmark",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "NSE_INDEX:NIFTY",
+              "title": "Benchmark"
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2500,
+              "minimum": 200,
+              "default": 1095,
+              "title": "Days"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Quant Dash Api Analysis Quant Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/analysis/pairs": {
+      "get": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Pairs Dash",
+        "operationId": "pairs_dash_api_analysis_pairs_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "a",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "NSE:HDFCBANK",
+              "title": "A"
+            }
+          },
+          {
+            "name": "b",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "NSE:ICICIBANK",
+              "title": "B"
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2500,
+              "minimum": 120,
+              "default": 730,
+              "title": "Days"
+            }
+          },
+          {
+            "name": "lookback",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 10,
+              "default": 60,
+              "title": "Lookback"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Pairs Dash Api Analysis Pairs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/analysis/pairs/scan": {
+      "get": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Pairs Scan",
+        "operationId": "pairs_scan_api_analysis_pairs_scan_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sector",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sector"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "title": "Response Pairs Scan Api Analysis Pairs Scan Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/analysis/screener/fields": {
+      "get": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Screener Fields",
+        "operationId": "screener_fields_api_analysis_screener_fields_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "type": "object"
+                  },
+                  "type": "object",
+                  "title": "Response Screener Fields Api Analysis Screener Fields Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/analysis/screener/run": {
+      "post": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Screener Run",
+        "operationId": "screener_run_api_analysis_screener_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScreenQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Screener Run Api Analysis Screener Run Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/analysis/screens": {
+      "get": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "List Screens",
+        "operationId": "list_screens_api_analysis_screens_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ScreenOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Screens Api Analysis Screens Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Save Screen",
+        "operationId": "save_screen_api_analysis_screens_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScreenIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreenOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/analysis/screens/{screen_id}": {
+      "put": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Update Screen",
+        "operationId": "update_screen_api_analysis_screens__screen_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "screen_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Screen Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScreenIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreenOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "analysis"
+        ],
+        "summary": "Delete Screen",
+        "operationId": "delete_screen_api_analysis_screens__screen_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "screen_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Screen Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/watchlists": {
+      "get": {
+        "tags": [
+          "watchlists"
+        ],
+        "summary": "Lists",
+        "operationId": "lists_api_watchlists_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/WatchlistOut"
+                  },
+                  "type": "array",
+                  "title": "Response Lists Api Watchlists Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "watchlists"
+        ],
+        "summary": "Create",
+        "operationId": "create_api_watchlists_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WatchlistIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WatchlistOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/watchlists/{wid}": {
+      "put": {
+        "tags": [
+          "watchlists"
+        ],
+        "summary": "Update",
+        "operationId": "update_api_watchlists__wid__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "wid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Wid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WatchlistIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WatchlistOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "watchlists"
+        ],
+        "summary": "Delete",
+        "operationId": "delete_api_watchlists__wid__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "wid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Wid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -5692,6 +6775,84 @@
         ],
         "title": "KillSwitchOut"
       },
+      "LegIn": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "BUY",
+              "SELL"
+            ],
+            "title": "Action"
+          },
+          "option_type": {
+            "type": "string",
+            "enum": [
+              "CE",
+              "PE",
+              "FUT"
+            ],
+            "title": "Option Type"
+          },
+          "strike": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Strike"
+          },
+          "offset": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Offset"
+          },
+          "lots": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Lots",
+            "default": 1
+          },
+          "premium": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Premium"
+          },
+          "iv": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iv"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action",
+          "option_type"
+        ],
+        "title": "LegIn"
+      },
       "ListingIn": {
         "properties": {
           "visibility": {
@@ -6845,6 +8006,91 @@
         ],
         "title": "PatternCondition"
       },
+      "PayoffIn": {
+        "properties": {
+          "underlying": {
+            "type": "string",
+            "title": "Underlying",
+            "default": "NIFTY"
+          },
+          "expiry": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiry"
+          },
+          "legs": {
+            "items": {
+              "$ref": "#/components/schemas/LegIn"
+            },
+            "type": "array",
+            "maxItems": 12,
+            "title": "Legs"
+          },
+          "structure": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Structure",
+            "description": "one of ['bear_put_spread', 'bull_call_spread', 'iron_condor', 'iron_fly', 'long_call_butterfly', 'long_straddle', 'long_strangle', 'short_straddle', 'short_strangle'] (fills `legs`)"
+          },
+          "width": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Width"
+          },
+          "wing": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wing"
+          },
+          "days_forward": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Days Forward",
+            "default": 0
+          },
+          "spot_shift_pct": {
+            "type": "number",
+            "maximum": 30.0,
+            "minimum": -30.0,
+            "title": "Spot Shift Pct",
+            "default": 0
+          },
+          "iv_shift": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": -50.0,
+            "title": "Iv Shift",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "PayoffIn"
+      },
       "PositionOut": {
         "properties": {
           "symbol": {
@@ -7217,6 +8463,83 @@
           "ltp"
         ],
         "title": "Quote"
+      },
+      "RatioIn": {
+        "properties": {
+          "underlying": {
+            "type": "string",
+            "title": "Underlying",
+            "default": "NIFTY"
+          },
+          "expiry": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiry"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "CE",
+              "PE"
+            ],
+            "title": "Kind",
+            "default": "CE"
+          },
+          "ratios": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Ratios"
+          },
+          "min_credit": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Credit"
+          },
+          "max_debit": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Debit",
+            "default": 0.0
+          },
+          "delta_min": {
+            "type": "number",
+            "title": "Delta Min",
+            "default": 0.05
+          },
+          "delta_max": {
+            "type": "number",
+            "title": "Delta Max",
+            "default": 0.6
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 25
+          }
+        },
+        "type": "object",
+        "title": "RatioIn"
       },
       "Reentry": {
         "properties": {
@@ -7642,6 +8965,182 @@
         "additionalProperties": false,
         "type": "object",
         "title": "Schedule"
+      },
+      "ScreenCondition": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "Field"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              ">",
+              "<",
+              ">=",
+              "<=",
+              "==",
+              "between"
+            ],
+            "title": "Op"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "value2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value2"
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "op",
+          "value"
+        ],
+        "title": "ScreenCondition"
+      },
+      "ScreenIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "query": {
+            "$ref": "#/components/schemas/ScreenQuery"
+          },
+          "alert_enabled": {
+            "type": "boolean",
+            "title": "Alert Enabled",
+            "default": false
+          },
+          "schedule_minutes": {
+            "type": "integer",
+            "maximum": 1440.0,
+            "minimum": 5.0,
+            "title": "Schedule Minutes",
+            "default": 60
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "query"
+        ],
+        "title": "ScreenIn"
+      },
+      "ScreenOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "query": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Query"
+          },
+          "alert_enabled": {
+            "type": "boolean",
+            "title": "Alert Enabled"
+          },
+          "schedule_minutes": {
+            "type": "integer",
+            "title": "Schedule Minutes"
+          },
+          "last_run_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Run At"
+          },
+          "last_results": {
+            "items": {},
+            "type": "array",
+            "title": "Last Results",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "query",
+          "alert_enabled",
+          "schedule_minutes"
+        ],
+        "title": "ScreenOut"
+      },
+      "ScreenQuery": {
+        "properties": {
+          "universe": {
+            "type": "string",
+            "title": "Universe",
+            "default": "NIFTY100"
+          },
+          "logic": {
+            "type": "string",
+            "enum": [
+              "all",
+              "any"
+            ],
+            "title": "Logic",
+            "default": "all"
+          },
+          "conditions": {
+            "items": {
+              "$ref": "#/components/schemas/ScreenCondition"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "title": "Conditions"
+          },
+          "sectors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sectors"
+          },
+          "sort_by": {
+            "type": "string",
+            "title": "Sort By",
+            "default": "market_cap_cr"
+          },
+          "descending": {
+            "type": "boolean",
+            "title": "Descending",
+            "default": true
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 200.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "default": 50
+          }
+        },
+        "type": "object",
+        "title": "ScreenQuery"
       },
       "SectorStock": {
         "properties": {
@@ -8778,6 +10277,55 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "WatchlistIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "symbols": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "title": "Symbols"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "WatchlistIn"
+      },
+      "WatchlistOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "symbols": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Symbols"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "symbols"
+        ],
+        "title": "WatchlistOut"
       },
       "app__schemas__auth__LoginIn": {
         "properties": {
