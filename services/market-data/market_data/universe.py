@@ -37,20 +37,20 @@ class Asset:
 
 
 INDICES: list[Asset] = [
-    Asset("NSE_INDEX:NIFTY", "Nifty 50", "index", 26_180, 10_860, 0.14, lot_size=65, freeze_qty=1800, base_volume=0),
-    Asset("NSE_INDEX:BANKNIFTY", "Nifty Bank", "index", 59_820, 27_390, 0.17, lot_size=30, freeze_qty=900, beta=1.15, base_volume=0),
-    Asset("NSE_INDEX:FINNIFTY", "Nifty Financial Services", "index", 27_940, 11_330, 0.16, lot_size=60, freeze_qty=1800, beta=1.1, base_volume=0),
-    Asset("NSE_INDEX:MIDCPNIFTY", "Nifty Midcap Select", "index", 13_880, 5_400, 0.18, lot_size=120, freeze_qty=2800, beta=1.2, base_volume=0),
-    Asset("NSE_INDEX:NIFTYIT", "Nifty IT", "index", 36_400, 14_400, 0.2, beta=0.8, base_volume=0),
-    Asset("NSE_INDEX:NIFTYPHARMA", "Nifty Pharma", "index", 22_800, 8_900, 0.17, beta=0.6, base_volume=0),
-    Asset("NSE_INDEX:NIFTYAUTO", "Nifty Auto", "index", 27_100, 10_600, 0.19, beta=1.0, base_volume=0),
-    Asset("NSE_INDEX:NIFTYFMCG", "Nifty FMCG", "index", 56_200, 29_800, 0.13, beta=0.6, base_volume=0),
-    Asset("NSE_INDEX:NIFTYMETAL", "Nifty Metal", "index", 10_150, 3_300, 0.25, beta=1.3, base_volume=0),
-    Asset("NSE_INDEX:NIFTYREALTY", "Nifty Realty", "index", 960, 240, 0.28, beta=1.4, base_volume=0),
-    Asset("NSE_INDEX:NIFTYENERGY", "Nifty Energy", "index", 36_900, 14_500, 0.19, beta=1.0, base_volume=0),
+    Asset("NSE_INDEX:NIFTY", "Nifty 50", "index", 26_180, 10_860, 0.13, lot_size=65, freeze_qty=1800, base_volume=0),
+    Asset("NSE_INDEX:BANKNIFTY", "Nifty Bank", "index", 59_820, 27_390, 0.185, lot_size=30, freeze_qty=900, beta=1.15, base_volume=0),
+    Asset("NSE_INDEX:FINNIFTY", "Nifty Financial Services", "index", 27_940, 11_330, 0.185, lot_size=60, freeze_qty=1800, beta=1.1, base_volume=0),
+    Asset("NSE_INDEX:MIDCPNIFTY", "Nifty Midcap Select", "index", 13_880, 5_400, 0.155, lot_size=120, freeze_qty=2800, beta=1.2, base_volume=0),
+    Asset("NSE_INDEX:NIFTYIT", "Nifty IT", "index", 36_400, 14_400, 0.185, beta=0.8, base_volume=0),
+    Asset("NSE_INDEX:NIFTYPHARMA", "Nifty Pharma", "index", 22_800, 8_900, 0.175, beta=0.6, base_volume=0),
+    Asset("NSE_INDEX:NIFTYAUTO", "Nifty Auto", "index", 27_100, 10_600, 0.2, beta=1.0, base_volume=0),
+    Asset("NSE_INDEX:NIFTYFMCG", "Nifty FMCG", "index", 56_200, 29_800, 0.14, beta=0.6, base_volume=0),
+    Asset("NSE_INDEX:NIFTYMETAL", "Nifty Metal", "index", 10_150, 3_300, 0.29, beta=1.3, base_volume=0),
+    Asset("NSE_INDEX:NIFTYREALTY", "Nifty Realty", "index", 960, 240, 0.36, beta=1.4, base_volume=0),
+    Asset("NSE_INDEX:NIFTYENERGY", "Nifty Energy", "index", 36_900, 14_500, 0.25, beta=1.0, base_volume=0),
     Asset("NSE_INDEX:INDIAVIX", "India VIX", "index", 12.8, 16.3, 0.85, beta=-1.0, base_volume=0),
-    Asset("BSE_INDEX:SENSEX", "S&P BSE Sensex", "index", 85_640, 36_070, 0.14, lot_size=20, freeze_qty=1000, base_volume=0),
-    Asset("BSE_INDEX:BANKEX", "S&P BSE Bankex", "index", 66_100, 30_800, 0.17, lot_size=30, freeze_qty=900, beta=1.15, base_volume=0),
+    Asset("BSE_INDEX:SENSEX", "S&P BSE Sensex", "index", 85_640, 36_070, 0.13, lot_size=20, freeze_qty=1000, base_volume=0),
+    Asset("BSE_INDEX:BANKEX", "S&P BSE Bankex", "index", 66_100, 30_800, 0.185, lot_size=30, freeze_qty=900, beta=1.15, base_volume=0),
 ]
 
 _E = "equity"
@@ -144,6 +144,16 @@ NIFTY50 = [a.symbol for a in EQUITIES][:50]
 NIFTY_BANK = ["NSE:HDFCBANK", "NSE:ICICIBANK", "NSE:SBIN", "NSE:KOTAKBANK", "NSE:AXISBANK", "NSE:INDUSINDBK",
               "NSE:PNB", "NSE:BANKBARODA"]
 
+# Index -> constituents used by the mock to build index levels (cap-weighted at the anchor date), so an index
+# always agrees with its stocks. Indices not listed (MIDCPNIFTY, INDIAVIX) are factor-driven series.
+INDEX_CONSTITUENTS: dict[str, list[str]] = {
+    "NSE_INDEX:NIFTY": NIFTY50,
+    "BSE_INDEX:SENSEX": [a.symbol for a in sorted(EQUITIES[:50], key=lambda a: -(a.mcap_cr or 0))[:30]],
+    "NSE_INDEX:BANKNIFTY": NIFTY_BANK,
+    "BSE_INDEX:BANKEX": NIFTY_BANK,
+    **{idx: [a.symbol for a in EQUITIES if a.sector == sector] for sector, idx in SECTOR_INDEX.items()},
+}
+
 UNIVERSES: dict[str, list[str]] = {
     "NIFTY50": NIFTY50,
     "NIFTY100": [a.symbol for a in EQUITIES],
@@ -156,8 +166,8 @@ DERIVATIVE_UNDERLYINGS = ["NIFTY", "BANKNIFTY", "FINNIFTY", "MIDCPNIFTY", "SENSE
     a.tradingsymbol for a in EQUITIES if a.lot_size
 ] + [a.tradingsymbol for a in COMMODITY_ASSETS]
 
-# Mock implied-volatility base levels by underlying (decimal)
-BASE_IV = {"NIFTY": 0.12, "BANKNIFTY": 0.145, "FINNIFTY": 0.14, "MIDCPNIFTY": 0.17, "SENSEX": 0.125, "BANKEX": 0.15}
+# Business-time (252-day) implied vol at the long-run VIX level; ~10% above realised vol (variance risk premium).
+BASE_IV = {"NIFTY": 0.142, "BANKNIFTY": 0.2, "FINNIFTY": 0.2, "MIDCPNIFTY": 0.17, "SENSEX": 0.142, "BANKEX": 0.2}
 
 
 def asset_for_underlying(underlying: str) -> Asset | None:

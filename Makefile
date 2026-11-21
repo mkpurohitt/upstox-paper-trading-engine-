@@ -1,7 +1,6 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 COMPOSE := docker compose
-LITE_DB := sqlite+aiosqlite:///$(CURDIR)/var/algo.db
 
 help: ## Show targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -22,13 +21,8 @@ down: ## Stop the stack
 logs: ## Tail logs
 	$(COMPOSE) logs -f --tail=100
 
-dev-lite: ## No Docker: SQLite + in-process workers, API on :8000 and web on :3000
-	@mkdir -p var
-	@echo "API  -> http://localhost:8000/docs   Web -> http://localhost:3000"
-	@trap 'kill 0' EXIT; \
-	(cd apps/api && DATABASE_URL=$(LITE_DB) EMBEDDED_WORKERS=true LOG_JSON=false uv run python -m app.seed && \
-	 DATABASE_URL=$(LITE_DB) EMBEDDED_WORKERS=true LOG_JSON=false uv run uvicorn app.main:app --port 8000 --reload) & \
-	(pnpm --filter @algo/web dev) & wait
+dev-lite: ## No Docker: SQLite + in-process workers, API on :8000 and web on :3000 (same as scripts/dev.py)
+	uv run python scripts/dev.py
 
 migrate: ## Apply Alembic migrations
 	cd apps/api && uv run alembic upgrade head

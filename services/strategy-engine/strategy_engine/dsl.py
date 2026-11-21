@@ -27,11 +27,11 @@ Example (EMA crossover)::
 from __future__ import annotations
 
 import re
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-DSL_VERSION = "1.0"
+DSL_VERSION: Final = "1.0"
 _ID = re.compile(r"^[a-z][a-z0-9_]{0,31}$")
 _HHMM = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
 
@@ -39,6 +39,7 @@ Timeframe = Literal["1m", "3m", "5m", "15m", "30m", "1h", "1d"]
 CompareOp = Literal[">", "<", ">=", "<=", "==", "crosses_above", "crosses_below"]
 PriceField = Literal["open", "high", "low", "close", "volume", "hl2", "hlc3", "ohlc4"]
 DayName = Literal["MON", "TUE", "WED", "THU", "FRI"]
+_WEEKDAYS: tuple[DayName, ...] = ("MON", "TUE", "WED", "THU", "FRI")
 
 
 class _M(BaseModel):
@@ -202,7 +203,7 @@ class Schedule(_M):
     entry_after: str | None = "09:20"
     entry_before: str | None = "15:00"
     square_off: str | None = "15:15"
-    days: list[DayName] = Field(default_factory=lambda: ["MON", "TUE", "WED", "THU", "FRI"])
+    days: list[DayName] = Field(default_factory=lambda: list(_WEEKDAYS))
 
     @field_validator("entry_after", "entry_before", "square_off")
     @classmethod

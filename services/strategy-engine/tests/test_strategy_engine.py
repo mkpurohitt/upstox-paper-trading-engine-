@@ -160,6 +160,55 @@ def test_event_engine_square_off():
     assert exit_ts.strftime("%H:%M") == "15:15"
 
 
+def test_trailing_stop_does_not_assume_the_high_came_first():
+    """A bar whose high would ratchet the trailing stop above its own low must not exit on that same bar: OHLC does
+    not say whether the low came before the high. The ratcheted stop applies from the next bar."""
+    dsl = StrategyDSL.model_validate({
+        "name": "t", "kind": "equity", "universe": {"symbols": ["NSE:T"]}, "timeframe": "15m", "product": "CNC",
+        "entry": {"long": {"kind": "all", "conditions": [{"kind": "compare", "left": {"type": "price", "field": "close"},
+                                                          "op": ">", "right": {"type": "const", "value": 0}}]}},
+        "exit": {"trailing_sl": {"type": "percent", "value": 1.0, "activate_after": 0.5}},
+        "sizing": {"mode": "fixed_qty", "value": 10},
+        "schedule": {"entry_after": None, "entry_before": None, "square_off": None},
+    })
+    idx = pd.date_range("2026-01-05 03:45", periods=4, freq="15min", tz="UTC")
+    df = pd.DataFrame({"open": [100, 100, 100.5, 102.6], "high": [100, 100.5, 103, 102.7],
+                       "low": [100, 99.9, 101.5, 101.0], "close": [100, 100.5, 102.8, 101.2], "volume": 1.0}, index=idx)
+    res = EventEngine(dsl, _params(), {"NSE:T": InstrumentMeta("NSE:T")}).run({"NSE:T": df})
+    t = res.trades[0]
+    # entry at bar 1's open (100); bar 2 (high 103, low 101.5) must not stop out at 103 x 0.99 = 101.97;
+    # bar 3 trades through the ratcheted stop and exits there
+    assert t["exit_reason"] == "stop_loss" and pd.Timestamp(t["exit_ts"]) == idx[3]
+    assert t["exit_price"] == pytest.approx(101.97, abs=0.05)
+
+
+def test_trailing_stop_backtest_is_unbiased_on_a_random_walk():
+    """With zero costs, a trailing-stop strategy on a driftless random walk must not lose money systematically."""
+    rng = np.random.default_rng(7)
+    n = 26 * 1500
+    closes = 1000 * np.exp(np.cumsum(rng.normal(0, 0.002, n)))
+    o = np.concatenate([[closes[0]], closes[:-1]])
+    wick = np.abs(rng.normal(0, 0.0012, (2, n)))
+    idx = pd.date_range("2025-01-01 03:45", periods=n, freq="15min", tz="UTC")
+    df = pd.DataFrame({"open": o, "high": np.maximum(o, closes) * (1 + wick[0]), "low": np.minimum(o, closes) * (1 - wick[1]),
+                       "close": closes, "volume": 1.0}, index=idx)
+    t = {**TEMPLATES[0], "universe": {"symbols": ["NSE:T"]}, "risk": {}, "product": "CNC",
+         "schedule": {"entry_after": None, "entry_before": None, "square_off": None},
+         "exit": {**TEMPLATES[0]["exit"], "stop_loss": None, "target": None}}
+    dsl = StrategyDSL.model_validate(t)
+
+    class Free(CostModel):
+        def charges(self, **kw):  # type: ignore[override]
+            return type(super().charges(**kw))()
+
+    eng = EventEngine(dsl, _params(), {"NSE:T": InstrumentMeta("NSE:T")})
+    eng.costs = Free("zerodha")
+    pnl = np.array([x["net_pnl"] for x in eng.run({"NSE:T": df}).trades])
+    assert len(pnl) > 300
+    t_stat = pnl.mean() / (pnl.std() / math.sqrt(len(pnl)))
+    assert abs(t_stat) < 3.0, t_stat
+
+
 async def _mock_frames(symbols, interval, days):
     p = MockProvider()
     end = now_ist()

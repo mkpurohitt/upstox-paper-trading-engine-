@@ -99,7 +99,7 @@ def support_resistance(df: pd.DataFrame, window: int = 5, tolerance_pct: float =
         else:
             clusters.append([p])
     last = float(df["close"].iloc[-1]) if n else 0.0
-    levels = []
+    levels: list[dict[str, Any]] = []
     for cl in clusters:
         price = float(np.mean([x[0] for x in cl]))
         strength = sum(0.5 + i / n for _, i, _ in cl)

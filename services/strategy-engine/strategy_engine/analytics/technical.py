@@ -48,7 +48,8 @@ async def technical_dashboard(provider: MarketDataProvider, symbol: str, interva
     df = await frame_for(provider, symbol, interval)
     if df.empty:
         raise ValueError(f"no data for {symbol}")
-    overlays, oscillators = [], []
+    overlays: list[dict[str, Any]] = []
+    oscillators: list[dict[str, Any]] = []
     for spec in indicators:
         kind, _, arg = spec.partition(":")
         kind = kind.upper()

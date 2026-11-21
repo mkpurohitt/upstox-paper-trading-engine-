@@ -26,6 +26,8 @@
 | `ORDER_RATE_LIMIT_PER_SEC` | Per-client per-exchange orders/second ceiling (default 8; SEBI threshold is 10). |
 | `ALGO_ID_PREFIX` | Prefix for Algo-ID tags until exchange-assigned IDs are available. |
 | `RAZORPAY_KEY_ID/SECRET/WEBHOOK_SECRET` | Payments; test keys start with `rzp_test_`. Without keys, checkout is simulated (non-production only). |
+| `PAPER_MARKET_HOURS` | `true` (default): paper orders placed while the exchange is closed queue as after-market orders and fill at the next open. `false` fills at any hour (used by the test suites). |
+| `REDIS_URL=none` | Forces the in-process bus/cache even if a Redis URL is set elsewhere (single-process runs). |
 
 ## Kill switch procedure
 

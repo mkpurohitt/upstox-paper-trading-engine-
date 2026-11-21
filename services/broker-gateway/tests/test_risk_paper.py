@@ -186,3 +186,50 @@ async def test_freeze_quantity_slicing(db, user):
                               OrderRequest(symbol="NFO:NIFTY17NOV2626200CE", side=Side.BUY, quantity=65 * 30, product=Product.NRML))
     assert [r.quantity for r in rows] == [1755, 195]  # NIFTY freeze 1800 -> 27 lots per slice
     assert rows[1].parent_order_id == rows[0].id
+
+
+async def test_day_pnl_marks_carried_positions_from_previous_close(db, user):
+    """An old holding bought at 1000 that closed yesterday at 900 and trades at 910 today made +10/share today,
+    not -90: the daily loss limit must not block new orders because of losses booked on earlier days."""
+    from datetime import timedelta
+
+    from algo_db.models import Order
+
+    class PrevClose(FixedPrices):
+        async def quotes(self, symbols: list[str]) -> dict[str, Quote]:
+            now = datetime.now(UTC)
+            return {s: Quote(symbol=s, ts=now, ltp=self.prices[s], close=900.0) for s in symbols if s in self.prices}
+
+    prov = PrevClose({"NSE:INFY": 910.0})
+    old = datetime.now(UTC) - timedelta(days=5)
+    o = Order(user_id=user.id, broker="paper", mode="paper", client_order_id="carried-1", symbol="NSE:INFY", exchange="NSE",
+              side="BUY", quantity=50, filled_quantity=50, average_price=1000.0, product="CNC", status="complete",
+              algo_id="TEST-MANUAL", created_at=old, updated_at=old)
+    db.add(o)
+    await db.flush()
+    db.add(Trade(order_id=o.id, user_id=user.id, broker="paper", mode="paper", symbol="NSE:INFY", exchange="NSE", side="BUY",
+                 quantity=50, price=1000.0, charges=0.0, product="CNC", ts=old))
+    await db.flush()
+    pb = PaperBroker(user.id, db, prov)
+    assert (await pb.get_positions())[0].unrealised_pnl == pytest.approx(-4500)  # total since purchase
+    assert await pb.day_pnl() == pytest.approx(500)  # today only: (910 - 900) x 50
+    # selling 20 today realises against the previous-close mark, not the purchase price
+    rows = await OrderRouter(prov).place(db, user, OrderRequest(symbol="NSE:INFY", side=Side.SELL, quantity=20, product=Product.CNC))
+    fill = rows[0].average_price
+    charges = sum(t.charges for t in (await db.execute(select(Trade).where(Trade.ts >= old + timedelta(days=1)))).scalars())
+    expected = (fill - 900) * 20 + (910 - 900) * 30 - charges
+    assert await pb.day_pnl() == pytest.approx(expected, abs=0.5)
+
+
+async def test_paper_orders_queue_as_amo_outside_market_hours(db, user, monkeypatch):
+    """Outside exchange hours a paper MARKET order is accepted but not filled (like a broker's AMO); the matcher
+    fills it only once the exchange is open."""
+    from algo_common.settings import get_settings
+    from broker_gateway import paper as paper_mod
+
+    monkeypatch.setattr(get_settings(), "paper_market_hours", True)
+    monkeypatch.setattr(paper_mod, "is_market_open", lambda at=None, exchange="NSE": False)
+    prov = FixedPrices({"NSE:SBIN": 800.0})
+    rows = await OrderRouter(prov).place(db, user, buy(qty=5))
+    assert rows[0].status == "open" and "after-market" in (rows[0].status_message or "")
+    assert (await db.execute(select(Trade).where(Trade.user_id == user.id))).first() is None

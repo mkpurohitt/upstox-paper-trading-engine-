@@ -9,14 +9,46 @@ from __future__ import annotations
 
 import base64
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, SecretStr, model_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _DEV_JWT_SECRET = "dev-only-jwt-secret-change-me-0123456789abcdef"
 # 32 zero-ish bytes, base64 encoded. Only accepted outside production.
 _DEV_VAULT_KEY = base64.b64encode(b"dev-only-vault-key-32-bytes!!!!!").decode()
+
+
+def _project_root() -> Path:
+    """The monorepo root (the directory holding ``uv.lock``), or the working directory outside a checkout."""
+    cwd = Path.cwd().resolve()
+    for d in (cwd, *cwd.parents):
+        if (d / "uv.lock").is_file():
+            return d
+    return cwd
+
+
+def _resolve_sqlite_url(url: str) -> str:
+    """Make a relative SQLite path independent of the working directory.
+
+    ``sqlite+aiosqlite:///./var/algo.db`` resolves against the repository root, so the API, the seed script and
+    Alembic share one database whether they run from the root or from ``apps/api`` (on Windows and POSIX alike).
+    The parent directory is created. In-memory URLs and absolute paths are returned unchanged.
+    """
+    prefix, sep, path = url.partition(":///")
+    if not sep or not prefix.startswith("sqlite") or not path or ":memory:" in path or path.startswith("file:"):
+        return url
+    query = ""
+    if "?" in path:
+        path, query = path.split("?", 1)
+        query = "?" + query
+    p = Path(path)
+    if p.is_absolute() or path.startswith("/"):
+        return url
+    resolved = (_project_root() / p).resolve()
+    resolved.parent.mkdir(parents=True, exist_ok=True)
+    return f"{prefix}:///{resolved.as_posix()}{query}"
 
 
 def _split(value: str | None) -> list[str]:
@@ -29,6 +61,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(".env", "../../.env"),
         env_file_encoding="utf-8",
+        env_ignore_empty=True,  # `KEY=` in .env means "not set" (use the default), not an empty string
         extra="ignore",
         case_sensitive=False,
     )
@@ -49,7 +82,8 @@ class Settings(BaseSettings):
     data_region: str = "ap-south-1"
 
     # ---- storage ------------------------------------------------------------
-    database_url: str = "postgresql+asyncpg://algo:algo@localhost:5432/algo"
+    # Local default: a SQLite file under ./var (no Docker needed). Compose and production set a PostgreSQL URL.
+    database_url: str = "sqlite+aiosqlite:///./var/algo.db"
     db_echo: bool = False
     db_pool_size: int = 10
     pgvector_enabled: bool = False
@@ -94,6 +128,8 @@ class Settings(BaseSettings):
     order_rate_limit_per_sec: int = Field(default=8, description="Per exchange per client; SEBI retail threshold is 10/s")
     paper_slippage_bps: float = 5.0
     paper_starting_capital: float = 1_000_000.0
+    # Paper orders respect exchange hours: outside them they queue as after-market orders (AMO) and fill at the open.
+    paper_market_hours: bool = True
     global_kill_switch: bool = False
     algo_id_prefix: str = "ALGO-PENDING"
     egress_static_ip: str | None = None
@@ -156,9 +192,25 @@ class Settings(BaseSettings):
     api_rate_limit_per_min: int = 600
     auth_rate_limit_per_min: int = 30
 
+    @field_validator("redis_url", mode="before")
+    @classmethod
+    def _redis_off(cls, v: object) -> object:
+        # "none"/"off"/"memory" force the in-process bus/cache even if a .env file sets a Redis URL.
+        if isinstance(v, str) and v.strip().lower() in {"", "none", "off", "memory", "false"}:
+            return None
+        return v
+
+    @model_validator(mode="after")
+    def _normalise_database_url(self) -> Settings:
+        if self.database_url.startswith("sqlite"):
+            self.database_url = _resolve_sqlite_url(self.database_url)
+        return self
+
     @model_validator(mode="after")
     def _guard_production_secrets(self) -> Settings:
         if self.environment == "production":
+            if self.database_url.startswith("sqlite"):
+                raise ValueError("DATABASE_URL must point to PostgreSQL in production")
             if self.jwt_secret.get_secret_value() == _DEV_JWT_SECRET:
                 raise ValueError("JWT_SECRET must be set in production")
             if self.vault_master_key.get_secret_value() == _DEV_VAULT_KEY:

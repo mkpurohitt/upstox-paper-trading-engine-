@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/misc";
 import { Select } from "@/components/ui/select";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { useRealtime, useTicks } from "@/hooks/use-realtime";
-import { api, ApiError, unwrap } from "@/lib/api";
+import { api, ApiError, apiJson, unwrap } from "@/lib/api";
 import { compactInr, inr, istTime, num } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -55,6 +55,13 @@ export function OrderTicket({ mode = "paper", defaultSymbol = "NSE:SBIN" }: { mo
   const [price, setPrice] = React.useState<number | "">("");
   const [trigger, setTrigger] = React.useState<number | "">("");
   const ltp = useTicks([symbol])[symbol]?.ltp;
+  const market = useQuery({
+    queryKey: ["market-status"],
+    queryFn: () => apiJson<{ exchange: string; is_open: boolean; status: string }[]>("/api/market/status"),
+    refetchInterval: 60_000,
+  });
+  const exchange = symbol.startsWith("MCX") ? "MCX" : "NSE";
+  const closed = market.data ? !market.data.find((m) => m.exchange === exchange)?.is_open : false;
   const m = useMutation({
     mutationFn: () =>
       unwrap(
@@ -64,8 +71,12 @@ export function OrderTicket({ mode = "paper", defaultSymbol = "NSE:SBIN" }: { mo
       ),
     onSuccess: (rows) => {
       const r = rows[rows.length - 1]!;
-      toast[r.status === "rejected" ? "error" : "success"](`${side} ${qty} ${symbol}: ${r.status}${r.average_price ? ` @ ${num(r.average_price)}` : ""}`);
+      const head = `${side} ${qty} ${symbol}`;
+      if (r.status === "rejected") toast.error(`${head}: rejected${r.status_message ? ` — ${r.status_message}` : ""}`);
+      else if (r.status === "complete") toast.success(`${head}: filled${r.average_price ? ` @ ${num(r.average_price)}` : ""}`);
+      else toast.info(`${head}: ${r.status_message || r.status}`);
       void qc.invalidateQueries({ queryKey: ["positions"] });
+      void qc.invalidateQueries({ queryKey: ["orders"] });
     },
     onError: (e: Error) => {
       const d = e instanceof ApiError ? (e.details as { decision?: { rule?: string } } | undefined) : undefined;
@@ -115,6 +126,11 @@ export function OrderTicket({ mode = "paper", defaultSymbol = "NSE:SBIN" }: { mo
         <Button variant={side === "BUY" ? "profit" : "loss"} loading={m.isPending} onClick={() => m.mutate()}>
           {side} {qty} · ≈ {ltp ? compactInr(ltp * qty) : "—"}
         </Button>
+        {closed && (
+          <p className="rounded-md bg-warning/10 px-2 py-1.5 text-2xs text-foreground">
+            {exchange} is closed. {mode === "paper" ? "Paper orders are queued as after-market orders and fill at the next open." : "Your broker may reject or queue this order (AMO)."}
+          </p>
+        )}
         <p className="text-2xs text-muted-foreground">Every order passes the pre-trade risk engine. Paper fills use live prices with {mode === "paper" ? "5 bps" : "real"} slippage.</p>
       </CardContent>
     </Card>

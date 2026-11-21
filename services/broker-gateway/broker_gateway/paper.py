@@ -23,7 +23,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from algo_common.logging import get_logger
 from algo_common.settings import get_settings
-from algo_common.timeutils import IST, now_ist, utcnow
+from algo_common.timeutils import IST, is_market_open, is_trading_day, now_ist, utcnow
 from algo_db.models import Order as OrderRow
 from algo_db.models import Trade as TradeRow
 from broker_gateway.base import BrokerAdapter, BrokerError
@@ -124,6 +124,10 @@ class PaperBroker(BrokerAdapter):
             if need > funds.available + 1e-6:
                 return OrderAck(broker_order_id=oid, status=OrderStatus.REJECTED,
                                 message=f"Insufficient paper funds: need ₹{need:,.0f}, available ₹{funds.available:,.0f}")
+        if get_settings().paper_market_hours and not is_market_open(now_ist(), req.exchange):
+            # like a real broker's AMO: accepted now, executed by the matcher once the exchange opens
+            return OrderAck(broker_order_id=oid, status=OrderStatus.OPEN,
+                            message="Market closed: queued as an after-market order; executes when the market opens")
         triggered, fills = self.would_fill(req.order_type, req.side, ltp, req.price, req.trigger_price)
         if not fills:
             return OrderAck(broker_order_id=oid, status=OrderStatus.OPEN if triggered else OrderStatus.TRIGGER_PENDING,
@@ -219,11 +223,47 @@ class PaperBroker(BrokerAdapter):
         return out
 
     async def day_pnl(self) -> float:
-        """Today's realised (net of charges) + unrealised P&L - feeds the daily loss limit."""
+        """Today's P&L, as a broker computes it - feeds the daily loss limit.
+
+        Quantity carried from previous sessions is marked from the previous close (not from its purchase price), so
+        an old holding that is underwater does not count as a loss made today. Trades done today are marked from
+        their fill prices; today's charges are deducted.
+        """
         start = datetime.combine(now_ist().date(), time(0, 0), tzinfo=IST)
-        book = await self._ledger(realised_since=start)
-        open_syms = [s for (s, _), b in book.items() if b["qty"] != 0]
-        quotes = await self.provider.quotes(open_syms) if open_syms else {}
+        rows = list((await self.db.execute(select(TradeRow).where(TradeRow.user_id == self.user_id, TradeRow.mode == "paper")
+                                           .order_by(TradeRow.ts, TradeRow.id))).scalars())
+        carried: dict[tuple[str, str], float] = defaultdict(float)
+        for t in rows:
+            if t.ts < start:
+                carried[(t.symbol, t.product)] += t.quantity if t.side == "BUY" else -t.quantity
+        today = [t for t in rows if t.ts >= start]
+        syms = sorted({s for (s, _), q in carried.items() if q} | {t.symbol for t in today})
+        if not syms:
+            return 0.0
+        quotes = await self.provider.quotes(syms)
+        book: dict[tuple[str, str], dict[str, float]] = {}
+        for key, q in carried.items():
+            if not q:
+                continue
+            qt = quotes.get(key[0])
+            mark = (qt.close if qt is not None and qt.close else (qt.ltp if qt is not None else 0.0))
+            book[key] = {"qty": q, "avg": float(mark), "realised": 0.0, "charges": 0.0}
+        for t in today:
+            b = book.setdefault((t.symbol, t.product), {"qty": 0.0, "avg": 0.0, "realised": 0.0, "charges": 0.0})
+            b["charges"] += t.charges
+            signed = t.quantity if t.side == "BUY" else -t.quantity
+            q, avg = b["qty"], b["avg"]
+            if q == 0 or (q > 0) == (signed > 0):
+                b["avg"] = (avg * abs(q) + t.price * abs(signed)) / (abs(q) + abs(signed))
+                b["qty"] = q + signed
+            else:
+                closing = min(abs(q), abs(signed))
+                b["realised"] += (t.price - avg) * closing * (1 if q > 0 else -1)
+                b["qty"] = q + signed
+                if abs(signed) > abs(q):
+                    b["avg"] = t.price
+                elif b["qty"] == 0:
+                    b["avg"] = 0.0
         total = 0.0
         for (sym, _), b in book.items():
             total += b["realised"] - b["charges"]
@@ -273,9 +313,11 @@ class PaperMatcher:
             if rows:
                 quotes = await self.provider.quotes(sorted({r.symbol for r in rows}))
                 router = OrderRouter()
+                enforce_hours = get_settings().paper_market_hours
+                at = self.clock()
                 for r in rows:
                     q = quotes.get(r.symbol)
-                    if q is None:
+                    if q is None or (enforce_hours and not is_market_open(at, r.exchange)):
                         continue
                     triggered, fills = PaperBroker.would_fill(OrderType(r.order_type), Side(r.side), q.ltp, r.price, r.trigger_price)
                     if triggered and r.status == "trigger_pending" and not fills:
@@ -288,7 +330,7 @@ class PaperMatcher:
                         await router.record_fill(db, r, r.quantity - r.filled_quantity, px)
                         filled += 1
         now = self.clock()
-        if now.time() >= MIS_SQUARE_OFF and now.date() not in self._squared_off_on and now.weekday() < 5:
+        if now.time() >= MIS_SQUARE_OFF and now.date() not in self._squared_off_on and is_trading_day(now.date()):
             await self.square_off_mis()
             self._squared_off_on.add(now.date())
         return filled

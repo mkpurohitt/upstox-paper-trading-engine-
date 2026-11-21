@@ -5,23 +5,24 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict
-from datetime import date, datetime
+from datetime import date, datetime, time
 from typing import Any
 
 from fastapi import APIRouter, Query
 from sqlalchemy import select
 
 from algo_common.logging import get_logger
+from algo_common.schemas.market import Interval
 from algo_common.settings import get_settings
-from algo_common.timeutils import now_ist, utcnow
-from algo_db.models import BrokerConnection, Deployment, Trade, User
+from algo_common.timeutils import IST, is_trading_day, now_ist, utcnow
+from algo_db.models import BrokerConnection, Deployment, Strategy, Trade, User
 from app.core.deps import DB, CurrentUser
 from broker_gateway.connections import live_adapter
 from broker_gateway.paper import PaperBroker
 from market_data.nse_mcp import call_nse_tool
 from market_data.registry import get_provider
 from market_data.universe import BY_SYMBOL
-from strategy_engine.analytics.portfolio import analyze_positions, realised_by_day, xirr
+from strategy_engine.analytics.portfolio import analyze_positions, mtm_equity_by_day, xirr
 
 router = APIRouter(prefix="/api/portfolio", tags=["portfolio"])
 log = get_logger("api.portfolio")
@@ -95,37 +96,62 @@ async def summary(user: CurrentUser, db: DB) -> dict[str, Any]:
 
 @router.get("/performance")
 async def performance(user: CurrentUser, db: DB, days: int = Query(180, ge=7, le=3650)) -> dict[str, Any]:
-    """Paper-account performance: daily realised P&L, equity curve and money-weighted return (XIRR)."""
+    """Paper-account performance marked to market daily: equity curve, daily P&L, winning days and XIRR."""
     rows = (await db.execute(select(Trade).where(Trade.user_id == user.id, Trade.mode == "paper").order_by(Trade.ts))).scalars().all()
-    fills = [{"ts": t.ts, "symbol": t.symbol, "product": t.product, "side": t.side, "quantity": t.quantity, "price": t.price,
-              "charges": t.charges} for t in rows]
-    series = realised_by_day(fills)
     capital = get_settings().paper_starting_capital
     u = await db.get(User, user.id)
-    start = (rows[0].ts if rows else (u.created_at if u else utcnow())).date()
+    today = now_ist().date()
+    start = (rows[0].ts.astimezone(IST) if rows else (u.created_at if u else utcnow()).astimezone(IST)).date()
     pb = PaperBroker(user.id, db, get_provider())
     funds = await pb.get_funds()
-    flows: list[tuple[date, float]] = [(start, -capital), (now_ist().date(), funds.total)]
-    rate = xirr(flows) if (now_ist().date() - start).days >= 7 else None
-    cutoff = (now_ist().date().toordinal() - days)
-    recent = [p for p in series if date.fromisoformat(p["date"]).toordinal() >= cutoff]
-    wins = [p for p in series if p["realised"] > 0]
+    fills = [{"date": t.ts.astimezone(IST).date(), "ts": t.ts, "symbol": t.symbol, "product": t.product, "side": t.side,
+              "quantity": t.quantity, "price": t.price, "charges": t.charges} for t in rows]
+    window_start = max(start, date.fromordinal(today.toordinal() - days))
+    provider = get_provider()
+    closes: dict[str, dict[date, float]] = {}
+    for sym in sorted({f["symbol"] for f in fills}):
+        try:
+            candles = await provider.candles(sym, Interval.D1, datetime.combine(start, time(0), tzinfo=IST),
+                                             datetime.combine(today, time(23, 59), tzinfo=IST))
+        except Exception as exc:  # a symbol without history is valued at its last fill price
+            log.warning("portfolio.history_failed", symbol=sym, error=str(exc))
+            continue
+        closes[sym] = {c.ts.astimezone(IST).date(): c.close for c in candles}
+    extra = {start} | ({today} if is_trading_day(today) else set()) if rows else set()
+    session_days = sorted({d for series in closes.values() for d in series if start <= d <= today} | extra)
+    open_syms = [p.symbol for p in await pb.get_positions(include_closed=False)]
+    live = {s: q.ltp for s, q in (await provider.quotes(open_syms)).items()} if open_syms else {}
+    curve = mtm_equity_by_day(fills, closes, capital, session_days, live) if rows else []
+    recent = [p for p in curve if date.fromisoformat(p["date"]) >= window_start]
+    active = [p for p in curve if p["pnl"] != 0]
+    flows: list[tuple[date, float]] = [(start, -capital), (today, funds.total)]
+    rate = xirr(flows) if (today - start).days >= 7 else None
+    peak, max_dd = capital, 0.0
+    for p in curve:
+        peak = max(peak, p["equity"])
+        max_dd = min(max_dd, p["equity"] / peak - 1)
     return {
         "starting_capital": capital, "current_value": round(funds.total, 2),
         "total_return_pct": round((funds.total / capital - 1) * 100, 2), "xirr_pct": rate,
-        "since": start.isoformat(), "trading_days": len(series), "winning_days": len(wins),
-        "best_day": max(series, key=lambda p: p["realised"], default=None), "worst_day": min(series, key=lambda p: p["realised"], default=None),
-        "daily": recent, "equity": [{"date": p["date"], "equity": round(capital + p["cumulative"], 2)} for p in recent],
-        "note": "XIRR treats the paper starting capital as the only contribution; realised P&L is net of charges.",
+        "max_drawdown_pct": round(max_dd * 100, 2), "since": start.isoformat(),
+        "trading_days": len(active), "winning_days": sum(1 for p in active if p["pnl"] > 0),
+        "best_day": max(active, key=lambda p: p["pnl"], default=None), "worst_day": min(active, key=lambda p: p["pnl"], default=None),
+        "daily": recent, "equity": [{"date": p["date"], "equity": p["equity"]} for p in recent],
+        "note": "Marked to market at each day's close (today at live prices), net of charges. XIRR treats the paper "
+                "starting capital as the only contribution.",
     }
 
 
 @router.get("/overlap")
 async def overlap(user: CurrentUser, db: DB) -> dict[str, Any]:
     """Instruments shared by more than one active deployment (hidden concentration across strategies)."""
-    deps = (await db.execute(select(Deployment).where(Deployment.user_id == user.id, Deployment.status.in_(("running", "paused")))))\
-        .scalars().all()
+    rows = (await db.execute(
+        select(Deployment, Strategy.name).join(Strategy, Strategy.id == Deployment.strategy_id)
+        .where(Deployment.user_id == user.id, Deployment.status.in_(("running", "paused")))
+    )).all()
     by_inst: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    deps = [d for d, _ in rows]
+    names = {d.id: name for d, name in rows}
     for d in deps:
         dsl = d.dsl or {}
         uni = dsl.get("universe") or {}
@@ -135,7 +161,8 @@ async def overlap(user: CurrentUser, db: DB) -> dict[str, Any]:
         pair = dsl.get("pair") or {}
         insts |= {s for s in (pair.get("leg_a"), pair.get("leg_b")) if s}
         for i in insts:
-            by_inst[i].append({"deployment_id": d.id, "name": d.name, "mode": d.mode})
+            by_inst[i].append({"deployment_id": d.id, "name": names.get(d.id) or f"Deployment #{d.id}", "mode": d.mode,
+                               "status": d.status})
     shared = [{"instrument": k, "deployments": v} for k, v in sorted(by_inst.items(), key=lambda kv: -len(kv[1])) if len(v) > 1]
     return {"active_deployments": len(deps), "instruments": len(by_inst), "shared": shared}
 

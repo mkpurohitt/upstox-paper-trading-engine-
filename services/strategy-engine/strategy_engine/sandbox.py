@@ -89,15 +89,22 @@ def validate_code(code: str) -> ast.Module:
 
 
 _RUNNER = r'''
-import json, math, resource, sys
+import json, math, sys
 cpu, mem = int(sys.argv[1]), int(sys.argv[2])
-resource.setrlimit(resource.RLIMIT_CPU, (cpu, cpu))
 try:
-    resource.setrlimit(resource.RLIMIT_AS, (mem, mem))
-except (ValueError, OSError):
-    pass
-resource.setrlimit(resource.RLIMIT_FSIZE, (0, 0))
-resource.setrlimit(resource.RLIMIT_NPROC, (64, 64)) if hasattr(resource, "RLIMIT_NPROC") else None
+    import resource  # POSIX only; on Windows the parent's wall-clock timeout is the limit
+except ImportError:
+    resource = None
+if resource is not None:
+    resource.setrlimit(resource.RLIMIT_CPU, (cpu, cpu))
+    try:
+        resource.setrlimit(resource.RLIMIT_AS, (mem, mem))
+    except (ValueError, OSError):
+        pass
+    resource.setrlimit(resource.RLIMIT_FSIZE, (0, 0))
+    if hasattr(resource, "RLIMIT_NPROC"):
+        resource.setrlimit(resource.RLIMIT_NPROC, (64, 64))
+    del resource
 payload = json.loads(sys.stdin.read())
 import numpy as np, pandas as pd
 SAFE = {k: __builtins__[k] if isinstance(__builtins__, dict) else getattr(__builtins__, k) for k in (
@@ -247,6 +254,10 @@ def _run(payload: dict[str, Any]) -> dict[str, Any]:
                "OMP_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "HOME": tmp}
         # allow the interpreter to find numpy/pandas from the current environment
         env["PYTHONPATH"] = os.pathsep.join(p for p in sys.path if p and "site-packages" in p)
+        if os.name == "nt":
+            # Windows: the interpreter needs SYSTEMROOT (crypto/random init) and PATH to load numpy's DLLs.
+            env.update({k: os.environ[k] for k in ("SYSTEMROOT", "WINDIR", "PATH") if k in os.environ})
+            env["USERPROFILE"] = tmp
         try:
             proc = subprocess.run(  # noqa: S603
                 [sys.executable, "-B", "-c", _RUNNER, str(CPU_SECONDS), str(MEMORY_BYTES)],

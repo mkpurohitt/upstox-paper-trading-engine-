@@ -3334,6 +3334,54 @@
         }
       }
     },
+    "/api/deployments/{dep_id}/restart": {
+      "post": {
+        "tags": [
+          "deployments"
+        ],
+        "summary": "Restart",
+        "description": "Restart a deployment whose runner stopped with an error (paper / notify only: a live deployment must be\nredeployed so the user re-confirms with a fresh 2FA code).",
+        "operationId": "restart_api_deployments__dep_id__restart_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "dep_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Dep Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeploymentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/deployments/{dep_id}/resume": {
       "post": {
         "tags": [
@@ -6082,7 +6130,7 @@
           "portfolio"
         ],
         "summary": "Performance",
-        "description": "Paper-account performance: daily realised P&L, equity curve and money-weighted return (XIRR).",
+        "description": "Paper-account performance marked to market daily: equity curve, daily P&L, winning days and XIRR.",
         "operationId": "performance_api_portfolio_performance_get",
         "security": [
           {

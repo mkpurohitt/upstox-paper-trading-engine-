@@ -9,8 +9,11 @@
   candles agree.
 * Derivatives: futures = spot x carry; options = Black-Scholes on a skewed,
   VIX-linked IV surface with plausible OI / volume profiles.
-* Live ticks follow today's path in real time while the market is open, and
-  drift gently around the last close when it is closed.
+* Live ticks follow today's path in real time while the market is open and stay at
+  the last close when it is closed.
+* Stocks load on a market factor and a sector factor; indices (NIFTY, SENSEX, Bank
+  Nifty, sector indices) are cap-weighted composites of their constituents, so the
+  index, heatmap, breadth and screener always agree.
 """
 
 from __future__ import annotations
@@ -56,7 +59,7 @@ from algo_common.timeutils import (
     year_fraction,
 )
 from market_data.base import DemandFn, MarketDataProvider
-from market_data.options import RISK_FREE, atm_strike, bs_greeks, strike_step
+from market_data.options import RISK_FREE, atm_strike, bs_greeks, business_variance_ratio, strike_step
 from market_data.symbols import (
     COMMODITIES,
     ParsedSymbol,
@@ -74,6 +77,7 @@ from market_data.universe import (
     DERIVATIVE_UNDERLYINGS,
     EQUITIES,
     HISTORY_START,
+    INDEX_CONSTITUENTS,
     Asset,
 )
 
@@ -157,33 +161,56 @@ class MockProvider(MarketDataProvider):
             return hit
         n = len(days)
         sigma = asset.vol / math.sqrt(252)
-        if asset.kind == "index" and asset.symbol.endswith(("NIFTY", "SENSEX")) and "BANK" not in asset.symbol:
-            rho = 0.97
-        elif asset.symbol.endswith("INDIAVIX"):
-            rho = -0.75
-        elif asset.kind == "commodity":
-            rho = 0.15
-        else:
-            rho = max(-0.9, min(0.92, 0.35 + 0.4 * asset.beta)) if asset.kind == "equity" else 0.85
-        z_m = self._market_shocks(n)
-        z_i = _rng("IDIO", asset.symbol).standard_normal(n)
-        z = rho * z_m + math.sqrt(max(0.0, 1 - rho * rho)) * z_i
-        steps = z * sigma
         a = self._anchor_index(days)
-        logp = np.empty(n)
-        w = np.cumsum(steps[: a + 1])
-        w = w - w[0]
-        t = np.arange(a + 1) / max(a, 1)
-        logp[: a + 1] = math.log(asset.p0) + t * (math.log(asset.price) - math.log(asset.p0)) + (w - t * w[-1])
-        if n > a + 1:  # continuation after the anchor date
-            logp[a + 1 :] = logp[a] + np.cumsum(steps[a + 1 :])
-        close = np.exp(logp)
+        members = [BY_SYMBOL[m] for m in INDEX_CONSTITUENTS.get(asset.symbol, []) if m in BY_SYMBOL]
+        comp_open: np.ndarray | None = None
+        if members:
+            # Index = cap-weighted constituents (weights fixed at the anchor date) plus a small tracking difference,
+            # so NIFTY, the sector indices, the heatmap, breadth and the screener always tell the same story.
+            wts = np.array([m.mcap_cr or 1.0 for m in members], dtype=float)
+            wts /= wts.sum()
+            dailies = [self._daily_for(m) for m in members]
+            rel_c = np.vstack([d.close / d.close[a] for d in dailies])
+            rel_o = np.vstack([d.open / d.close[a] for d in dailies])
+            track_sd = sigma * (0.06 if len(members) >= 10 else 0.25)
+            e = np.cumsum(_rng("TRACK", asset.symbol).standard_normal(n) * track_sd)
+            e -= e[a]
+            close = asset.price * np.exp(np.log(wts @ rel_c) + e)
+            comp_open = asset.price * np.exp(np.log(wts @ rel_o) + np.concatenate([[e[0]], e[:-1]]))
+        else:
+            if asset.symbol.endswith("INDIAVIX"):
+                rho = -0.75
+            elif asset.kind == "commodity":
+                rho = 0.15
+            elif asset.kind == "equity":
+                # market loading rises with beta; with the sector factor this gives realistic pairwise correlations
+                # (~0.3-0.5) and an index volatility near NIFTY's (~11-12%) from ~25%-vol stocks
+                rho = max(0.15, min(0.7, 0.2 + 0.28 * asset.beta))
+            else:
+                rho = 0.85
+            z_m = self._market_shocks(n)
+            z_i = _rng("IDIO", asset.symbol).standard_normal(n)
+            if asset.kind == "equity" and asset.sector:
+                s_load = min(0.42, math.sqrt(max(0.0, 0.95 - rho * rho)))
+                z_s = _rng("SECTOR", asset.sector).standard_normal(n)
+                z = rho * z_m + s_load * z_s + math.sqrt(max(0.0, 1 - rho * rho - s_load * s_load)) * z_i
+            else:
+                z = rho * z_m + math.sqrt(max(0.0, 1 - rho * rho)) * z_i
+            steps = z * sigma
+            logp = np.empty(n)
+            w = np.cumsum(steps[: a + 1])
+            w = w - w[0]
+            t = np.arange(a + 1) / max(a, 1)
+            logp[: a + 1] = math.log(asset.p0) + t * (math.log(asset.price) - math.log(asset.p0)) + (w - t * w[-1])
+            if n > a + 1:  # continuation after the anchor date
+                logp[a + 1 :] = logp[a] + np.cumsum(steps[a + 1 :])
+            close = np.exp(logp)
 
         # Older history: vectorised gap / range model (fast). The most recent
         # FULL_PATH_DAYS use the exact minute path so 1m and 1D candles agree.
         prev = np.concatenate([[close[0] * 0.995], close[:-1]])
         rv = _rng("OLD", asset.symbol).standard_normal((n, 4))
-        opens = prev * np.exp(rv[:, 0] * sigma * 0.3)
+        opens = prev * np.exp(rv[:, 0] * sigma * 0.3) if comp_open is None else comp_open.copy()
         hi_ext = np.abs(rv[:, 1]) * sigma * 0.45 + sigma * 0.15
         lo_ext = np.abs(rv[:, 2]) * sigma * 0.45 + sigma * 0.15
         highs = np.maximum(opens, close) * np.exp(hi_ext)
@@ -193,7 +220,8 @@ class MockProvider(MarketDataProvider):
         for i in range(max(0, n - FULL_PATH_DAYS), n):
             d = days[i]
             r = _rng("DAY", asset.symbol, d.toordinal())
-            o = prev[i] * math.exp(r.normal(0, sigma * 0.3))
+            gap = r.normal(0, sigma * 0.3)  # always drawn: keeps the stream aligned with _path
+            o = prev[i] * math.exp(gap) if comp_open is None else float(comp_open[i])
             opens[i] = o
             path = self._bridge(r, o, close[i], sigma, MINUTES)
             highs[i] = max(path.max(), o)
@@ -207,10 +235,11 @@ class MockProvider(MarketDataProvider):
     @staticmethod
     def _bridge(r: np.random.Generator, start: float, end: float, daily_sigma: float, steps: int) -> np.ndarray:
         """Minute-resolution log-price bridge from start to end (values at end of each minute)."""
-        s = daily_sigma / math.sqrt(steps) * 1.15
-        # U-shaped intraday volatility: higher at open and close
+        # U-shaped intraday volatility (higher at open and close), normalised so the session carries its share
+        # of the day's variance (the rest is the overnight gap), consistent with option pricing in business time.
         u = np.linspace(-1, 1, steps)
         shape = 0.75 + 0.6 * u * u
+        s = daily_sigma / math.sqrt(steps) * math.sqrt(0.91 / float(np.mean(shape * shape)))
         inc = r.standard_normal(steps) * s * shape
         w = np.cumsum(inc)
         t = np.arange(1, steps + 1) / steps
@@ -293,8 +322,12 @@ class MockProvider(MarketDataProvider):
             last = max(0, last)
             px = float(daily.close[last])
             prev_close = float(daily.close[last - 1]) if last else px
-        # micro-noise so the UI feels alive (mean reverting, bounded). It advances at
-        # most once per tick interval so concurrent reads (chain + quote) agree.
+        if not open_now:
+            # Outside trading hours the last traded price is the close: nothing moves (like a real terminal).
+            self._noise.pop(asset.symbol, None)
+            return px, prev_close
+        # Micro-noise between the minute-path points (mean reverting, bounded). It advances at most once per
+        # tick interval so concurrent reads (chain + quote) agree.
         mono = _time.monotonic()
         n, last = self._noise.get(asset.symbol, (0.0, 0.0))
         if mono - last >= self._tick_interval * 0.9:
@@ -306,14 +339,18 @@ class MockProvider(MarketDataProvider):
     # ------------------------------------------------------------------ derivatives pricing
     def iv_for(self, underlying: str, strike: float, spot: float, t_years: float, at: datetime | None = None) -> float:
         und = underlying.upper()
+        at = at or now_ist()
+        a = BY_SYMBOL.get(underlying_spot_symbol(und))
         if und in BASE_IV:
             base = BASE_IV[und]
             vix = BY_SYMBOL["NSE_INDEX:INDIAVIX"]
-            vix_now = self.spot_at(vix, at or now_ist())
-            base *= max(0.6, min(2.5, vix_now / 13.0))
+            base *= max(0.6, min(2.5, self.spot_at(vix, at) / vix.price))
         else:
-            a = BY_SYMBOL.get(underlying_spot_symbol(und))
-            base = (a.vol if a else 0.3) * 0.95
+            # implied trades above realised vol (variance risk premium)
+            base = (a.vol if a else 0.3) * 1.08
+        if a is None or a.kind != "commodity":
+            # business-time variance quoted as a calendar-time IV (see market_data.options.business_variance_ratio)
+            base *= math.sqrt(business_variance_ratio(at, t_years))
         m = math.log(strike / spot) if spot > 0 and strike > 0 else 0.0
         scale = math.sqrt(max(t_years, 1 / 365) * 12)  # wings flatten with maturity
         smile = 1 - 1.4 * m / scale + 9.0 * (m / scale) ** 2

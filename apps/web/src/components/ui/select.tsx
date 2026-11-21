@@ -94,7 +94,7 @@ export function Select({
   disabled?: boolean;
 }) {
   return (
-    <SelectRoot value={value} onValueChange={onValueChange} disabled={disabled}>
+    <SelectRoot value={value ?? ""} onValueChange={onValueChange} disabled={disabled}>
       <SelectTrigger className={className} aria-label={ariaLabel}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

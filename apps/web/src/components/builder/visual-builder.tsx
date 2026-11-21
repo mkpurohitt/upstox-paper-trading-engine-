@@ -325,7 +325,6 @@ export function VisualBuilder() {
             colorMode={resolvedTheme === "light" ? "light" : "dark"}
             fitView
             deleteKeyCode={["Backspace", "Delete"]}
-            proOptions={{ hideAttribution: true }}
           >
             <Background variant={BackgroundVariant.Dots} gap={18} size={1} />
             <Controls showInteractive={false} />

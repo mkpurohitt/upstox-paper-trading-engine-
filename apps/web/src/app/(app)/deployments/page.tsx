@@ -2,7 +2,7 @@
 import type { Schemas } from "@algo/api-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ChevronDown, Pause, Play, Radio, Rocket, Square, Undo2 } from "lucide-react";
+import { ChevronDown, Pause, Play, Radio, Rocket, RotateCcw, Square, Undo2 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import * as React from "react";
@@ -54,8 +54,9 @@ function DeploymentCard({ d, pnl, focus }: { d: Dep; pnl?: { pnl: number; open_p
   const qc = useQueryClient();
   const [open, setOpen] = React.useState(focus);
   const act = useMutation({
-    mutationFn: async (action: "pause" | "resume" | "stop" | "square-off") => {
+    mutationFn: async (action: "pause" | "resume" | "restart" | "stop" | "square-off") => {
       const path = { params: { path: { dep_id: d.id } } } as const;
+      if (action === "restart") return unwrap(api.POST("/api/deployments/{dep_id}/restart", path));
       if (action === "pause") return unwrap(api.POST("/api/deployments/{dep_id}/pause", path));
       if (action === "resume") return unwrap(api.POST("/api/deployments/{dep_id}/resume", path));
       if (action === "stop") return unwrap(api.POST("/api/deployments/{dep_id}/stop", { params: { path: { dep_id: d.id }, query: { square_off: true } } }));
@@ -99,6 +100,11 @@ function DeploymentCard({ d, pnl, focus }: { d: Dep; pnl?: { pnl: number; open_p
               <Play /> Resume
             </Button>
           )}
+          {d.status === "error" && d.mode !== "live" && (
+            <Button size="sm" variant="outline" onClick={() => act.mutate("restart")} loading={act.isPending}>
+              <RotateCcw /> Restart
+            </Button>
+          )}
           {active && (
             <>
               <Button size="sm" variant="outline" onClick={() => act.mutate("square-off")}>
@@ -110,7 +116,12 @@ function DeploymentCard({ d, pnl, focus }: { d: Dep; pnl?: { pnl: number; open_p
             </>
           )}
           <span className="font-mono text-2xs text-muted-foreground">{d.algo_id}</span>
-          {d.error && <span className="text-2xs text-loss">{d.error}</span>}
+          {d.error && (
+            <span className="basis-full rounded-md bg-loss/10 px-2 py-1 text-2xs text-loss" role="alert">
+              Stopped with an error: {d.error}
+              {d.mode === "live" ? " — redeploy it from the Build page." : " — fix the cause and press Restart."}
+            </span>
+          )}
           <Button size="sm" variant="ghost" className="ml-auto" onClick={() => setOpen(!open)} aria-expanded={open}>
             Details <ChevronDown className={cn("transition-transform", open && "rotate-180")} />
           </Button>
@@ -144,7 +155,8 @@ function Inner() {
     if (d.type === "status") void qc.invalidateQueries({ queryKey: ["deployments"] });
   });
   const rows = q.data ?? [];
-  const active = rows.filter((d) => ["running", "paused"].includes(d.status));
+  // errored deployments stay on this tab (with the error and a Restart button) until the user acts on them
+  const active = rows.filter((d) => ["running", "paused", "error"].includes(d.status));
   const past = rows.filter((d) => !["running", "paused"].includes(d.status));
   const totalPnl = active.reduce((a, d) => a + (pnl[d.id]?.pnl ?? d.pnl_realised + d.pnl_unrealised), 0);
   return (
@@ -170,7 +182,7 @@ function Inner() {
         <TabsContent value="strategies" className="flex flex-col gap-3">
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <Stat label="Running" value={active.filter((d) => d.status === "running").length} />
-            <Stat label="Paused" value={active.filter((d) => d.status === "paused").length} />
+            <Stat label="Paused" value={active.filter((d) => d.status === "paused").length} hint={active.some((d) => d.status === "error") ? `${active.filter((d) => d.status === "error").length} stopped with an error` : undefined} />
             <Stat label="Live (real money)" value={active.filter((d) => d.mode === "live").length} tone={active.some((d) => d.mode === "live") ? "loss" : "default"} />
             <Stat label="Combined P&L" value={<Pnl value={totalPnl} />} />
           </div>

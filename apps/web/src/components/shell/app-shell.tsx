@@ -25,6 +25,7 @@ import { num, pct } from "@/lib/format";
 import { usePrefs } from "@/lib/prefs";
 import { cn, pnlClass } from "@/lib/utils";
 import { realtime, useWsStatus } from "@/lib/ws";
+import { ApiStatusBanner } from "./api-status";
 import { CommandPalette } from "./command-palette";
 import { KillSwitchButton, KillSwitchDialog } from "./kill-switch";
 import { NAV } from "./nav";
@@ -279,6 +280,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </a>
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
+        <ApiStatusBanner />
         <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b bg-background/85 px-3 backdrop-blur sm:px-4">
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-primary to-info text-xs font-bold text-white md:hidden">A</div>
           <button

@@ -128,6 +128,24 @@ async def pause(dep_id: int, user: CurrentUser, db: DB, request: Request) -> Dep
     return _out(d)
 
 
+@router.post("/{dep_id}/restart", response_model=DeploymentOut)
+async def restart(dep_id: int, user: CurrentUser, db: DB, request: Request) -> DeploymentOut:
+    """Restart a deployment whose runner stopped with an error (paper / notify only: a live deployment must be
+    redeployed so the user re-confirms with a fresh 2FA code)."""
+    d = await _owned(db, user.id, dep_id)
+    if d.status != "error":
+        raise HTTPException(409, f"Only a deployment in error can be restarted (this one is {d.status})")
+    if d.mode == "live":
+        raise HTTPException(409, "Live deployments must be redeployed from the Build page (requires a fresh 2FA code)")
+    if user.kill_switch or await global_kill_engaged(db):
+        raise HTTPException(409, "Kill switch is engaged - release it before restarting")
+    d.error = None
+    d.stopped_at = None
+    await _set_status(db, d, "running", "restart", user.id, client_ip(request))
+    await get_bus().publish("deploy:control", {"action": "start", "deployment_id": d.id})
+    return _out(d)
+
+
 @router.post("/{dep_id}/resume", response_model=DeploymentOut)
 async def resume(dep_id: int, user: CurrentUser, db: DB, request: Request) -> DeploymentOut:
     d = await _owned(db, user.id, dep_id)

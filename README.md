@@ -58,14 +58,22 @@ Open <http://localhost:3000> and click **Try the demo account**. API docs: <http
 
 Optional profiles: `docker compose --profile ollama up` (local LLM), `--profile observability` (Prometheus + Jaeger).
 
-### Without Docker
+### Without Docker (Windows, macOS, Linux)
 
-Requires Python 3.12+ with [uv](https://docs.astral.sh/uv/) and Node 22 with pnpm 10.
+Requires Python 3.12+ with [uv](https://docs.astral.sh/uv/) and Node 22 with pnpm 10. The same two commands work in
+PowerShell, Command Prompt, VS Code's terminal and any Unix shell:
 
 ```bash
-make install        # uv sync + pnpm install
-make dev-lite       # SQLite + in-process workers: API on :8000, web on :3000
+uv sync                              # Python dependencies (first time only)
+uv run python scripts/dev.py         # installs JS deps on first run, seeds the DB, starts API (:8000) + web (:3000)
 ```
+
+Open <http://localhost:3000> once it prints **AlgoDesk is running**, and press `Ctrl+C` to stop both servers. The launcher
+uses a local SQLite database (`var/algo.db`) and in-process workers, so nothing else needs to be installed. Useful flags:
+`--reset` (fresh demo data), `--env-db` (use `DATABASE_URL`/`REDIS_URL` from `.env`, e.g. Postgres), `--api-only`.
+`make dev-lite` runs the same launcher.
+
+If a page shows *Can't reach the AlgoDesk API*, the backend is not running (or crashed): check the launcher's terminal.
 
 ### Accounts (development only)
 
@@ -116,6 +124,7 @@ secret scanning, dependency audits and Docker builds.
 | [docs/RUNBOOK.md](docs/RUNBOOK.md) | Deployment, kill-switch procedure, key rotation, monitoring, backups, incident response |
 | [DECISIONS.md](DECISIONS.md) | Every design decision and assumption made while building, with rationale |
 | [evals/README.md](evals/README.md) | How the copilot is evaluated |
+| [docs/AUDIT.md](docs/AUDIT.md) | Full product audit: what was tested, every defect found and how it was fixed |
 
 ## Repository layout
 

@@ -21,7 +21,8 @@ import { cn } from "@/lib/utils";
 
 interface ChainLeg { symbol: string; ltp: number; iv: number | null }
 interface ChainResp { chain: { underlying: string; spot: number; expiry: string; lot_size: number; atm_strike: number; rows: { strike: number; call: ChainLeg | null; put: ChainLeg | null }[] } }
-interface ServerPayoff { pop: number | null; greeks: { delta: number; gamma: number; theta: number; vega: number } }
+interface ServerPayoff {
+  margin_estimate?: number | null; pop: number | null; greeks: { delta: number; gamma: number; theta: number; vega: number } }
 type BLeg = PayoffLeg & { manualPremium?: boolean };
 
 const PRESETS: Record<string, { label: string; legs: [("BUY" | "SELL"), ("CE" | "PE"), number][] }> = {
@@ -203,8 +204,12 @@ export default function OptionsBuilderPage() {
                 </div>
               )}
               <p className="text-2xs text-muted-foreground">
-                Premiums follow the live chain; edit one to override (highlighted). Margin estimate (SPAN+exposure) is approximate: ~
-                {inr(priced.filter((l) => l.action === "SELL").reduce((a, l) => a + l.strike * l.lots * chain.lot_size * 0.12, 0) * (priced.some((l) => l.action === "BUY") ? 0.35 : 1), { compact: true })}.
+                Premiums follow the live chain; edit one to override (highlighted).
+                {server.data?.margin_estimate != null && (
+                  <>
+                    {" "}Estimated margin (SPAN + exposure, with hedge benefit): ~{inr(server.data.margin_estimate, { compact: true })}. Your broker&apos;s figure may differ.
+                  </>
+                )}
               </p>
             </CardContent>
           </Card>

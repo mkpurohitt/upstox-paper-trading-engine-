@@ -189,6 +189,7 @@ Legend: 🔓 public · 👤 signed-in user · 🛡 admin only. Generated from th
 | 👤 | `GET` | `/api/deployments/{dep_id}` | Get Deployment |
 | 👤 | `GET` | `/api/deployments/{dep_id}/logs` | Logs |
 | 👤 | `POST` | `/api/deployments/{dep_id}/pause` | Pause |
+| 👤 | `POST` | `/api/deployments/{dep_id}/restart` | Restart |
 | 👤 | `POST` | `/api/deployments/{dep_id}/resume` | Resume |
 | 👤 | `POST` | `/api/deployments/{dep_id}/square-off` | Square Off |
 | 👤 | `POST` | `/api/deployments/{dep_id}/stop` | Stop |
@@ -279,7 +280,7 @@ Legend: 🔓 public · 👤 signed-in user · 🛡 admin only. Generated from th
 |---|---|---|---|
 | 👤 | `GET` | `/api/portfolio/dividends` | Upcoming corporate actions for held stocks, with estimated dividend cash flow. |
 | 👤 | `GET` | `/api/portfolio/overlap` | Instruments shared by more than one active deployment (hidden concentration across strategies). |
-| 👤 | `GET` | `/api/portfolio/performance` | Paper-account performance: daily realised P&L, equity curve and money-weighted return (XIRR). |
+| 👤 | `GET` | `/api/portfolio/performance` | Paper-account performance marked to market daily: equity curve, daily P&L, winning days and XIRR. |
 | 👤 | `GET` | `/api/portfolio/summary` | Summary |
 
 ### Billing & subscriptions
@@ -327,4 +328,4 @@ Legend: 🔓 public · 👤 signed-in user · 🛡 admin only. Generated from th
 | 🛡 | `GET` | `/api/admin/users` | Users |
 | 🛡 | `PATCH` | `/api/admin/users/{user_id}` | Patch User |
 
-_162 operations across 140 paths._
+_163 operations across 141 paths._

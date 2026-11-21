@@ -123,7 +123,7 @@ async def get_greeks(ctx: ToolContext, a: GreeksArgs) -> ToolResult:
     und = a.underlying.upper().split(":")[-1]
     specs = [leg.model_dump() for leg in a.legs] if a.legs else opt.structure_specs(a.structure or "short_straddle", a.width, a.wing)
     chain, legs = await opt.legs_from_chain(get_provider(), und, a.expiry, specs)
-    res = opt.payoff(chain.spot, legs, chain.lot_size, expiry=chain.expiry)
+    res = opt.payoff(chain.spot, legs, chain.lot_size, expiry=chain.expiry, underlying=und)
     pts = res["points"][::3]
     data = {"underlying": und, "structure": a.structure or "custom", "expiry": chain.expiry.isoformat(), "spot": chain.spot,
             "lot_size": chain.lot_size, "legs": [{k: leg.get(k) for k in ("action", "option_type", "strike", "premium", "iv", "lots", "symbol")}

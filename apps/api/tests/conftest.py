@@ -14,7 +14,8 @@ os.environ.update(
         "ENVIRONMENT": "test",
         # Set TEST_DATABASE_URL to run the suite against a migrated Postgres (CI does this).
         "DATABASE_URL": os.environ.get("TEST_DATABASE_URL") or f"sqlite+aiosqlite:///{_tmp}/test.db",
-        "REDIS_URL": "",
+        "REDIS_URL": "none",
+        "PAPER_MARKET_HOURS": "false",  # paper fills at any hour (AMO behaviour is covered by its own test)
         "DATA_MODE": "mock",
         "EMBEDDED_WORKERS": "true",
         "LOG_JSON": "false",

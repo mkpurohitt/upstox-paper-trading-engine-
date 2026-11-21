@@ -27,7 +27,7 @@ export function UnderlyingExpiry({
         <Select value={underlying} onValueChange={setUnderlying} options={UNDERLYINGS.map((u) => ({ value: u, label: u }))} />
       </Field>
       <Field label="Expiry">
-        <Select value={expiry ?? exp.data?.[0]} onValueChange={setExpiry} options={(exp.data ?? []).map((e) => ({ value: e, label: shortDate(e) }))} />
+        <Select value={expiry ?? exp.data?.[0]} placeholder={exp.isLoading ? "Loading…" : "No expiries"} ariaLabel="Expiry" onValueChange={setExpiry} options={(exp.data ?? []).map((e) => ({ value: e, label: shortDate(e) }))} />
       </Field>
     </>
   );

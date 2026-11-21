@@ -27,11 +27,18 @@ function errorMessage(err: unknown, fallback: string): { message: string; code?:
   return { message: fallback };
 }
 
+const UNREACHABLE = "Can't reach the AlgoDesk API. Make sure the backend is running (uv run python scripts/dev.py).";
+
+/** A 5xx that did not come from the API (which always answers JSON): the Next.js proxy could not reach it. */
+function apiUnreachable(response: Response): boolean {
+  return response.status >= 500 && !(response.headers.get("content-type") || "").includes("application/json");
+}
+
 /** Unwrap an openapi-fetch result, throwing ApiError on failure. */
 export async function unwrap<T>(p: Promise<{ data?: T; error?: unknown; response: Response }>): Promise<T> {
   const { data, error, response } = await p;
   if (error !== undefined || !response.ok) {
-    const m = errorMessage(error, `Request failed (${response.status})`);
+    const m = errorMessage(error, apiUnreachable(response) ? UNREACHABLE : `Request failed (${response.status})`);
     throw new ApiError(m.message, response.status, m.code, m.details);
   }
   return data as T;
@@ -56,7 +63,7 @@ export async function apiJson<T>(path: string, init: RequestInit = {}): Promise<
   const res = await apiFetch(path, { ...init, headers });
   const body = res.status === 204 ? null : await res.json().catch(() => null);
   if (!res.ok) {
-    const m = errorMessage(body, `Request failed (${res.status})`);
+    const m = errorMessage(body, apiUnreachable(res) ? UNREACHABLE : `Request failed (${res.status})`);
     throw new ApiError(m.message, res.status, m.code, m.details);
   }
   return body as T;

@@ -39,3 +39,6 @@ algo-platform.zip
 evals/report.json
 apps/web/test-results/
 apps/web/playwright-report/
+
+# Monaco editor assets copied from node_modules at dev/build time
+apps/web/public/monaco/

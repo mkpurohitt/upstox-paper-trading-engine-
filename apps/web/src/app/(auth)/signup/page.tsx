@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/misc";
 import { api, unwrap } from "@/lib/api";
+import { useHydrated } from "@/hooks/use-hydrated";
 import { useAuth } from "@/lib/auth";
 import { Brand } from "../auth-ui";
 
@@ -37,6 +38,7 @@ export default function SignupPage() {
     defaultValues: { full_name: "", email: "", password: "", marketing_opt_in: false } as Partial<Form>,
   });
   const { errors, isSubmitting } = form.formState;
+  const hydrated = useHydrated();
 
   const onSubmit = form.handleSubmit(async (values) => {
     try {
@@ -58,7 +60,7 @@ export default function SignupPage() {
           <CardDescription>Paper trading is on by default. Live trading requires 2FA and a connected broker.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="flex flex-col gap-3" onSubmit={onSubmit} noValidate>
+          <form className="flex flex-col gap-3" method="post" onSubmit={onSubmit} noValidate>
             {(
               [
                 ["full_name", "Full name", "text", "name"],
@@ -94,7 +96,7 @@ export default function SignupPage() {
                 )}
               />
             ))}
-            <Button type="submit" loading={isSubmitting} className="mt-1">
+            <Button type="submit" loading={isSubmitting} disabled={!hydrated} className="mt-1">
               Create account
             </Button>
           </form>

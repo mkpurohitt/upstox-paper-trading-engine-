@@ -131,7 +131,8 @@ class RiskEngine:
         ) and req.quantity <= abs(pos.quantity)
 
         def check(rule: str, ok: bool, detail: str = "") -> bool:
-            checks.append(RiskCheck(rule, ok, detail))
+            # `detail` describes the failure; recording it on a passing check would read as a violation in the audit
+            checks.append(RiskCheck(rule, ok, "" if ok else detail))
             RISK_DECISIONS.labels("pass" if ok else "reject", rule).inc()
             return ok
 

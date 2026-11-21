@@ -75,6 +75,19 @@ def test_portfolio_consolidation_and_performance(client):
     assert (p["daily"] and p["daily"][-1]["realised"] < 0) or p["daily"][-1]["realised"] >= 0  # SBIN round trip realised today
     assert p["starting_capital"] == 1_000_000 and p["equity"]
     assert client.get("/api/portfolio/overlap", headers=h).json()["active_deployments"] == 0
+    # two active deployments trading the same symbols -> reported as overlap, with strategy names
+    from strategy_engine.templates import TEMPLATES
+
+    ema = next(t for t in TEMPLATES if t["name"] == "EMA 9/21 crossover")
+    for name in ("Overlap A", "Overlap B"):
+        sid = client.post("/api/strategies", json={"dsl": {**ema, "name": name}}, headers=h).json()["id"]
+        r = client.post("/api/deployments", json={"strategy_id": sid, "mode": "paper", "acknowledge_risk": True}, headers=h)
+        assert r.status_code == 201, r.text
+    ov = client.get("/api/portfolio/overlap", headers=h)
+    assert ov.status_code == 200, ov.text
+    ov = ov.json()
+    assert ov["active_deployments"] == 2 and ov["shared"]
+    assert {d["name"] for d in ov["shared"][0]["deployments"]} == {"Overlap A", "Overlap B"}
     d = client.get("/api/portfolio/dividends", headers=h).json()
     assert isinstance(d["items"], list)
 

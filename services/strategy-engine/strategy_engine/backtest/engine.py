@@ -130,6 +130,21 @@ class EventEngine:
         cap = int(equity * lev / price / lot) * lot
         return max(0, min(qty, cap))
 
+    def _trail(self, pos: _Pos, price: float) -> None:
+        """Move the position's best price to `price` (if better) and ratchet the trailing stop from it."""
+        pos.best = max(pos.best, price) if pos.side > 0 else (min(pos.best, price) if pos.best else price)
+        tr = self.dsl.exit.trailing_sl
+        if tr is None:
+            return
+        profit = (pos.best - pos.entry_price) * pos.side
+        trigger = tr.activate_after * (pos.entry_price / 100 if tr.type == "percent" else 1)
+        if profit >= trigger:
+            dist = pos.best * tr.value / 100 if tr.type == "percent" else tr.value
+            new_stop = pos.best - pos.side * dist
+            if pos.stop is None or (new_stop - pos.stop) * pos.side > 0:
+                pos.stop = new_stop
+                pos.trailing_active = True
+
     def _stops(self, side: int, price: float, atr_val: float | None) -> tuple[float | None, float | None]:
         ex = self.dsl.exit
 
@@ -244,19 +259,11 @@ class EventEngine:
                 # 2) manage open position intrabar
                 pos = positions.get(sym)
                 if pos is not None:
-                    tr = dsl.exit.trailing_sl
-                    if pos.side > 0:
-                        pos.best = max(pos.best, h)
-                    else:
-                        pos.best = min(pos.best, lo) if pos.best else lo
-                    if tr is not None:
-                        profit = (pos.best - pos.entry_price) * pos.side
-                        trigger = tr.activate_after * (pos.entry_price / 100 if tr.type == "percent" else 1)
-                        if profit >= trigger:
-                            dist = pos.best * tr.value / 100 if tr.type == "percent" else tr.value
-                            new_stop = pos.best - pos.side * dist
-                            if pos.stop is None or (new_stop - pos.stop) * pos.side > 0:
-                                pos.stop = new_stop
+                    # The trailing level in force during this bar may only use prices known before the bar's range
+                    # unfolds (earlier extremes and this bar's open); the bar's own high/low ratchet it afterwards.
+                    # Ratcheting with this bar's high and then testing this bar's low assumes the high came first,
+                    # which biases every trailing-stop backtest downwards (DECISIONS #78).
+                    self._trail(pos, o)
                     hit_stop = pos.stop is not None and ((pos.side > 0 and lo <= pos.stop) or (pos.side < 0 and h >= pos.stop))
                     hit_tgt = pos.target is not None and ((pos.side > 0 and h >= pos.target) or (pos.side < 0 and lo <= pos.target))
                     if hit_stop:
@@ -279,6 +286,10 @@ class EventEngine:
                                 close_position(sym, c, ts, i, "signal")
                             else:
                                 pending[sym] = ("exit", 0)
+
+                pos = positions.get(sym)
+                if pos is not None:
+                    self._trail(pos, h if pos.side > 0 else lo)
 
                 last_close[sym] = c
 

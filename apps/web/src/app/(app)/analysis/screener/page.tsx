@@ -95,7 +95,7 @@ export default function ScreenerPage() {
   const run = useQuery({ queryKey: ["screener", submitted], queryFn: () => apiJson<RunResp>("/api/analysis/screener/run", { method: "POST", body: JSON.stringify(submitted) }) });
   const saved = useQuery({ queryKey: ["screens"], queryFn: () => apiJson<Saved[]>("/api/analysis/screens") });
   const fields = fieldsQ.data ?? {};
-  const fieldOpts = Object.entries(fields).map(([k, f]) => ({ value: k, label: `${f.label}${f.group === "fundamental" ? " ·F" : ""}` }));
+  const fieldOpts = Object.entries(fields).map(([k, f]) => ({ value: k, label: `${f.label}${f.group === "fundamental" ? " (fundamental)" : ""}` }));
 
   const save = useMutation({
     mutationFn: (alert: boolean) => {

@@ -124,7 +124,7 @@ def main() -> None:
             lines.append(f"| {access(path)} | `{method}` | `{path}` | {text} |")
     n = sum(len(v) for v in groups.values())
     lines.append(f"\n_{n} operations across {len(spec['paths'])} paths._\n")
-    with open(out, "w") as fh:
+    with open(out, "w", encoding="utf-8") as fh:
         fh.write("\n".join(lines))
     print(f"wrote {out} ({n} operations)")
 

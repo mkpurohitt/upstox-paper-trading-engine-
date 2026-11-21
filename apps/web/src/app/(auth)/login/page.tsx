@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/misc";
 import { api, apiJson, unwrap } from "@/lib/api";
+import { useHydrated } from "@/hooks/use-hydrated";
 import { useAuth } from "@/lib/auth";
 import { Brand, GoogleIcon } from "../auth-ui";
 
@@ -30,6 +31,7 @@ function LoginInner() {
   const [busy, setBusy] = React.useState(false);
   const [providers, setProviders] = React.useState<Schemas["AuthProvidersOut"] | null>(null);
   const form = useForm<Form>({ resolver: zodResolver(schema), defaultValues: { email: "", password: "" } });
+  const hydrated = useHydrated(); // never let the browser submit the form natively (credentials in the URL)
 
   React.useEffect(() => {
     unwrap(api.GET("/api/auth/providers")).then(setProviders).catch(() => undefined);
@@ -114,7 +116,7 @@ function LoginInner() {
               </Button>
             </form>
           ) : (
-            <form className="flex flex-col gap-3" onSubmit={onSubmit} noValidate>
+            <form className="flex flex-col gap-3" method="post" onSubmit={onSubmit} noValidate>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" type="email" autoComplete="email" {...form.register("email")} aria-invalid={!!form.formState.errors.email} />
@@ -125,7 +127,7 @@ function LoginInner() {
                 <Input id="password" type="password" autoComplete="current-password" {...form.register("password")} />
                 {form.formState.errors.password && <p className="text-2xs text-loss">{form.formState.errors.password.message}</p>}
               </div>
-              <Button type="submit" loading={busy} className="mt-1">
+              <Button type="submit" loading={busy} disabled={!hydrated} className="mt-1">
                 Sign in
               </Button>
               <div className="my-1 flex items-center gap-3 text-2xs text-muted-foreground">

@@ -75,7 +75,15 @@ export class RealtimeClient {
     this.stopped = true;
     if (this.timer) clearTimeout(this.timer);
     if (this.ping) clearInterval(this.ping);
-    this.ws?.close();
+    const ws = this.ws;
+    if (ws) {
+      ws.onclose = null;
+      ws.onerror = null;
+      ws.onmessage = null;
+      // Closing a socket that is still connecting logs a browser warning (React StrictMode mounts twice in dev).
+      if (ws.readyState === WebSocket.CONNECTING) ws.onopen = () => ws.close();
+      else ws.close();
+    }
     this.ws = null;
     this.ready = false;
     useWsStatus.getState().set("closed");

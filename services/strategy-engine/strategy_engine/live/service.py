@@ -24,7 +24,10 @@ async def main() -> None:
     stop = asyncio.Event()
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGINT, signal.SIGTERM):
-        loop.add_signal_handler(sig, stop.set)
+        try:
+            loop.add_signal_handler(sig, stop.set)
+        except NotImplementedError:  # Windows: Ctrl+C raises KeyboardInterrupt instead
+            pass
     await stop.wait()
     for t in tasks:
         t.cancel()

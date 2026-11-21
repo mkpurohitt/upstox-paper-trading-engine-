@@ -286,7 +286,7 @@ class StrategyRunner:
             frame = self.frames.get(self.dsl.symbols[0])
             if frame is None or frame.empty or not bool(generate_signals(frame, self.dsl)["entry_long"].iloc[-1]):
                 return
-        legs = []
+        legs: list[dict[str, Any]] = []
         for spec in self.dsl.legs:
             if spec.option_type == "FUT":
                 continue

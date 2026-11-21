@@ -70,7 +70,10 @@ export default function ArbitragePage() {
         <div className="flex flex-col gap-3">
           <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
             <Stat label="Cash-carry setups" value={d.cash_futures.filter((r) => r.signal !== "fair").length} hint={`of ${d.cash_futures.length} F&O stocks`} />
-            <Stat label="Best net annualised" value={`${num(Math.max(...d.cash_futures.map((r) => r.net_annualised_pct)), 2)}%`} tone="profit" />
+            {(() => {
+              const best = d.cash_futures.length ? Math.max(...d.cash_futures.map((r) => r.net_annualised_pct)) : null;
+              return <Stat label="Best net annualised" value={best == null ? "—" : `${num(best, 2)}%`} tone={best == null ? "default" : best > 0 ? "profit" : "loss"} hint="after round-trip costs" />;
+            })()}
             <Stat label="NSE–BSE actionable" value={d.nse_bse.filter((r) => r.actionable).length} />
             <Stat label="PCP violations" value={d.put_call_parity.filter((r) => r.violation).length} tone={d.put_call_parity.some((r) => r.violation) ? "warning" : "default"} />
           </div>

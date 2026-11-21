@@ -10,9 +10,13 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from datetime import date, datetime, time, timedelta
+from functools import lru_cache
 
 import numpy as np
 from scipy.stats import norm
+
+from algo_common.timeutils import IST, is_trading_day
 
 RISK_FREE = 0.065  # ~ 91-day T-bill
 _SQRT_2PI = math.sqrt(2 * math.pi)
@@ -152,3 +156,72 @@ def strike_step(underlying: str, spot: float) -> float:
 
 def atm_strike(spot: float, step: float) -> float:
     return round(spot / step) * step
+
+
+# ---------------------------------------------------------------------------------------------------- business time
+# Prices only move while the exchange is open (plus the overnight gap), but quoted IVs and Greeks use calendar
+# time (NSE convention). Pricing with calendar time alone makes options decay 24x7 while variance arrives only in
+# trading hours, which systematically mis-prices intraday option P&L. We therefore measure variance in trading
+# days (252 a year): each trading day = an overnight gap (GAP_SHARE) + a 375-minute session, and convert a
+# business-time volatility into the calendar-quoted IV that gives the same total variance.
+SESSION_OPEN, SESSION_CLOSE, SESSION_MINUTES = time(9, 15), time(15, 30), 375
+GAP_SHARE = 0.09  # share of a day's variance realised in the overnight gap
+
+
+def _trading_day_units(at: datetime, expiry: datetime) -> float:
+    """Variance-weighted trading days between ``at`` and ``expiry`` (both aware datetimes)."""
+    a, e = at.astimezone(IST), expiry.astimezone(IST)
+    if e <= a:
+        return 0.0
+
+    def remaining_today(t: datetime, until: datetime | None) -> float:
+        if not is_trading_day(t.date()):
+            return 0.0
+        start = datetime.combine(t.date(), SESSION_OPEN, tzinfo=IST)
+        close = datetime.combine(t.date(), SESSION_CLOSE, tzinfo=IST)
+        end = min(close, until) if until else close
+        units = 0.0
+        if t < start:
+            units += GAP_SHARE
+            t = start
+        if end > t:
+            units += (1 - GAP_SHARE) * (end - t).total_seconds() / (SESSION_MINUTES * 60)
+        return units
+
+    if a.date() == e.date():
+        return remaining_today(a, e)
+    units = remaining_today(a, None)
+    d = a.date() + timedelta(days=1)
+    while d < e.date():
+        if is_trading_day(d):
+            units += 1.0
+        d += timedelta(days=1)
+    return units + remaining_today(datetime.combine(e.date(), time(0, 0), tzinfo=IST), e)
+
+
+@lru_cache(maxsize=4096)
+def _ratio_cached(at_min: int, exp_min: int) -> float:
+    at = datetime.fromtimestamp(at_min * 60, IST)
+    exp = datetime.fromtimestamp(exp_min * 60, IST)
+    t_cal = (exp - at).total_seconds() / (365 * 86400)
+    if t_cal <= 0:
+        return 1.0
+    t_bus = _trading_day_units(at, exp) / 252
+    return max(0.05, min(12.0, t_bus / t_cal))
+
+
+def business_variance_ratio(at: datetime, t_years: float) -> float:
+    """T_business / T_calendar for an option expiring ``t_years`` (calendar) after ``at``.
+
+    Multiply a business-time variance by this ratio to get the calendar-time variance to quote:
+    ``iv_calendar = sigma_business * sqrt(ratio)``.
+    """
+    if t_years <= 0:
+        return 1.0
+    exp = at + timedelta(seconds=t_years * 365 * 86400)
+    return _ratio_cached(int(at.timestamp() // 60), int(exp.timestamp() // 60))
+
+
+def business_date_units(at: datetime, expiry_day: date) -> float:
+    """Trading-day units from ``at`` to the 15:30 close of ``expiry_day`` (for display/what-if helpers)."""
+    return _trading_day_units(at, datetime.combine(expiry_day, SESSION_CLOSE, tzinfo=IST))

@@ -68,7 +68,24 @@ def test_deploy_paper_and_controls(client):
     assert d["status"] == "running" and d["algo_id"].endswith(f"S{s['id']}") and d["symbols"]
     assert client.post(f"/api/deployments/{d['id']}/pause", headers=h).json()["status"] == "paused"
     assert client.post(f"/api/deployments/{d['id']}/resume", headers=h).json()["status"] == "running"
+    assert client.post(f"/api/deployments/{d['id']}/restart", headers=h).status_code == 409  # only errored ones
     assert client.post(f"/api/deployments/{d['id']}/stop", headers=h).json()["status"] == "stopped"
+
+    async def fail(db):
+        from algo_db.models import Deployment
+
+        dep = await db.get(Deployment, d["id"])
+        dep.status, dep.error = "error", "boom"
+
+    from algo_db.session import session_scope
+
+    async def run(fn):
+        async with session_scope() as db:
+            await fn(db)
+
+    client.portal.call(run, fail)
+    r = client.post(f"/api/deployments/{d['id']}/restart", headers=h)
+    assert r.status_code == 200 and r.json()["status"] == "running" and r.json()["error"] is None
     # live deploy requires 2FA
     r = client.post("/api/deployments", json={"strategy_id": s["id"], "mode": "live", "acknowledge_risk": True}, headers=h)
     assert r.status_code == 403

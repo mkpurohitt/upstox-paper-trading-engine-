@@ -104,20 +104,21 @@ function Performance() {
   const eq = ((d.equity ?? []) as Any[]).map((p) => ({ ...p, t: shortDate(p.date) }));
   return (
     <div className="flex flex-col gap-3">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
         <Stat label="Current value" value={compactInr(d.current_value)} hint={`from ${compactInr(d.starting_capital)}`} />
         <Stat label="Total return" value={pct(d.total_return_pct)} tone={d.total_return_pct >= 0 ? "profit" : "loss"} />
-        <Stat label="XIRR" value={d.xirr_pct != null ? pct(d.xirr_pct) : "—"} hint={d.xirr_pct == null ? "needs ≥ 7 days" : "money-weighted"} />
-        <Stat label="Winning days" value={`${d.winning_days}/${d.trading_days}`} />
-        <Stat label="Best / worst day" value={<span className="text-sm"><Pnl value={d.best_day?.realised} /> / <Pnl value={d.worst_day?.realised} /></span>} />
+        <Stat label="XIRR" value={d.xirr_pct != null ? pct(d.xirr_pct) : "—"} hint={d.xirr_pct == null ? "needs ≥ 7 days" : "money-weighted, annualised"} />
+        <Stat label="Max drawdown" value={d.max_drawdown_pct != null ? pct(d.max_drawdown_pct) : "—"} tone={d.max_drawdown_pct < 0 ? "loss" : "default"} />
+        <Stat label="Winning days" value={`${d.winning_days}/${d.trading_days}`} hint={d.trading_days ? `${Math.round((d.winning_days / d.trading_days) * 100)}% of days with P&L` : undefined} />
+        <Stat label="Best / worst day" value={<span className="text-sm"><Pnl value={d.best_day?.pnl} /> / <Pnl value={d.worst_day?.pnl} /></span>} hint={d.best_day ? `${shortDate(d.best_day.date)} · ${shortDate(d.worst_day.date)}` : undefined} />
       </div>
       {daily.length === 0 ? (
-        <EmptyState icon={Briefcase} title="No closed trades yet" description="Realised P&L appears here once paper trades are closed." />
+        <EmptyState icon={Briefcase} title="No trades yet" description="Your equity curve and daily P&L appear here after your first paper trade." />
       ) : (
         <div className="grid gap-3 lg:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Equity (realised, net of charges)</CardTitle>
+              <CardTitle>Equity (marked to market)</CardTitle>
             </CardHeader>
             <CardContent className="h-64">
               <ResponsiveContainer>
@@ -133,7 +134,7 @@ function Performance() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Daily realised P&amp;L</CardTitle>
+              <CardTitle>Daily P&amp;L</CardTitle>
             </CardHeader>
             <CardContent className="h-64">
               <ResponsiveContainer>
@@ -142,9 +143,9 @@ function Performance() {
                   <XAxis dataKey="t" {...axisProps} minTickGap={40} />
                   <YAxis {...axisProps} width={56} tickFormatter={(v: number) => compactInr(v)} />
                   <RTooltip {...tooltipStyle} formatter={(v: number) => inr(v, { decimals: 0 })} />
-                  <Bar dataKey="realised" radius={[2, 2, 0, 0]}>
+                  <Bar dataKey="pnl" name="P&L" radius={[2, 2, 0, 0]}>
                     {daily.map((p, i) => (
-                      <Cell key={i} fill={p.realised >= 0 ? "hsl(var(--profit))" : "hsl(var(--loss))"} />
+                      <Cell key={i} fill={p.pnl >= 0 ? "hsl(var(--profit))" : "hsl(var(--loss))"} />
                     ))}
                   </Bar>
                 </BarChart>

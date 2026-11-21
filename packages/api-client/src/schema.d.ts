@@ -1074,6 +1074,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/deployments/{dep_id}/restart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Restart
+         * @description Restart a deployment whose runner stopped with an error (paper / notify only: a live deployment must be
+         *     redeployed so the user re-confirms with a fresh 2FA code).
+         */
+        post: operations["restart_api_deployments__dep_id__restart_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/deployments/{dep_id}/resume": {
         parameters: {
             query?: never;
@@ -1873,7 +1894,7 @@ export interface paths {
         };
         /**
          * Performance
-         * @description Paper-account performance: daily realised P&L, equity curve and money-weighted return (XIRR).
+         * @description Paper-account performance marked to market daily: equity curve, daily P&L, winning days and XIRR.
          */
         get: operations["performance_api_portfolio_performance_get"];
         put?: never;
@@ -7135,6 +7156,37 @@ export interface operations {
         };
     };
     pause_api_deployments__dep_id__pause_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dep_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeploymentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    restart_api_deployments__dep_id__restart_post: {
         parameters: {
             query?: never;
             header?: never;

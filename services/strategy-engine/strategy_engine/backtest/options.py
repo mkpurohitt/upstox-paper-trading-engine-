@@ -25,7 +25,7 @@ import numpy as np
 import pandas as pd
 
 from algo_common.timeutils import IST, upcoming_expiries
-from market_data.options import RISK_FREE, atm_strike, bs_greeks, strike_step
+from market_data.options import RISK_FREE, atm_strike, bs_greeks, business_variance_ratio, strike_step
 from market_data.symbols import option_symbol, parse
 from strategy_engine.backtest.engine import BacktestParams, EngineResult, ProgressFn, round_tick
 from strategy_engine.costs import Charges, CostModel, split_orders
@@ -61,6 +61,7 @@ class HVPricer:
         base = max(0.06, base * 1.1)
         m = math.log(strike / spot)
         scale = math.sqrt(max(t_years, 1 / 365) * 12)
+        base *= math.sqrt(business_variance_ratio(at, t_years))  # variance arrives in trading hours
         return base * max(0.6, 1 - 1.4 * m / scale + 9 * (m / scale) ** 2)
 
 
@@ -128,10 +129,11 @@ class OptionsEngine:
         if sel.mode == "ATM_OFFSET" or leg.option_type == "FUT":
             return atm + sel.offset * step
         candidates = [atm + k * step for k in range(-30, 31)]
-        if sel.mode == "DELTA" and sel.delta:
-            return min(candidates, key=lambda k: abs(abs(self.price(k, leg.option_type, expiry, spot, at)[1]) - sel.delta))
-        if sel.mode == "PREMIUM" and sel.premium:
-            return min(candidates, key=lambda k: abs(self.price(k, leg.option_type, expiry, spot, at)[0] - sel.premium))
+        target_delta, target_premium = sel.delta, sel.premium
+        if sel.mode == "DELTA" and target_delta:
+            return min(candidates, key=lambda k: abs(abs(self.price(k, leg.option_type, expiry, spot, at)[1]) - target_delta))
+        if sel.mode == "PREMIUM" and target_premium:
+            return min(candidates, key=lambda k: abs(self.price(k, leg.option_type, expiry, spot, at)[0] - target_premium))
         return atm
 
     def _charge(self, ts: pd.Timestamp, sign: int, price: float, qty: int, exercised: float = 0.0) -> Charges:
@@ -200,7 +202,7 @@ class OptionsEngine:
             for lg in legs:
                 if lg.exit_price is None:
                     close_leg(lg, spot, ts, reason)
-            gross = sum((lg.exit_price - lg.entry_price) * lg.qty * lg.sign for lg in legs)  # type: ignore[operator]
+            gross = sum(((lg.exit_price or 0.0) - lg.entry_price) * lg.qty * lg.sign for lg in legs)
             charges = sum(lg.charges.total for lg in legs)
             net = gross - charges
             day_pnl += net

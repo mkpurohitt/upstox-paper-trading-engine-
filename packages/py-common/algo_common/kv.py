@@ -13,6 +13,10 @@ from typing import Any, TypeVar
 T = TypeVar("T")
 
 
+
+# `set` is also a method name on the KV classes; this alias keeps annotations pointing at the builtin.
+StrSet = set[str]
+
 class KV(ABC):
     @abstractmethod
     async def get(self, key: str) -> str | None: ...
@@ -37,7 +41,7 @@ class KV(ABC):
     async def srem(self, key: str, *members: str) -> None: ...
 
     @abstractmethod
-    async def smembers(self, key: str) -> set[str]: ...
+    async def smembers(self, key: str) -> StrSet: ...
 
     async def get_json(self, key: str) -> Any | None:
         raw = await self.get(key)
@@ -106,7 +110,7 @@ class MemoryKV(KV):
         s.difference_update(members)
         self._data[key] = (s, None)
 
-    async def smembers(self, key: str) -> set[str]:
+    async def smembers(self, key: str) -> StrSet:
         return set(self._alive(key) or set())
 
 
@@ -150,7 +154,7 @@ class RedisKV(KV):
         if members:
             await self._r.srem(key, *members)
 
-    async def smembers(self, key: str) -> set[str]:
+    async def smembers(self, key: str) -> StrSet:
         return set(await self._r.smembers(key))
 
 

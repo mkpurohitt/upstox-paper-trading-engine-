@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import date
+from datetime import date, datetime
 from typing import Any
 
 from market_data.symbols import parse, underlying_spot_symbol
@@ -143,4 +143,48 @@ def realised_by_day(fills: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for d in sorted(days):
         cum += days[d]
         out.append({"date": d.isoformat(), "realised": round(days[d], 2), "cumulative": round(cum, 2)})
+    return out
+
+
+def mtm_equity_by_day(
+    fills: list[dict[str, Any]], closes: dict[str, dict[date, float]], capital: float, days: list[date],
+    last_prices: dict[str, float] | None = None,
+) -> list[dict[str, Any]]:
+    """Daily mark-to-market equity of a cash account: cash (capital - buys + sells - charges) plus open quantity
+    valued at each day's close. ``fills`` carry an IST ``date``; ``closes[symbol][day]`` are daily closes (the last
+    known close is carried forward over gaps); ``last_prices`` override the final day's marks (live LTPs) so the
+    last point equals the account's current value. Returns ``[{date, equity, pnl, realised}]`` where ``pnl`` is the
+    day's change in equity (the first day against ``capital``)."""
+    fills = sorted(fills, key=lambda f: (f["date"], f.get("ts") or 0))
+    realised = {date.fromisoformat(r["date"]): r["realised"] for r in realised_by_day(
+        [{**f, "ts": datetime.combine(f["date"], datetime.min.time())} for f in fills])}
+    cash = capital
+    qty: dict[str, float] = defaultdict(float)
+    last_mark: dict[str, float] = {}
+    out: list[dict[str, Any]] = []
+    prev_eq = capital
+    k = 0
+    for n, d in enumerate(days):
+        while k < len(fills) and fills[k]["date"] <= d:
+            f = fills[k]
+            signed = f["quantity"] if f["side"] == "BUY" else -f["quantity"]
+            cash -= signed * f["price"] + float(f.get("charges") or 0)
+            qty[f["symbol"]] += signed
+            last_mark.setdefault(f["symbol"], f["price"])
+            k += 1
+        value = 0.0
+        for sym, q in qty.items():
+            if not q:
+                continue
+            px = (last_prices or {}).get(sym) if n == len(days) - 1 else None
+            if px is None:
+                px = closes.get(sym, {}).get(d)
+            if px is None:
+                px = last_mark.get(sym, 0.0)
+            last_mark[sym] = px
+            value += q * px
+        eq = cash + value
+        out.append({"date": d.isoformat(), "equity": round(eq, 2), "pnl": round(eq - prev_eq, 2),
+                    "realised": round(realised.get(d, 0.0), 2)})
+        prev_eq = eq
     return out

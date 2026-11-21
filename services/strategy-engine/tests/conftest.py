@@ -8,7 +8,7 @@ import tempfile
 import pytest
 
 _tmp = tempfile.mkdtemp(prefix="bg-test-")
-os.environ.update({"DATABASE_URL": f"sqlite+aiosqlite:///{_tmp}/bg.db", "REDIS_URL": "", "DATA_MODE": "mock",
+os.environ.update({"DATABASE_URL": f"sqlite+aiosqlite:///{_tmp}/bg.db", "REDIS_URL": "none", "DATA_MODE": "mock", "PAPER_MARKET_HOURS": "false",
                    "ENVIRONMENT": "test", "LOG_LEVEL": "WARNING", "LOG_JSON": "false"})
 
 from algo_common.settings import reset_settings_cache  # noqa: E402

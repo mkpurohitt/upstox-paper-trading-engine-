@@ -98,7 +98,7 @@ async def payoff(body: PayoffIn, _: CurrentUser) -> dict[str, Any]:
     if not specs:
         raise HTTPException(422, "provide legs or a structure")
     chain, legs = await opt.legs_from_chain(get_provider(), body.underlying, body.expiry, specs)
-    res = opt.payoff(chain.spot, legs, chain.lot_size, expiry=chain.expiry, days_forward=body.days_forward,
+    res = opt.payoff(chain.spot, legs, chain.lot_size, expiry=chain.expiry, days_forward=body.days_forward, underlying=body.underlying,
                      spot_shift_pct=body.spot_shift_pct, iv_shift=body.iv_shift)
     return {**res, "underlying": body.underlying.upper(), "expiry": chain.expiry.isoformat(), "expiries": [e.isoformat() for e in chain.expiries],
             "legs": legs, "structures": sorted(opt.STRUCTURES)}

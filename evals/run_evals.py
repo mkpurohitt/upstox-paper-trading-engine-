@@ -131,7 +131,7 @@ def _load_cases(args: argparse.Namespace) -> list[dict[str, Any]]:
     files = sorted(glob.glob(str(HERE / "cases" / "*.jsonl")))
     cases: list[dict[str, Any]] = []
     for f in files:
-        for i, line in enumerate(Path(f).read_text().splitlines(), 1):
+        for i, line in enumerate(Path(f).read_text(encoding="utf-8").splitlines(), 1):
             if line.strip():
                 c = json.loads(line)
                 c["_file"] = f"{Path(f).name}:{i}"

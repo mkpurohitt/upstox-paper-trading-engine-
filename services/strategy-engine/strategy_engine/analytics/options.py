@@ -11,7 +11,15 @@ import numpy as np
 from algo_common.schemas.market import Interval, OptionChain
 from algo_common.timeutils import IST, expiry_from_date, now_ist, upcoming_expiries
 from market_data.base import MarketDataProvider
-from market_data.options import RISK_FREE, bs_greeks, bs_price_vec, implied_vol, prob_between, strike_step
+from market_data.options import (
+    RISK_FREE,
+    bs_greeks,
+    bs_price_vec,
+    business_date_units,
+    implied_vol,
+    prob_between,
+    strike_step,
+)
 from market_data.symbols import future_symbol, option_symbol, underlying_spot_symbol
 from market_data.universe import EQUITIES, asset_for_underlying
 
@@ -70,22 +78,60 @@ def chain_analytics(chain: OptionChain, changes: dict[str, float] | None = None)
 # ---------------------------------------------------------------- payoff engine
 
 
-def _leg_value(leg: dict[str, Any], s: np.ndarray, t: float, iv_shift: float, r: float = RISK_FREE) -> np.ndarray:
+def _leg_value(leg: dict[str, Any], s: np.ndarray, t: float, iv_shift: float, r: float = RISK_FREE, vol_scale: float = 1.0) -> np.ndarray:
     if leg["option_type"] == "FUT":
         return s * math.exp(r * t)
-    sigma = max(0.01, leg["iv"] / 100 + iv_shift / 100)
+    sigma = max(0.01, leg["iv"] / 100 * vol_scale + iv_shift / 100)
     return bs_price_vec(s, leg["strike"], t, sigma, r, call=leg["option_type"] == "CE")
+
+
+def forward_vol_scale(expiry: date, days_forward: float, at: datetime | None = None) -> float:
+    """Factor turning today's calendar-quoted IV into the IV that keeps business-time variance constant
+    ``days_forward`` calendar days from now: options do not decay over closed hours, so moving the clock across a
+    weekend leaves premiums (almost) unchanged while moving it through a session bleeds them."""
+    at = at or now_ist()
+    t_now = years_to(expiry, at)
+    t_fwd = max(0.0, t_now - days_forward / 365)
+    if days_forward <= 0 or t_fwd <= 1e-9 or t_now <= 0:
+        return 1.0
+    u_now = business_date_units(at, expiry)
+    u_fwd = business_date_units(at + timedelta(days=days_forward), expiry)
+    if u_now <= 0:
+        return 1.0
+    return math.sqrt(max(0.0, (u_fwd / u_now) * (t_now / t_fwd)))
+
+
+def margin_estimate(underlying: str, spot: float, legs: list[dict[str, Any]], lot_size: int, max_loss: float | None) -> float:
+    """Rough SPAN + exposure estimate. Defined-risk structures are charged close to their maximum loss plus a small
+    exposure margin (the hedge benefit brokers give); naked shorts ~11% (index) / ~18% (stock) of notional;
+    long-only positions need just the premium. Brokers' figures differ; always check before trading."""
+    a = asset_for_underlying(underlying)
+    index = a is None or a.kind == "index"
+    rate, exposure = (0.11, 0.01) if index else (0.18, 0.035)
+    shorts = [leg for leg in legs if leg["action"] == "SELL"]
+    qty = lambda leg: int(leg.get("lots", 1)) * lot_size  # noqa: E731
+    if not shorts:
+        return round(sum(float(leg["premium"]) * qty(leg) for leg in legs if leg["option_type"] != "FUT")
+                     + sum(spot * qty(leg) * rate for leg in legs if leg["option_type"] == "FUT"), 2)
+    notional = sum((leg["strike"] if leg["option_type"] != "FUT" else spot) * qty(leg) for leg in shorts)
+    naked = notional * rate
+    if max_loss is not None:
+        return round(min(naked, abs(max_loss) + exposure * notional), 2)
+    hedged = any(leg["action"] == "BUY" for leg in legs)
+    return round(naked * (0.7 if hedged else 1.0), 2)
 
 
 def payoff(
     spot: float, legs: list[dict[str, Any]], lot_size: int, *, expiry: date, days_forward: float = 0.0,
     spot_shift_pct: float = 0.0, iv_shift: float = 0.0, range_pct: float = 0.12, points: int = 241,
+    underlying: str = "NIFTY",
 ) -> dict[str, Any]:
     """legs: {action BUY|SELL, option_type CE|PE|FUT, strike, premium, iv(%), lots}"""
     s0 = spot * (1 + spot_shift_pct / 100)
     grid = np.linspace(spot * (1 - range_pct), spot * (1 + range_pct), points)
     t_now = years_to(expiry)
     t_fwd = max(0.0, t_now - days_forward / 365)
+    vscale = forward_vol_scale(expiry, days_forward)
     exp_pnl = np.zeros_like(grid)
     fwd_pnl = np.zeros_like(grid)
     greeks = {"delta": 0.0, "gamma": 0.0, "theta": 0.0, "vega": 0.0}
@@ -100,9 +146,9 @@ def payoff(
         else:
             exp_val = np.maximum(0, grid - leg["strike"]) if leg["option_type"] == "CE" else np.maximum(0, leg["strike"] - grid)
         exp_pnl += sign * (exp_val - prem) * qty
-        fwd_pnl += sign * (_leg_value(leg, grid, t_fwd, iv_shift) - prem) * qty
+        fwd_pnl += sign * (_leg_value(leg, grid, t_fwd, iv_shift, vol_scale=vscale) - prem) * qty
         if leg["option_type"] != "FUT":
-            g = bs_greeks(s0, leg["strike"], max(t_fwd, 1e-6), max(0.01, leg["iv"] / 100 + iv_shift / 100), call=leg["option_type"] == "CE")
+            g = bs_greeks(s0, leg["strike"], max(t_fwd, 1e-6), max(0.01, leg["iv"] / 100 * vscale + iv_shift / 100), call=leg["option_type"] == "CE")
             greeks["delta"] += sign * g.delta * qty
             greeks["gamma"] += sign * g.gamma * qty
             greeks["theta"] += sign * g.theta * qty
@@ -142,6 +188,7 @@ def payoff(
         "spot": round(spot, 2), "lot_size": lot_size, "net_premium": round(net_premium, 2),
         "points": [{"spot": round(float(x), 2), "expiry": round(float(a), 2), "t": round(float(b), 2)} for x, a, b in zip(grid, exp_pnl, fwd_pnl, strict=True)],
         "breakevens": be, "max_profit": max_profit, "max_loss": max_loss, "pop": round(min(1.0, pop), 4),
+        "margin_estimate": margin_estimate(underlying, spot, legs, lot_size, max_loss),
         "greeks": {k: round(v, 4) for k, v in greeks.items()},
         "days_to_expiry": round(t_now * 365, 2), "days_forward": days_forward,
     }
@@ -231,15 +278,21 @@ async def straddle_dashboard(provider: MarketDataProvider, underlying: str, expi
     iv = ((ce_row.call.iv if ce_row and ce_row.call and ce_row.call.iv else 0) + (pe_row.put.iv if pe_row and pe_row.put and pe_row.put.iv else 0)) / 2
     t = years_to(chain.expiry)
     theta = (ce_row.call.greeks.theta if ce_row and ce_row.call else 0) + (pe_row.put.greeks.theta if pe_row and pe_row.put else 0)
-    # decay projection: theoretical combined premium per remaining day at constant spot/IV
-    # (hourly steps when fewer than 3 days remain, so expiry-day decay is visible)
+    # decay projection: theoretical combined premium as time passes at constant spot and constant *business-time*
+    # volatility - premium only bleeds while the exchange is open (flat over nights, weekends and holidays), the
+    # way quoted prices behave. Hourly steps when fewer than 3 days remain, so expiry-day decay is visible.
     decay = []
     dte_days = t * 365
     steps = [i / 24 for i in range(0, max(1, math.ceil(dte_days * 24)) + 1)] if dte_days < 3 else list(range(max(1, math.ceil(dte_days)) + 1))
+    units_now = business_date_units(end, chain.expiry)
+    variance = (max(0.01, iv / 100) ** 2) * t  # total variance to expiry implied by today's quotes
     for d in steps:
         tt = max(0.0, t - d / 365)
-        c = bs_greeks(chain.spot, ce_k, max(tt, 1e-6), max(0.01, iv / 100), call=True).price
-        p = bs_greeks(chain.spot, pe_k, max(tt, 1e-6), max(0.01, iv / 100), call=False).price
+        units = business_date_units(end + timedelta(days=d), chain.expiry) if d else units_now
+        var_d = variance * (units / units_now) if units_now > 0 else 0.0
+        sig = math.sqrt(var_d / tt) if tt > 1e-9 and var_d > 0 else 1e-4
+        c = bs_greeks(chain.spot, ce_k, max(tt, 1e-6), sig, call=True).price
+        p = bs_greeks(chain.spot, pe_k, max(tt, 1e-6), sig, call=False).price
         decay.append({"day": round(d, 4), "premium": round(c + p, 2)})
     return {
         "underlying": underlying.upper(), "expiry": chain.expiry.isoformat(), "spot": chain.spot, "lot_size": chain.lot_size,
@@ -317,13 +370,14 @@ async def arbitrage_scan(provider: MarketDataProvider, cost_bps: float = 6.0) ->
         f2 = q.get(future_symbol(a.tradingsymbol, monthly[1]))
         bse = q.get(f"BSE:{a.tradingsymbol}")
         if spot and f1:
-            t = max(1, (monthly[0] - today).days)
+            # calendar days to the expiry close, fractional (a basis earned over 1.6 days annualises over 1.6 days)
+            t = max(0.25, years_to(monthly[0]) * 365)
             basis = f1.ltp - spot.ltp
             ann = basis / spot.ltp * 365 / t * 100
             net = ann - cost_bps / 100 * 365 / t
             cash_fut.append({"symbol": a.tradingsymbol, "spot": spot.ltp, "future": f1.ltp, "expiry": monthly[0].isoformat(),
                              "basis": round(basis, 2), "basis_pct": round(basis / spot.ltp * 100, 3), "annualised_pct": round(ann, 2),
-                             "net_annualised_pct": round(net, 2), "days": t, "lot_size": a.lot_size,
+                             "net_annualised_pct": round(net, 2), "days": round(t, 1), "lot_size": a.lot_size,
                              "signal": "cash & carry" if net > RISK_FREE * 100 else ("reverse c&c" if ann < 0 else "fair")})
         if f1 and f2:
             spread = f2.ltp - f1.ltp
@@ -355,7 +409,8 @@ async def arbitrage_scan(provider: MarketDataProvider, cost_bps: float = 6.0) ->
     pcp.sort(key=lambda r: -abs(r["deviation"]))
     return {"ts": now_ist().isoformat(), "cost_bps": cost_bps, "cash_futures": cash_fut, "calendar": calendar,
             "nse_bse": nse_bse, "put_call_parity": pcp,
-            "note": "Gross of execution risk; net figures subtract round-trip costs of ~cost_bps. Educational only."}
+            "note": f"Gross of execution risk; net figures subtract round-trip costs of ~{cost_bps:g} bps "
+                    "(brokerage, STT, exchange and slippage). Educational only."}
 
 
 def implied_vol_for(price: float, spot: float, strike: float, expiry: date, call: bool) -> float | None:
