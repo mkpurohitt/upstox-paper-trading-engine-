@@ -69,6 +69,9 @@ async def chain_snapshot_loop(every_s: int = 300) -> None:
 async def main() -> None:
     s = get_settings()
     configure_logging(s.log_level, s.log_json, service="market-data")
+    from market_data.registry import init_provider_from_db, watch_provider_reloads
+
+    await init_provider_from_db()
     provider = get_provider()
     streamer = TickStreamer(provider)
     set_streamer(streamer)
@@ -77,6 +80,8 @@ async def main() -> None:
         asyncio.create_task(instruments_loop(), name="instruments"),
         asyncio.create_task(eod_ingestion_loop(), name="eod"),
         asyncio.create_task(chain_snapshot_loop(), name="chains"),
+        asyncio.create_task(watch_provider_reloads(), name="provider-watch"),
+        asyncio.create_task(price_alert_loop(), name="price-alerts"),
     ]
     stop = asyncio.Event()
     loop = asyncio.get_running_loop()
@@ -90,6 +95,12 @@ async def main() -> None:
         t.cancel()
     await asyncio.gather(*tasks, return_exceptions=True)
     await provider.close()
+
+
+async def price_alert_loop() -> None:
+    from algo_jobs.price_alerts import run_forever
+
+    await run_forever()
 
 
 if __name__ == "__main__":

@@ -13,7 +13,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from algo_common.timeutils import utcnow
 from algo_db.audit import audit
-from algo_db.models import BrokerConnection, ChatMessage, ChatSession, Notification, Screen, User, Watchlist
+from algo_db.models import (
+    Alert,
+    BrokerConnection,
+    ChartLayout,
+    ChatMessage,
+    ChatSession,
+    Notification,
+    Screen,
+    User,
+    Watchlist,
+)
 from algo_db.models import Session as UserSession
 
 DELETION_GRACE_DAYS = 7
@@ -29,6 +39,8 @@ async def purge_user(db: AsyncSession, user: User) -> dict[str, int]:
         ("broker_connections", BrokerConnection.__table__.delete().where(BrokerConnection.user_id == uid)),
         ("notifications", Notification.__table__.delete().where(Notification.user_id == uid)),
         ("watchlists", Watchlist.__table__.delete().where(Watchlist.user_id == uid)),
+        ("chart_layouts", ChartLayout.__table__.delete().where(ChartLayout.user_id == uid)),
+        ("alerts", Alert.__table__.delete().where(Alert.user_id == uid)),
         ("screens", Screen.__table__.delete().where(Screen.user_id == uid)),
         ("sessions", UserSession.__table__.delete().where(UserSession.user_id == uid)),
     ]

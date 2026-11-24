@@ -36,7 +36,7 @@ def _register_optional_routers(app: FastAPI) -> None:
 
     for name in (
         "market", "strategies", "backtests", "brokers", "orders", "deployments", "risk",
-        "analysis", "ai", "rag", "news", "portfolio", "billing", "account", "admin", "watchlists",
+        "analysis", "ai", "rag", "news", "portfolio", "billing", "account", "admin", "watchlists", "charts", "alerts",
     ):
         try:
             module = importlib.import_module(f"app.routes.{name}")
@@ -65,8 +65,13 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             log.info("rag.corpus_seeded", documents=added)
     except Exception as exc:  # never block startup on the knowledge base
         log.warning("rag.seed_failed", error=str(exc))
+    # live market data: an admin-saved Upstox token (encrypted) wins over the environment; follow later changes
+    from market_data.registry import init_provider_from_db, provider_info, watch_provider_reloads
+
+    await init_provider_from_db()
+    runtime.spawn("md-provider-watch", watch_provider_reloads())
     await runtime.start()
-    log.info("api.started", data_mode=s.data_mode, environment=s.environment)
+    log.info("api.started", data_mode=s.data_mode, environment=s.environment, market_data=provider_info()["name"])
     try:
         yield
     finally:

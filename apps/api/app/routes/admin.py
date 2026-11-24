@@ -323,3 +323,113 @@ async def review(strategy_id: int, body: ReviewIn, admin: AdminUser, db: DB, req
         await notify(db, s.user_id, f"Black-box listing {s.ra_status}: {s.name}", body.note, kind="system",
                      data={"strategy_id": s.id}, channels=[])
     return {"id": s.id, "ra_status": s.ra_status}
+
+
+# ------------------------------------------------------------------ market data (Upstox access token)
+class MarketDataIn(BaseModel):
+    token: str | None = Field(None, max_length=4096, description="Upstox access token or analytics token")
+    enabled: bool = True
+
+
+def token_expiry(token: str) -> datetime | None:
+    """Upstox tokens are JWTs; read the `exp` claim (no signature check: informational only)."""
+    import base64
+    import json as _json
+
+    try:
+        payload = token.split(".")[1]
+        payload += "=" * (-len(payload) % 4)
+        exp = _json.loads(base64.urlsafe_b64decode(payload)).get("exp")
+        return datetime.fromtimestamp(int(exp), tz=now_ist().tzinfo) if exp else None
+    except (IndexError, ValueError, TypeError):
+        return None
+
+
+async def verify_upstox_token(token: str) -> dict[str, Any]:
+    """One cheap market-data call proves the token works for quotes, candles and the live feed."""
+    from market_data.upstox import UpstoxProvider
+
+    p = UpstoxProvider(token)
+    try:
+        data = await p._get("/v3/market-quote/ltp", {"instrument_key": "NSE_INDEX|Nifty 50"}) or {}
+    finally:
+        await p.close()
+    row = next(iter(data.values()), {}) if isinstance(data, dict) else {}
+    return {"nifty_ltp": row.get("last_price")}
+
+
+async def _market_data_status(db: DB) -> dict[str, Any]:
+    from market_data.registry import LIVE_CONFIG_KEY, provider_info
+
+    s = get_settings()
+    flag = await db.get(SystemFlag, LIVE_CONFIG_KEY)
+    cfg = dict(flag.value) if flag and flag.value else {}
+    exp = datetime.fromisoformat(cfg["expires_at"]) if cfg.get("expires_at") else None
+    return {
+        **provider_info(),
+        "saved": bool(cfg), "enabled": bool(cfg.get("enabled")), "token_hint": cfg.get("token_hint"),
+        "expires_at": exp.isoformat() if exp else None, "expired": bool(exp and exp <= now_ist()),
+        "verified_at": cfg.get("verified_at"), "verified_nifty_ltp": cfg.get("verified_nifty_ltp"),
+        "updated_at": cfg.get("set_at"), "env_token_configured": s.upstox_configured,
+    }
+
+
+@router.get("/market-data")
+async def market_data_status(_: AdminUser, db: DB) -> dict[str, Any]:
+    return await _market_data_status(db)
+
+
+@router.put("/market-data")
+async def set_market_data(body: MarketDataIn, admin: AdminUser, db: DB, request: Request) -> dict[str, Any]:
+    from algo_common.bus import get_bus
+    from algo_common.crypto import Vault, mask
+    from algo_common.errors import ProviderError
+    from market_data.registry import LIVE_CONFIG_KEY, apply_live_config
+
+    flag = await db.get(SystemFlag, LIVE_CONFIG_KEY)
+    cfg: dict[str, Any] = dict(flag.value) if flag and flag.value else {}
+    if body.token and body.token.strip():
+        token = body.token.strip().removeprefix("Bearer ").strip()
+        try:
+            check = await verify_upstox_token(token)
+        except ProviderError as exc:
+            status = (exc.details or {}).get("status")
+            why = "it is invalid or has expired" if status in (401, 403) else str(exc)
+            raise HTTPException(422, f"Upstox did not accept this token: {why}") from exc
+        except Exception as exc:  # network / DNS / proxy
+            raise HTTPException(502, f"Could not reach Upstox to verify the token: {exc.__class__.__name__}: {exc}") from exc
+        exp = token_expiry(token)
+        cfg.update(token_enc=Vault.from_settings().encrypt(token, aad=LIVE_CONFIG_KEY), token_hint=mask(token),
+                   expires_at=exp.isoformat() if exp else None, verified_at=utcnow().isoformat(),
+                   verified_nifty_ltp=check.get("nifty_ltp"))
+    elif body.enabled and not cfg.get("token_enc"):
+        raise HTTPException(422, "Paste an Upstox access token to turn on live data")
+    cfg.update(enabled=body.enabled, set_by=admin.id, set_at=utcnow().isoformat())
+    if flag is None:
+        db.add(SystemFlag(key=LIVE_CONFIG_KEY, value=cfg, updated_by=admin.id))
+    else:
+        flag.value, flag.updated_by = cfg, admin.id
+    await audit(db, "market_data.configure", user_id=admin.id, actor="admin", entity_type="system_flag",
+                entity_id=LIVE_CONFIG_KEY, ip=client_ip(request),
+                payload={"enabled": body.enabled, "token_changed": bool(body.token), "token_hint": cfg.get("token_hint"),
+                         "expires_at": cfg.get("expires_at")})
+    await db.commit()
+    await apply_live_config(cfg)
+    await get_bus().publish("md:provider", {"action": "reload"})
+    return await _market_data_status(db)
+
+
+@router.delete("/market-data")
+async def clear_market_data(admin: AdminUser, db: DB, request: Request) -> dict[str, Any]:
+    from algo_common.bus import get_bus
+    from market_data.registry import LIVE_CONFIG_KEY, apply_live_config
+
+    flag = await db.get(SystemFlag, LIVE_CONFIG_KEY)
+    if flag is not None:
+        await db.delete(flag)
+    await audit(db, "market_data.clear", user_id=admin.id, actor="admin", entity_type="system_flag",
+                entity_id=LIVE_CONFIG_KEY, ip=client_ip(request))
+    await db.commit()
+    await apply_live_config(None)
+    await get_bus().publish("md:provider", {"action": "reload"})
+    return await _market_data_status(db)

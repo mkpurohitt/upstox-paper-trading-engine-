@@ -1,5 +1,5 @@
 "use client";
-import { Activity, BookOpen, CreditCard, FileClock, Gauge, OctagonX, Shield, ShieldCheck, Users as UsersIcon } from "lucide-react";
+import { Activity, BookOpen, CandlestickChart, CreditCard, FileClock, Gauge, OctagonX, Shield, ShieldCheck, Users as UsersIcon } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import * as React from "react";
@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/misc";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/lib/auth";
 
+const MarketDataPanel = dynamic(() => import("@/components/admin/market-data").then((m) => m.MarketDataPanel), { ssr: false, loading: () => <Skeleton className="h-80" /> });
 const RagManager = dynamic(() => import("@/components/admin/rag-manager").then((m) => m.RagManager), { ssr: false, loading: () => <Skeleton className="h-96" /> });
 
 const TABS = [
@@ -17,6 +18,7 @@ const TABS = [
   { id: "billing", label: "Billing", icon: CreditCard },
   { id: "knowledge", label: "Knowledge base", icon: BookOpen },
   { id: "health", label: "Health", icon: Activity },
+  { id: "market-data", label: "Market data", icon: CandlestickChart },
   { id: "kill", label: "Kill switch", icon: OctagonX },
   { id: "audit", label: "Audit", icon: FileClock },
   { id: "reviews", label: "RA reviews", icon: ShieldCheck },
@@ -56,6 +58,9 @@ function Inner() {
         </TabsContent>
         <TabsContent value="health">
           <Health />
+        </TabsContent>
+        <TabsContent value="market-data">
+          <MarketDataPanel />
         </TabsContent>
         <TabsContent value="kill">
           <GlobalKillSwitch />

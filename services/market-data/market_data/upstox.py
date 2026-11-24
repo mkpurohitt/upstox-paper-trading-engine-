@@ -81,6 +81,7 @@ _INTERVALS: dict[Interval, tuple[str, str]] = {
     Interval.M15: ("minutes", "15"), Interval.M30: ("minutes", "30"), Interval.H1: ("hours", "1"),
     Interval.D1: ("days", "1"), Interval.W1: ("weeks", "1"),
 }
+POLL_SECONDS = 2.0  # REST polling interval when the WebSocket feed is not available for the token
 # Upstox v3 history depth per unit (chunk size when paging large ranges)
 _CHUNK_DAYS = {"minutes": 30, "hours": 90, "days": 3650, "weeks": 3650}
 
@@ -274,7 +275,16 @@ class UpstoxProvider(MarketDataProvider):
         asks = [DepthLevel(price=d.get("price", 0), quantity=d.get("quantity", 0), orders=d.get("orders", 0))
                 for d in depth.get("sell", []) if d.get("price")]
         ltp = float(q.get("last_price") or 0)
-        prev = float(q.get("prev_close_price") or ohlc.get("close") or 0) or None
+        # Previous close: explicit field when present, else last price - net_change (Upstox documents net_change as
+        # the change from yesterday's close); the quote's ohlc.close is today's running close, not yesterday's.
+        if q.get("prev_close_price"):
+            prev: float | None = float(q["prev_close_price"])
+        elif q.get("net_change") is not None and ltp:
+            prev = ltp - float(q["net_change"])
+        elif q.get("cp"):
+            prev = float(q["cp"])
+        else:
+            prev = float(ohlc.get("close") or 0) or None
         chg = (ltp - prev) if prev else None
         ts = q.get("timestamp") or q.get("last_trade_time")
         try:
@@ -366,13 +376,44 @@ class UpstoxProvider(MarketDataProvider):
 
     # ------------------------------------------------------------------ streaming
     async def stream(self, demand: DemandFn) -> AsyncIterator[list[Tick]]:  # type: ignore[override]
-        from market_data.upstox_feed import UpstoxFeed
+        from market_data.upstox_feed import FeedNotAuthorized, UpstoxFeed
 
         await self.instruments()
         feed = UpstoxFeed(self._http, self._by_symbol, self._by_key)
-        async for batch in feed.run(demand):
-            TICKS_PUBLISHED.labels("upstox").inc(len(batch))
-            yield batch
+        try:
+            async for batch in feed.run(demand):
+                TICKS_PUBLISHED.labels("upstox").inc(len(batch))
+                yield batch
+        except FeedNotAuthorized as exc:
+            # Some tokens (e.g. read-only ones without the feed scope) can call the REST market-data APIs but not
+            # open the WebSocket feed: keep prices moving by polling quotes instead of going silent.
+            from market_data.registry import note_provider_error
+
+            log.warning("upstox.feed_not_authorized_polling", error=str(exc))
+            note_provider_error("This Upstox token cannot open the live WebSocket feed; prices update by polling every "
+                                f"{POLL_SECONDS:g} s instead ({exc}).")
+            async for batch in self.poll(demand):
+                yield batch
+
+    async def poll(self, demand: DemandFn, every: float | None = None) -> AsyncIterator[list[Tick]]:
+        """REST fallback for the live feed: quotes for the demanded symbols every couple of seconds."""
+        every = every or POLL_SECONDS
+        while True:
+            symbols = sorted(demand())[:450]
+            batch: list[Tick] = []
+            if symbols:
+                try:
+                    quotes = await self.quotes(symbols)
+                except Exception as exc:
+                    log.warning("upstox.poll_failed", error=str(exc))
+                    quotes = {}
+                for sym, q in quotes.items():
+                    batch.append(Tick(symbol=sym, ts=q.ts, ltp=q.ltp, volume=q.volume, oi=q.oi, open=q.open, high=q.high,
+                                      low=q.low, close=q.close, change=q.change, change_pct=q.change_pct, bid=q.bid, ask=q.ask))
+            if batch:
+                TICKS_PUBLISHED.labels("upstox").inc(len(batch))
+                yield batch
+            await asyncio.sleep(every)
 
     async def close(self) -> None:
         await self._http.aclose()

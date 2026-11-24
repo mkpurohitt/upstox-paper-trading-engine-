@@ -181,3 +181,33 @@ async def test_mock_nse_tools():
     assert len(res["rows"]) == 5 and "fii_net" in res["rows"][0]
     sh = await tools.call_tool("get_shareholding_pattern", {"symbol": "NSE:RELIANCE"})
     assert pytest.approx(sh["promoter"] + sh["fii"] + sh["dii"] + sh["public"], abs=0.01) == 100 or sh["public"] == 2
+
+
+async def test_upstox_prev_close_and_feed_fallback_to_polling(monkeypatch):
+    """Previous close comes from net_change when no explicit field is sent, and a token that may not open the
+    WebSocket feed (401/403 on authorize) still streams prices by polling quotes."""
+    transport = _upstox_transport()
+    real_client = httpx.AsyncClient
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        if req.url.path == "/v3/feed/market-data-feed/authorize":
+            return httpx.Response(401, json={"status": "error", "errors": [{"message": "Invalid token used to access API"}]})
+        if req.url.path == "/v3/market-quote/quotes":
+            return httpx.Response(200, json={"status": "success", "data": {"NSE_EQ:RELIANCE": {
+                "instrument_token": "NSE_EQ|INE002A01018", "last_price": 1521.0, "net_change": 21.0, "volume": 5,
+                "ohlc": {"open": 1505, "high": 1530, "low": 1499, "close": 1521}, "depth": {"buy": [], "sell": []}}}})
+        return transport.handle_request(req)
+
+    mt = httpx.MockTransport(handler)
+    monkeypatch.setattr(httpx, "AsyncClient", lambda *a, **kw: real_client(*a, **{**kw, "transport": mt}))
+    from market_data import upstox as up
+
+    monkeypatch.setattr(up, "POLL_SECONDS", 0.01)
+    p = UpstoxProvider(token="t", transport=mt)
+    q = (await p.quotes(["NSE:RELIANCE"]))["NSE:RELIANCE"]
+    assert q.close == 1500.0 and round(q.change_pct, 2) == 1.4  # 1521 - 21
+    gen = p.stream(lambda: {"NSE:RELIANCE"}).__aiter__()
+    batch = await gen.__anext__()
+    assert batch[0].symbol == "NSE:RELIANCE" and batch[0].ltp == 1521.0 and batch[0].close == 1500.0
+    await gen.aclose()
+    await p.close()

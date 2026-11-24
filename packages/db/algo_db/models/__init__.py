@@ -3,6 +3,7 @@ from algo_db.models.billing import Payment, Plan, Subscription
 from algo_db.models.market import (
     Alert,
     CandleRow,
+    ChartLayout,
     InstrumentRow,
     NewsItem,
     Notification,
@@ -29,6 +30,7 @@ __all__ = [
     "BacktestTrade",
     "BrokerConnection",
     "CandleRow",
+    "ChartLayout",
     "ChatMessage",
     "ChatSession",
     "Consent",

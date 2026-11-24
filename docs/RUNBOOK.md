@@ -29,6 +29,16 @@
 | `PAPER_MARKET_HOURS` | `true` (default): paper orders placed while the exchange is closed queue as after-market orders and fill at the next open. `false` fills at any hour (used by the test suites). |
 | `REDIS_URL=none` | Forces the in-process bus/cache even if a Redis URL is set elsewhere (single-process runs). |
 
+## Live market data (Upstox)
+
+* **Connect / rotate:** Admin → Market data → paste the token → *Verify & go live*. The token is verified with one LTP call,
+  stored AES-GCM encrypted in `system_flags` (`market_data.upstox`), audited (`market_data.configure`, never the token itself),
+  and every process switches provider without a restart (the API applies it and publishes `md:provider` → `reload`).
+* **Daily access tokens** expire at 03:30 IST: replace them each morning, or use the long-lived analytics token. An expired
+  token shows as *expired* on the Market data tab and chart requests return a clear "Upstox rejected the access token" error.
+* **Pause** switches everyone to the simulated market while keeping the token; **Remove token** falls back to `.env`.
+* If the token cannot open the WebSocket feed, the streamer polls quotes every 2 s (shown as a note on the Market data tab).
+
 ## Kill switch procedure
 
 **User-level:** users press **Kill switch** in the top bar. This stops their deployments, cancels open orders and squares off paper

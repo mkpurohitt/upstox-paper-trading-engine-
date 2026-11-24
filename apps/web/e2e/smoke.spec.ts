@@ -58,6 +58,26 @@ test.describe("workspace pages", () => {
     await expect(page.getByRole("log").getByText(/Interpret the NIFTY option chain/)).toBeVisible();
   });
 
+  test("charts terminal: deep link, timeframe, chart type and an indicator", async ({ authed: page }) => {
+    await page.goto("/analysis/charts?symbol=NSE:RELIANCE&tf=15");
+    const cell = page.getByTestId("chart-cell-0");
+    await expect(cell.locator("canvas").first()).toBeVisible({ timeout: 90_000 });
+    await expect(cell.getByText("RELIANCE", { exact: true })).toBeVisible({ timeout: 60_000 });
+    await expect(cell.getByText("SIMULATED")).toBeVisible(); // offline data is never presented as live
+    await page.getByRole("button", { name: "Timeframe 1h" }).click();
+    await expect(cell.getByText(/^1h · NSE$/)).toBeVisible();
+    await page.getByRole("button", { name: /chart type/i }).click();
+    await page.getByRole("menuitem", { name: "Heikin Ashi", exact: true }).click();
+    await page.getByRole("button", { name: /^indicators$/i }).click();
+    await page.getByPlaceholder("Search indicators").fill("Bollinger");
+    await page.getByRole("dialog").getByRole("button", { name: /Bollinger Bands/ }).first().click();
+    await page.keyboard.press("Escape");
+    const expand = cell.getByRole("button", { name: /▸ \d+ indicators/ }); // legend starts collapsed on phones
+    await expect(cell.getByText(/^BB 20 2$/).or(expand).first()).toBeVisible();
+    if (await expand.isVisible()) await expand.click();
+    await expect(cell.getByText(/^BB 20 2$/).first()).toBeVisible(); // (the demo layout persists between runs)
+  });
+
   test("build page lists templates", async ({ authed: page }) => {
     await page.goto("/build");
     await expect(page.getByText("EMA 9/21 crossover").first()).toBeVisible({ timeout: 60_000 });

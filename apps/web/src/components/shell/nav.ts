@@ -1,6 +1,7 @@
 import {
   Blocks,
   Briefcase,
+  CandlestickChart,
   LineChart,
   Newspaper,
   Radio,
@@ -24,6 +25,7 @@ export const NAV: NavItem[] = [
   { href: "/", label: "Copilot", icon: Sparkles, description: "AI research assistant", shortcut: "G H", mobile: true },
   { href: "/build", label: "Build", icon: Blocks, description: "Strategies & backtests", shortcut: "G B", mobile: true },
   { href: "/deployments", label: "Live", icon: Radio, description: "Running strategies", shortcut: "G L" },
+  { href: "/analysis/charts", label: "Charts", icon: CandlestickChart, description: "Charting terminal", shortcut: "G C" },
   { href: "/analysis", label: "Analysis", icon: LineChart, description: "Dashboards & scanners", shortcut: "G A", mobile: true },
   { href: "/news", label: "News", icon: Newspaper, description: "Markets & announcements", shortcut: "G N" },
   { href: "/portfolio", label: "Portfolio", icon: Briefcase, description: "Holdings & positions", shortcut: "G P", mobile: true },

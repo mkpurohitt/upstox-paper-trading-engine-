@@ -320,6 +320,9 @@ Legend: 🔓 public · 👤 signed-in user · 🛡 admin only. Generated from th
 | 🛡 | `GET` | `/api/admin/health` | Health |
 | 🛡 | `GET` | `/api/admin/kill-switch` | Get Kill |
 | 🛡 | `POST` | `/api/admin/kill-switch` | Post Kill |
+| 🛡 | `DELETE` | `/api/admin/market-data` | Clear Market Data |
+| 🛡 | `GET` | `/api/admin/market-data` | Market Data Status |
+| 🛡 | `PUT` | `/api/admin/market-data` | Set Market Data |
 | 🛡 | `GET` | `/api/admin/payments` | Payments |
 | 🛡 | `GET` | `/api/admin/stats` | Stats |
 | 🛡 | `GET` | `/api/admin/strategies/review` | Review Queue |
@@ -328,4 +331,25 @@ Legend: 🔓 public · 👤 signed-in user · 🛡 admin only. Generated from th
 | 🛡 | `GET` | `/api/admin/users` | Users |
 | 🛡 | `PATCH` | `/api/admin/users/{user_id}` | Patch User |
 
-_163 operations across 141 paths._
+### Alerts
+
+| | Method | Path | Description |
+|---|---|---|---|
+| 👤 | `GET` | `/api/alerts` | List Alerts |
+| 👤 | `POST` | `/api/alerts` | Create Alert |
+| 👤 | `DELETE` | `/api/alerts/{alert_id}` | Delete Alert |
+| 👤 | `PATCH` | `/api/alerts/{alert_id}` | Update Alert |
+
+### Charts
+
+| | Method | Path | Description |
+|---|---|---|---|
+| 👤 | `GET` | `/api/charts/bars` | Bars |
+| 👤 | `GET` | `/api/charts/layouts` | List Layouts |
+| 👤 | `POST` | `/api/charts/layouts` | Create Layout |
+| 👤 | `DELETE` | `/api/charts/layouts/{layout_id}` | Delete Layout |
+| 👤 | `GET` | `/api/charts/layouts/{layout_id}` | Get Layout |
+| 👤 | `PUT` | `/api/charts/layouts/{layout_id}` | Update Layout |
+| 👤 | `GET` | `/api/charts/source` | Source |
+
+_177 operations across 148 paths._

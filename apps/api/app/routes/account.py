@@ -15,9 +15,11 @@ from sqlalchemy import desc, select, update
 from algo_common.timeutils import utcnow
 from algo_db.audit import audit
 from algo_db.models import (
+    Alert,
     AuditLog,
     Backtest,
     BrokerConnection,
+    ChartLayout,
     ChatMessage,
     ChatSession,
     Consent,
@@ -135,6 +137,8 @@ async def export(user: CurrentUser, db: DB, request: Request) -> JSONResponse:
         "chats": await rows(ChatSession, ChatSession.user_id == uid),
         "chat_messages": await rows(ChatMessage, ChatMessage.session_id.in_(sessions)) if sessions else [],
         "watchlists": await rows(Watchlist, Watchlist.user_id == uid),
+        "chart_layouts": await rows(ChartLayout, ChartLayout.user_id == uid),
+        "alerts": await rows(Alert, Alert.user_id == uid),
         "screens": await rows(Screen, Screen.user_id == uid),
         "notifications": await rows(Notification, Notification.user_id == uid),
         "llm_usage": await rows(LLMUsage, LLMUsage.user_id == uid),

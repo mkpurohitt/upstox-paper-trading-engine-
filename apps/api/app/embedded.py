@@ -30,6 +30,9 @@ async def start(rt: Runtime) -> None:
     rt.spawn("paper-matcher", PaperMatcher(provider).run())
     rt.spawn("runner-manager", RunnerManager(provider).run())
     rt.spawn("scheduler", _scheduler())
+    from algo_jobs.price_alerts import run_forever
+
+    rt.spawn("price-alerts", run_forever())
 
 
 async def _scheduler() -> None:

@@ -126,3 +126,14 @@ Mapped loosely to OWASP ASVS L2:
 7. Worker hardening (seccomp/AppArmor, no network, read-only FS) and the kill-switch procedure rehearsed (docs/RUNBOOK.md).
 8. Verify the effective-dated STT/charges regimes (`services/broker-gateway/broker_gateway/costs.py`, especially the Apr-2026 F&O STT
    regime flagged _verify_) against the enacted Finance Act.
+9. Exchange market-data licensing settled before showing live prices to customers (section 10).
+
+## 10. Market data licensing
+
+Exchange prices are licensed data. An Upstox token gives **its account holder** API access to NSE/BSE/MCX data; showing that
+data to *other* people (your customers) is redistribution, which the exchanges license separately (NSE/BSE data-vendor or
+redistribution agreements, with per-user or per-terminal fees), and broker API terms commonly restrict data to the account
+holder's own use. _Verify_ with Upstox and the exchanges before launch. Typical routes: each user connects their own broker
+account and sees data fetched with their own token; or the operator signs a data-vendor agreement (directly or via a licensed
+vendor) and reports users. The Charts terminal labels its source on every chart (LIVE / SIMULATED) so simulated data is never
+presented as exchange data.

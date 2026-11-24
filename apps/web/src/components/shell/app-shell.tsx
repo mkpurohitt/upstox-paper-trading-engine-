@@ -112,7 +112,7 @@ function Sidebar() {
       </div>
       <nav className="flex flex-1 flex-col gap-0.5 px-2 py-2" aria-label="Main">
         {items.map((n) => {
-          const active = n.href === "/" ? pathname === "/" : pathname.startsWith(n.href);
+          const active = isActiveNav(n.href, pathname);
           const link = (
             <Link
               key={n.href}
@@ -147,12 +147,20 @@ function Sidebar() {
   );
 }
 
+/** Longest matching nav entry wins (so /analysis/charts highlights Charts, not Analysis). */
+function isActiveNav(href: string, pathname: string): boolean {
+  if (href === "/") return pathname === "/";
+  const matches = NAV.filter((n) => n.href !== "/" && (pathname === n.href || pathname.startsWith(`${n.href}/`) || pathname.startsWith(n.href)));
+  const best = matches.sort((a, b) => b.href.length - a.href.length)[0];
+  return best?.href === href;
+}
+
 function MobileNav() {
   const pathname = usePathname();
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex h-14 items-stretch border-t bg-surface/95 backdrop-blur md:hidden" aria-label="Mobile">
       {NAV.filter((n) => n.mobile).map((n) => {
-        const active = n.href === "/" ? pathname === "/" : pathname.startsWith(n.href);
+        const active = isActiveNav(n.href, pathname);
         return (
           <Link key={n.href} href={n.href} className={cn("flex flex-1 flex-col items-center justify-center gap-0.5 text-2xs", active ? "text-primary" : "text-muted-foreground")}>
             <n.icon className="h-4 w-4" aria-hidden />
@@ -210,7 +218,8 @@ function useGlobalShortcuts(openPalette: () => void) {
         return;
       }
       if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
-      if (e.key === "/") {
+      if (e.key === "/" && !document.querySelector("[data-chart-terminal]")) {
+        // (on the Charts page "/" opens the chart's symbol search instead)
         e.preventDefault();
         openPalette();
         return;

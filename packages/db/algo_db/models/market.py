@@ -100,6 +100,17 @@ class Watchlist(IdMixin, TimestampMixin, Base):
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
 
 
+class ChartLayout(IdMixin, TimestampMixin, Base):
+    """A saved chart workspace: grid layout, per-cell symbol/timeframe/style/indicators and drawings per symbol."""
+
+    __tablename__ = "chart_layouts"
+
+    user_id: Mapped[int] = mapped_column(BigIntId, ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    name: Mapped[str] = mapped_column(String(80))
+    state: Mapped[dict[str, Any]] = mapped_column(default=dict)
+    is_default: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
 class Screen(IdMixin, TimestampMixin, Base):
     __tablename__ = "screens"
 

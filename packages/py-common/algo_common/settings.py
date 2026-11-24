@@ -12,7 +12,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, SecretStr, field_validator, model_validator
+from pydantic import AliasChoices, Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _DEV_JWT_SECRET = "dev-only-jwt-secret-change-me-0123456789abcdef"
@@ -113,7 +113,11 @@ class Settings(BaseSettings):
     upstox_api_key: str | None = None
     upstox_api_secret: SecretStr | None = None
     upstox_redirect_uri: str = "http://localhost:8000/api/brokers/upstox/callback"
-    upstox_analytics_token: SecretStr | None = None
+    # Any Upstox token that can call the market-data APIs: the long-lived Analytics Token or a daily access token.
+    # Either variable name works. Admins can also paste one in Admin -> Market data (stored encrypted, no restart).
+    upstox_analytics_token: SecretStr | None = Field(
+        default=None, validation_alias=AliasChoices("UPSTOX_ANALYTICS_TOKEN", "UPSTOX_ACCESS_TOKEN", "upstox_analytics_token")
+    )
     upstox_base_url: str = "https://api.upstox.com"
     upstox_instruments_url: str = "https://assets.upstox.com/market-quote/instruments/exchange/complete.json.gz"
     upstox_rate_limit_per_sec: int = 25

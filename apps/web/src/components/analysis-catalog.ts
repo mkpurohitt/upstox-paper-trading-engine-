@@ -23,6 +23,7 @@ export interface DashboardTile {
 }
 
 export const DASHBOARDS: DashboardTile[] = [
+  { slug: "charts", title: "Charts", description: "Full charting terminal: 15 timeframes, 9 chart types, 32 indicators, drawing tools, multi-chart layouts, alerts and replay on live Upstox data", icon: CandlestickChart, tags: ["charts", "live", "terminal"] },
   { slug: "market-overview", title: "Market Overview", description: "Indices, sector heatmap, FII/DII flows, breadth, movers and OI gainers", icon: Globe2, tags: ["live", "breadth"] },
   { slug: "option-chain", title: "Option Chain", description: "Live chain with OI, ΔOI, IV, Greeks, PCR, max pain, IV skew and OI buildup", icon: Layers, tags: ["options", "live"] },
   { slug: "arbitrage", title: "Arbitrage Scanner", description: "Cash-futures basis, calendar spreads, NSE-BSE gaps and put-call parity breaks", icon: ArrowLeftRight, tags: ["scanner", "live"] },

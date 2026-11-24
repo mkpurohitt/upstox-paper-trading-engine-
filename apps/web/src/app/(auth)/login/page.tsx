@@ -34,7 +34,21 @@ function LoginInner() {
   const hydrated = useHydrated(); // never let the browser submit the form natively (credentials in the URL)
 
   React.useEffect(() => {
-    unwrap(api.GET("/api/auth/providers")).then(setProviders).catch(() => undefined);
+    // retry: on a cold start (first compile / API still booting) the first request can fail, and without the
+    // providers the demo and Google buttons would never appear
+    let alive = true;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const load = (attempt: number) =>
+      unwrap(api.GET("/api/auth/providers"))
+        .then((p) => alive && setProviders(p))
+        .catch(() => {
+          if (alive && attempt < 20) timer = setTimeout(() => load(attempt + 1), Math.min(5000, 750 * (attempt + 1)));
+        });
+    load(0);
+    return () => {
+      alive = false;
+      if (timer) clearTimeout(timer);
+    };
   }, []);
 
   const finish = (t: Schemas["TokenOut"]) => {

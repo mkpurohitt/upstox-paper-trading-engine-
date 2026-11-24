@@ -82,6 +82,10 @@ def decode_feed(raw: bytes, key_to_symbol: dict[str, str]) -> list[Tick]:
     return out
 
 
+class FeedNotAuthorized(Exception):
+    """The token is valid for REST but not allowed to authorize the WebSocket feed (HTTP 401/403)."""
+
+
 class UpstoxFeed:
     def __init__(self, http: httpx.AsyncClient, by_symbol: dict[str, Instrument], by_key: dict[str, Instrument]) -> None:
         self._http = http
@@ -90,6 +94,11 @@ class UpstoxFeed:
 
     async def _authorize(self) -> str:
         r = await self._http.get("/v3/feed/market-data-feed/authorize")
+        if r.status_code in (401, 403):
+            msg = ""
+            with contextlib.suppress(Exception):
+                msg = ((r.json().get("errors") or [{}])[0]).get("message", "")
+            raise FeedNotAuthorized(f"feed authorize returned {r.status_code}{': ' + msg if msg else ''}")
         r.raise_for_status()
         return str(r.json()["data"]["authorized_redirect_uri"])
 
@@ -143,7 +152,7 @@ class UpstoxFeed:
                         reader_task.cancel()
                         with contextlib.suppress(BaseException):
                             await reader_task
-            except asyncio.CancelledError:
+            except (asyncio.CancelledError, FeedNotAuthorized):
                 raise
             except Exception as exc:
                 log.warning("upstox.feed_error", error=str(exc))

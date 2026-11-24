@@ -7,6 +7,8 @@ whole product works without any API keys.
 
 ![Copilot answering with a backtest card](docs/screenshots/copilot-backtest.png)
 
+![Charts terminal](docs/screenshots/charts-terminal.png)
+
 | | |
 |---|---|
 | ![Option chain](docs/screenshots/option-chain.png) | ![Visual strategy builder](docs/screenshots/strategy-builder.png) |
@@ -34,6 +36,16 @@ pause, resume, square-off and stop; a paper-trading desk; a user kill switch and
 **Brokers** — Upstox, Zerodha, Angel One, Dhan, Fyers, Kotak Neo, 5paisa, ICICI Breeze, Alice Blue and Shoonya, plus the default
 paper broker. Credentials are AES-GCM encrypted. Every order passes the risk engine (kill switches, allow-lists, size and position
 caps, orders/minute, the SEBI orders/second threshold, daily loss) and is tagged with an Algo-ID and written to a hash-chained audit log.
+
+**Charts** — a full charting terminal in Analysis: 15 timeframes (1m … 4h, D, W, M, plus custom minutes, all aligned to
+the 09:15 session open), 9 chart types (candles, hollow candles, Heikin Ashi, bars, line, area, baseline, Renko, line break),
+32 indicators in resizable panes (moving averages, VWAP, Bollinger/Keltner/Donchian, Supertrend, SAR, Ichimoku, pivots, RSI,
+MACD, Stochastic/Stoch RSI, ADX, CCI, ATR, MFI, OBV …), 13 drawing tools (trend lines, rays, horizontal/vertical lines,
+rectangles, Fibonacci, parallel channel, price range, long/short position with R:R, text) with magnet, undo/redo, lock and
+hide, compare symbols, 1/2/3/4-chart grids with symbol, timeframe and crosshair sync, bar replay, price alerts, watchlist,
+quote and market depth, range buttons and go-to-date, screenshots and full screen. Layouts and drawings auto-save to your
+account. Data streams live from **Upstox** once an access token is connected (Admin → Market data); otherwise charts run on
+the simulated market and are clearly labelled SIMULATED.
 
 **Analysis** — Market overview, option chain, arbitrage scanner (cash-futures, calendar, NSE-BSE, put-call parity), ratio spreads,
 straddle/strangle, butterfly & condor, options strategy builder with what-if sliders, technical, fundamental, quant (VaR, regimes,
@@ -75,6 +87,20 @@ uses a local SQLite database (`var/algo.db`) and in-process workers, so nothing 
 
 If a page shows *Can't reach the AlgoDesk API*, the backend is not running (or crashed): check the launcher's terminal.
 
+### Live Upstox market data
+
+Out of the box every screen runs on a realistic simulated market. To switch the whole platform to live NSE/BSE/MCX data:
+
+1. Get an Upstox token: the **analytics token** (read-only, long-lived; recommended) from your Upstox developer account, or a
+   daily access token from your Upstox app's login flow (it expires at 03:30 IST every day).
+2. Log in as an admin → **Admin → Market data** → paste the token → **Verify & go live**. The token is checked against Upstox,
+   encrypted, and charts, quotes, option chains, the screener, paper fills and strategy runners switch over immediately.
+   (Alternatively set `DATA_MODE=live` and `UPSTOX_ANALYTICS_TOKEN=…` or `UPSTOX_ACCESS_TOKEN=…` in `.env` and restart.)
+3. Open **Charts**: the badge changes from *Simulated data* to *Live · Upstox*. If a token may not open Upstox's WebSocket feed,
+   prices update by polling quotes every 2 seconds instead.
+
+Read COMPLIANCE.md §10 before showing exchange data to other users commercially.
+
 ### Accounts (development only)
 
 | Account | Login | Notes |
@@ -91,7 +117,7 @@ All settings are environment variables documented in [`.env.example`](.env.examp
 | **LLM: "GPT-6 Luna"** (any OpenAI-compatible endpoint) | `LLM_PRIMARY_PROVIDER=openai_compat`, `LLM_PRIMARY_MODEL=gpt-6-luna`, `LLM_PRIMARY_BASE_URL`, `LLM_PRIMARY_API_KEY`, optional `LLM_CHEAP_MODEL` / `LLM_STRONG_MODEL` | Built-in offline assistant (rule-based, tool-using, cites sources) |
 | Fallback LLMs | `ANTHROPIC_API_KEY`; `OLLAMA_ENABLED=true` (+ `ollama` compose profile); `LLM_FALLBACKS` | — |
 | Embeddings | `EMBEDDING_PROVIDER=hashing\|openai_compat\|ollama` | Deterministic hashing embedder |
-| Market data | `DATA_MODE=live`, `UPSTOX_ANALYTICS_TOKEN` (or the OAuth app keys) | Deterministic mock market (history since 2019, live ticks, option chains) |
+| Market data | Admin → Market data (paste an Upstox token), or `DATA_MODE=live` + `UPSTOX_ANALYTICS_TOKEN` / `UPSTOX_ACCESS_TOKEN` | Deterministic simulated market (history since 2019, live ticks, option chains), labelled SIMULATED |
 | NSE data | `NSE_MCP_URL` (+ transport/key) | Mock NSE tools with the same surface |
 | Brokers | Users connect their own accounts in Profile → Brokers; register `EGRESS_STATIC_IP` with each broker | Paper broker |
 | Payments | `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET` | Simulated checkout (non-production) |

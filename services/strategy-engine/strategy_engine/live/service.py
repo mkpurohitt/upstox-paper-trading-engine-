@@ -18,9 +18,13 @@ from strategy_engine.live.manager import RunnerManager
 async def main() -> None:
     s = get_settings()
     configure_logging(s.log_level, s.log_json, service="strategy-runner")
+    from market_data.registry import init_provider_from_db, watch_provider_reloads
+
+    await init_provider_from_db()
     manager = RunnerManager()
     tasks = [asyncio.create_task(manager.run(), name="runner-manager"),
-             asyncio.create_task(PaperMatcher().run(), name="paper-matcher")]
+             asyncio.create_task(PaperMatcher().run(), name="paper-matcher"),
+             asyncio.create_task(watch_provider_reloads(), name="provider-watch")]
     stop = asyncio.Event()
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGINT, signal.SIGTERM):
